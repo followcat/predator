@@ -11,6 +11,7 @@ def catchman(htmlsource):
     for index in range(len(up_data)):
         storage_data = {'peo':[], 'info':[]}
         index_bs = up_data[index]
+        storage_data['html'] = index_bs.prettify()
         checkbox = index_bs.find(class_='checkbox')
         storage_data['id'] = checkbox['value']
         storage_data['data-name'] = checkbox['data-name']
@@ -19,7 +20,6 @@ def catchman(htmlsource):
             index_bs.find(class_='icons16 icons16-recommend') is not None
         storage_data['elite'] = \
             index_bs.find(class_='icons16 icons16-elite') is not None
-
         mark = index_bs.find(class_='mark')
         storage_data['name'] = mark.text
         storage_data['href'] = mark['href']

@@ -49,7 +49,7 @@ def update_all_jobtitles(repojt):
             print localdatajobs['jobtitles'][id_str][0]
             update_jobtitle(id_str, repojt)
 
-def updata_select_jobtitles(repojt, selected):
+def update_select_jobtitles(repojt, selected):
     for id_str in selected:
         print localdatajobs['jobtitles'][id_str][0]
         update_jobtitle(id_str, repojt)
