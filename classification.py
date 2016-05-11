@@ -18,7 +18,7 @@ def update_jobtitle(id_str, repojt, MAX_PAGE=100):
     post_data = downloader.liepin.classify_postdata({
                 'jobtitles': id_str,
                 'curPage': 0})
-    for curPage in range(100):
+    for curPage in range(MAX_PAGE):
         post_data['curPage'] = curPage + 1
         text = downloader.liepin.classify_search(post_data)
         results = htmlparser.liepin.catchman(text)
