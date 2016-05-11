@@ -34,3 +34,18 @@ def catchman(htmlsource):
                 storage_data['info'].append(td.text)
         results.append(storage_data)
     return results
+
+def catchcv(htmlsource):
+    bs = bs4.BeautifulSoup(htmlsource)
+    side = bs.find(class_='side')
+    side.decompose()
+    footer = bs.find('footer')
+    footer.decompose()
+    javascripts = bs.findAll('script')
+    for js in javascripts:
+        js.decompose()
+    alinks = bs.findAll('a')
+    for a in alinks:
+        a.decompose()
+    content = bs.find(class_='content')
+    return content.prettify()
