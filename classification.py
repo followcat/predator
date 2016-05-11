@@ -48,7 +48,11 @@ def update_all_jobtitles(repojt):
         if len(id_str) > 3:
             print localdatajobs['jobtitles'][id_str][0]
             update_jobtitle(id_str, repojt)
-            break
+
+def updata_select_jobtitles(repojt, selected):
+    for id_str in selected:
+        print localdatajobs['jobtitles'][id_str][0]
+        update_jobtitle(id_str, repojt)
 
 if __name__ == '__main__':
     repo = interface.gitinterface.GitInterface('liepin')
