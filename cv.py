@@ -27,6 +27,13 @@ def update_all_cv(jt, cv):
         update_title_cv(yamldata, cv)
 
 
+def update_select_cv(jt, cv, selected):
+    for id_str in selected:
+        path, name = jt.repo_path, id_str+'.yaml'
+        yamldata = utils.builtin.load_yaml(path, name)
+        update_title_cv(yamldata, cv)
+
+
 if __name__ == '__main__':
     jtrepo = interface.gitinterface.GitInterface('liepin')
     jt = interface.repojobtitles.JobTitles(jtrepo)
