@@ -57,17 +57,17 @@ def extract_details(uploaded_details):
     return details
 
 
-import interface.repocv
-import interface.gitinterface
+import storage.repocv
+import storage.gitinterface
 import repogener.cv
 
 if __name__ == '__main__':
     with open('liepin/JOBTITLES/290094.yaml') as f:
         text = f.read()
-    inputrepo = interface.gitinterface.GitInterface('liepin_cv')
-    inputcv = interface.repocv.CurriculumVitae(inputrepo)
+    inputrepo = storage.gitinterface.GitInterface('liepin_cv')
+    inputcv = storage.repocv.CurriculumVitae(inputrepo)
 
-    outputrepo = interface.gitinterface.GitInterface('liepinrepo')
+    outputrepo = storage.gitinterface.GitInterface('liepinrepo')
     outputcv = repogener.cv.RepoCurriculumVitae(outputrepo)
     res = yaml.load(text)
     for id_str in res:

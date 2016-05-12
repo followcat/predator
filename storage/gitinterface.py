@@ -17,8 +17,8 @@ class GitInterface(object):
             >>> import shutil
             >>> import repointerface.gitinterface
             >>> repo_name = 'repointerface/test_repo'
-            >>> interface = repointerface.gitinterface.GitInterface(repo_name)
-            >>> interface.repo # doctest: +ELLIPSIS
+            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> storage.repo # doctest: +ELLIPSIS
             <Repo at ...
             >>> shutil.rmtree(repo_name)
         """
@@ -32,13 +32,13 @@ class GitInterface(object):
             >>> import shutil
             >>> import repointerface.gitinterface
             >>> repo_name = 'repointerface/test_repo'
-            >>> interface = repointerface.gitinterface.GitInterface(repo_name)
-            >>> path = interface.repo.path
+            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> path = storage.repo.path
             >>> with open('repointerface/test_repo/test_file', 'w') as file:
             ...     file.write('test')
-            >>> commit_id = interface.add_files(['test_file'],
+            >>> commit_id = storage.add_files(['test_file'],
             ... b'Test commit', b'test<test@test.com>')
-            >>> commit_id == interface.repo.head()
+            >>> commit_id == storage.repo.head()
             True
             >>> shutil.rmtree(repo_name)
         """
@@ -57,13 +57,13 @@ class GitInterface(object):
             >>> import shutil
             >>> import repointerface.gitinterface
             >>> repo_name = 'repointerface/test_repo'
-            >>> interface = repointerface.gitinterface.GitInterface(repo_name)
-            >>> path = interface.repo.path
+            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> path = storage.repo.path
             >>> with open('repointerface/test_repo/test_file', 'w') as file:
             ...     file.write('test')
-            >>> commit_id = interface.add_files(['test_file'],
+            >>> commit_id = storage.add_files(['test_file'],
             ... b'Test commit', b'test<test@test.com>')
-            >>> commit_id = interface.modify_file('test_file', b'Modify test')
+            >>> commit_id = storage.modify_file('test_file', b'Modify test')
             >>> with open('repointerface/test_repo/test_file') as file:
             ...     data = file.read()
             >>> data
@@ -104,14 +104,14 @@ class GitInterface(object):
             >>> import shutil
             >>> import repointerface.gitinterface
             >>> repo_name = 'repointerface/test_repo'
-            >>> interface = repointerface.gitinterface.GitInterface(repo_name)
-            >>> path = interface.repo.path
+            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> path = storage.repo.path
             >>> data = {'name': u'中文名字'}
             >>> with open('repointerface/test_repo/test_file.yaml', 'w') as file:
             ...     file.write(yaml.dump(data))
-            >>> commit_id = interface.add_files(['test_file.yaml'],
+            >>> commit_id = storage.add_files(['test_file.yaml'],
             ... b'Test commit', b'test<test@test.com>')
-            >>> interface.grep_yaml('name', '.')
+            >>> storage.grep_yaml('name', '.')
             ['test_file.yaml']
             >>> shutil.rmtree(repo_name)
         """
@@ -141,13 +141,13 @@ class GitInterface(object):
             >>> import shutil
             >>> import repointerface.gitinterface
             >>> repo_name = 'repointerface/test_repo'
-            >>> interface = repointerface.gitinterface.GitInterface(repo_name)
-            >>> path = interface.repo.path
+            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> path = storage.repo.path
             >>> with open('repointerface/test_repo/test_file', 'w') as file:
             ...     file.write('test')
-            >>> commit_id = interface.add_files(['test_file'],
+            >>> commit_id = storage.add_files(['test_file'],
             ... b'Test commit', b'test<test@test.com>')
-            >>> info = interface.get_file_create_info('test_file')
+            >>> info = storage.get_file_create_info('test_file')
             >>> info['author']
             'test<test@test.com>'
             >>> shutil.rmtree(repo_name)

@@ -4,9 +4,9 @@ import os.path
 import utils.builtin
 import htmlparser.liepin
 import downloader.liepin
-import interface.repocv
-import interface.gitinterface
-import interface.repojobtitles
+import storage.repocv
+import storage.gitinterface
+import storage.repojobtitles
 
 
 def update_title_cv(yamldata, cv):
@@ -33,8 +33,8 @@ def update_select_cv(jt, cv, selected):
 
 
 if __name__ == '__main__':
-    jtrepo = interface.gitinterface.GitInterface('liepin')
-    jt = interface.repojobtitles.JobTitles(jtrepo)
-    cvrepo = interface.gitinterface.GitInterface('liepin_cv')
-    cv = interface.repocv.CurriculumVitae(cvrepo)
+    jtrepo = storage.gitinterface.GitInterface('liepin')
+    jt = storage.repojobtitles.JobTitles(jtrepo)
+    cvrepo = storage.gitinterface.GitInterface('liepin_cv')
+    cv = storage.repocv.CurriculumVitae(cvrepo)
     update_all_cv(jt, cv)

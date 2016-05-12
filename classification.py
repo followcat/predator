@@ -4,8 +4,8 @@ import time
 
 import htmlparser.liepin
 import downloader.liepin
-import interface.gitinterface
-import interface.repojobtitles
+import storage.gitinterface
+import storage.repojobtitles
 from sources.datajobs import *
 
 def logException(text):
@@ -55,6 +55,6 @@ def update_select_jobtitles(repojt, selected):
         update_jobtitle(id_str, repojt)
 
 if __name__ == '__main__':
-    repo = interface.gitinterface.GitInterface('liepin')
-    repojt = interface.repojobtitles.JobTitles(repo)
+    repo = storage.gitinterface.GitInterface('liepin')
+    repojt = storage.repojobtitles.JobTitles(repo)
     update_all_jobtitles(repojt)
