@@ -13,9 +13,7 @@ def update_title_cv(yamldata, cv):
     for cv_id in yamldata:
         if cv.exists(cv_id):
             continue
-        cv_info = yamldata[cv_id]
-        cv_url = cv_info['href']
-        htmlsource = downloader.liepin.cv(cv_url)
+        htmlsource = downloader.liepin.cv(cv_id)
         cv_content = htmlparser.liepin.catchcv(htmlsource)
         result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         print cv_id
