@@ -2,6 +2,8 @@ import urllib
 import urllib2
 
 import downloader.tools
+import selenium.webdriver
+
 
 def classify_postdata(update_dict):
     post_data = {
@@ -47,3 +49,19 @@ def cv(cv_id):
     res = opener.open(req)
     text = res.read()
     return text
+
+
+class Webdriver(object):
+
+    def __init__(self, profilepath=None):
+        if profilepath is None:
+            profile = None
+        else:
+            profile = selenium.webdriver.FirefoxProfile(profilepath)
+        self.driver =  selenium.webdriver.Firefox(firefox_profile=profile)
+
+    def cv(self, cv_id):
+        CV_HREF = "https://h.liepin.com/resume/showresumedetail/?simple=0&res_id_encode="
+        download_url = CV_HREF + cv_id
+        self.driver.get(download_url)
+        return self.driver.page_source
