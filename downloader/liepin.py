@@ -60,8 +60,8 @@ class Webdriver(object):
             profile = selenium.webdriver.FirefoxProfile(profilepath)
         self.driver =  selenium.webdriver.Firefox(firefox_profile=profile)
 
-    def cv(self, cv_id):
-        CV_HREF = "https://h.liepin.com/resume/showresumedetail/?simple=0&res_id_encode="
-        download_url = CV_HREF + cv_id
+    def cv(self, cv_url):
+        CV_HREF = 'https://h.liepin.com'
+        download_url = CV_HREF + cv_url
         self.driver.get(download_url)
         return self.driver.page_source
