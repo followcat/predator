@@ -39,10 +39,10 @@ def classify_search(data):
     return text
 
 
-def cv(cv_id):
+def cv(cv_url):
     cookies_str = downloader.tools.getcookies()
-    CV_HREF = "https://h.liepin.com/resume/showresumedetail/?simple=0&res_id_encode="
-    download_url = CV_HREF + cv_id
+    CV_HREF = 'https://h.liepin.com'
+    download_url = CV_HREF + cv_url
     headers = {'Cookie': cookies_str}
     req = urllib2.Request(download_url, headers = headers)
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
