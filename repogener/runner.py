@@ -82,3 +82,4 @@ if __name__ == '__main__':
             uploaded_details = res[id_str]
             with open(out+'.yaml', 'w') as f:
                 f.write(yaml.dump(extract_details(uploaded_details)).encode('utf8'))
+            outputcv.add([out+'.md', out+'.yaml'], committer='dev')
