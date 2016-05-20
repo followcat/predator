@@ -36,7 +36,7 @@ def catchman(htmlsource):
     return results
 
 def catchcv(htmlsource):
-    bs = bs4.BeautifulSoup(htmlsource)
+    bs = bs4.BeautifulSoup(htmlsource, 'lxml')
     side = bs.find(class_='side')
     side.decompose()
     footer = bs.find('footer')
