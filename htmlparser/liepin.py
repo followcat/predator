@@ -4,7 +4,7 @@ import utils.tools
 
 
 def catchman(htmlsource):
-    bs = bs4.BeautifulSoup(htmlsource)
+    bs = bs4.BeautifulSoup(htmlsource, "lxml")
     up_data = bs.findAll(class_='table-list-peo')
     down_data = bs.findAll(class_='table-list-info')
     results = []
