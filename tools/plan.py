@@ -8,6 +8,7 @@ import downloader.liepin
 import storage.repocv
 import storage.gitinterface
 import storage.repojobtitles
+import tools.mail
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -65,12 +66,17 @@ def err_listener(ev):
         err_logger.error('%s error.', str(ev.job_id))
     else:
         err_logger.info('%s miss', str(ev.job_id))
+    tools.mail.send_mail(['fengliji@willendare.com'], ev.job_id, "Wrong and stop!")
     global scheduler
     scheduler.shutdown()
 
 
 if __name__ == '__main__':
-    scheduler.add_job(tick, 'cron', minute='*/3', day_of_week='4-6', hour='9-22')
+    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-20')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='21-23')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-1')
+    scheduler.add_job(tick, 'cron', minute='*/8', hour='2-3')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='4-7')
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
