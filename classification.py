@@ -13,11 +13,10 @@ def logException(text):
         fp.write(text)
     raise Exception
 
-def update_jobtitle(id_str, repojt, MAX_PAGE=100):
+def update_jobtitle(postdict, repojt, MAX_PAGE=100, sleeptime=10):
     add_list = []
-    post_data = downloader.liepin.classify_postdata({
-                'jobtitles': id_str,
-                'curPage': 0})
+    id_str = postdict['jobtitles']
+    post_data = downloader.liepin.classify_postdata(postdict)
     for curPage in range(MAX_PAGE):
         post_data['curPage'] = curPage + 1
         text = downloader.liepin.classify_search(post_data)
@@ -36,6 +35,7 @@ def update_jobtitle(id_str, repojt, MAX_PAGE=100):
             break
         else:
             add_list.extend(parts_results)
+        time.sleep(sleeptime)
     repojt.add_datas(id_str, add_list, 'followcat')
     return True
 
@@ -52,9 +52,23 @@ def update_all_jobtitles(repojt):
 def update_select_jobtitles(repojt, selected):
     for id_str in selected:
         print localdatajobs['jobtitles'][id_str][0]
-        update_jobtitle(id_str, repojt)
+        postdict = {'industrys': 290,
+                    'jobtitles': id_str,
+                    'curPage': 0}
+        update_jobtitle(postdict, repojt)
 
 if __name__ == '__main__':
     repo = storage.gitinterface.GitInterface('liepin')
     repojt = storage.repojobtitles.JobTitles(repo)
-    update_all_jobtitles(repojt)
+    selected_list = [
+    '290094', #医疗器械研发
+    '290097', #医疗器械生产/质量管理
+    '060010', #市场总监
+    '020010', #销售总监
+    '040020', #项目经理/主管
+    '040040', #项目专员/助理
+    '050010', #质量管理/测试经理(QA/QC经理)
+    '050080', #体系工程师/审核员
+    '050020', #质量管理/测试主管(QA/QC主管)
+    ]
+    update_select_jobtitles(repojt, selected_list)
