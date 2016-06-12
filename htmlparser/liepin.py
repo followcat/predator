@@ -47,5 +47,5 @@ def catchcv(htmlsource):
     alinks = bs.findAll('a')
     for a in alinks:
         a.decompose()
-    content = bs.find(class_='content')
+    content = bs.find(class_='resume')
     return content.prettify()
