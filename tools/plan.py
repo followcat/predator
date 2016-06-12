@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import datetime 
 
 import utils.builtin
@@ -43,10 +44,15 @@ downloader = downloader.liepin.Webdriver('/home/followcat/.mozilla/firefox/yffp1
 
 
 def tick():
+    nums_tensec = random.randint(0, 18)
+    time.sleep(nums_tensec*10)
     job_logger = logging.getLogger('schedJob')
     print('Tick! The time is: %s' % datetime.datetime.now())
-    yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290094.yaml')
-    for cv_id in yamldata:
+    yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
+    sorded_id = sorted(yamldata,
+                       key = lambda cvid:yamldata[cvid]['peo'][-1],
+                       reverse=True)
+    for cv_id in sorded_id:
         if cv.exists(cv_id):
             continue
         cv_info = yamldata[cv_id]
@@ -72,11 +78,9 @@ def err_listener(ev):
 
 
 if __name__ == '__main__':
-    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-20')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='21-23')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-1')
-    scheduler.add_job(tick, 'cron', minute='*/8', hour='2-3')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='4-7')
+    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-17')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='18-23')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-2')
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
