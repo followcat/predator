@@ -1,3 +1,5 @@
+import time
+
 import bs4
 
 import utils.tools
@@ -14,6 +16,7 @@ def catchman(htmlsource):
         storage_data['html'] = index_bs.prettify()
         checkbox = index_bs.find(class_='checkbox')
         storage_data['id'] = checkbox['value']
+        storage_data['date'] = time.time()
         storage_data['data-name'] = checkbox['data-name']
         storage_data['data-userid'] = checkbox['data-userid']
         storage_data['recommend'] = \
