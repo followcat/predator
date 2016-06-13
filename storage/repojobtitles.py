@@ -1,5 +1,6 @@
 import glob
 import yaml
+import utils._yaml
 import os.path
 
 import utils.builtin
@@ -25,7 +26,7 @@ class JobTitles(object):
 
         for data in datas:
             table[data['id']] = data
-        dump_data = yaml.dump(table)
+        dump_data = yaml.safe_dump(table, allow_unicode=True)
         self.repo.modify_file(os.path.join(self.path, filename), dump_data,
                               message="Add to classify id :" + filename,
                               committer=committer)
@@ -46,7 +47,7 @@ class JobTitles(object):
         if not os.path.exists(file_path):
             table = {}
             with open(file_path, 'w') as f:
-                f.write(yaml.dump(table))
+                f.write(yaml.safe_dump(table, allow_unicode=True))
             self.repo.add_files(os.path.join(self.path, filename),
                                 "Add classify file: " + filename)
 
