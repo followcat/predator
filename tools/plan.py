@@ -5,7 +5,6 @@ import datetime
 
 import utils.builtin
 import htmlparser.liepin
-import downloader.liepin
 import downloader.webdriver
 import storage.repocv
 import storage.gitinterface
