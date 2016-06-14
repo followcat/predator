@@ -6,6 +6,7 @@ import datetime
 import utils.builtin
 import htmlparser.liepin
 import downloader.liepin
+import downloader.webdriver
 import storage.repocv
 import storage.gitinterface
 import storage.repojobtitles
@@ -40,7 +41,7 @@ jtrepo = storage.gitinterface.GitInterface('liepin')
 jt = storage.repojobtitles.JobTitles(jtrepo)
 cvrepo = storage.gitinterface.GitInterface('liepin_webdrivercv')
 cv = storage.repocv.CurriculumVitae(cvrepo)
-downloader = downloader.liepin.Webdriver('/home/followcat/.mozilla/firefox/yffp11op.followcat')
+downloader = downloader.webdriver.Webdriver('/home/followcat/.mozilla/firefox/yffp11op.followcat')
 
 
 def tick():
