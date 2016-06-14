@@ -3,7 +3,7 @@
 import time
 
 import htmlparser.liepin
-import downloader.liepin
+import precedure.liepin
 import storage.gitinterface
 import storage.repojobtitles
 from sources.datajobs import *
@@ -13,13 +13,12 @@ def logException(text):
         fp.write(text)
     raise Exception
 
-def update_jobtitle(postdict, repojt, MAX_PAGE=100, sleeptime=10):
+def update_jobtitle(precedure, postdict, repojt, MAX_PAGE=100, sleeptime=10):
     add_list = []
     id_str = postdict['jobtitles']
-    post_data = downloader.liepin.classify_postdata(postdict)
     for curPage in range(MAX_PAGE):
         post_data['curPage'] = curPage + 1
-        text = downloader.liepin.classify_search(post_data)
+        text = precedure.classify(post_data)
         results = htmlparser.liepin.catchman(text)
         if len(results) == 0:
             if '没有找到符合' in text:
@@ -39,7 +38,7 @@ def update_jobtitle(postdict, repojt, MAX_PAGE=100, sleeptime=10):
     repojt.add_datas(id_str, add_list, 'followcat')
     return True
 
-def update_all_jobtitles(repojt):
+def update_all_jobtitles(precedure, repojt):
     for id_str in localdatajobs['jobtitles']:
         try:
             int_id = int(id_str)
@@ -47,19 +46,20 @@ def update_all_jobtitles(repojt):
             continue
         if len(id_str) > 3:
             print localdatajobs['jobtitles'][id_str][0]
-            update_jobtitle(id_str, repojt)
+            update_jobtitle(precedure, id_str, repojt)
 
-def update_select_jobtitles(repojt, selected):
+def update_select_jobtitles(precedure, repojt, selected):
     for id_str in selected:
         print localdatajobs['jobtitles'][id_str][0]
         postdict = {'industrys': 290,
                     'jobtitles': id_str,
                     'curPage': 0}
-        update_jobtitle(postdict, repojt)
+        update_jobtitle(precedure, postdict, repojt)
 
 if __name__ == '__main__':
     repo = storage.gitinterface.GitInterface('liepin')
     repojt = storage.repojobtitles.JobTitles(repo)
+    liepin = precedure.liepin.Liepin()
     selected_list = [
     '290094', #医疗器械研发
     '290097', #医疗器械生产/质量管理
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     '050080', #体系工程师/审核员
     '050020', #质量管理/测试主管(QA/QC主管)
     ]
-    update_select_jobtitles(repojt, selected_list)
+    update_select_jobtitles(liepin, repojt, selected_list)
