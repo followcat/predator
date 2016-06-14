@@ -58,7 +58,8 @@ def tick():
             continue
         cv_info = yamldata[cv_id]
         cv_url = cv_info['href']
-        htmlsource = downloader.cv(cv_url)
+        download_url = 'https://h.liepin.com' + cv_url
+        htmlsource = downloader.getsource(download_url)
         cv_content = htmlparser.liepin.catchcv(htmlsource)
         result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         print('Download: '+cv_id)
