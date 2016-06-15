@@ -6,9 +6,10 @@ import bs4
 
 import utils.tools
 import utils.builtin
+import precedure.base
 import downloader.urllib
 
-class Liepin(object):
+class Liepin(precedure.base.Base):
 
     urls_post = {
         'form_submit':1,
