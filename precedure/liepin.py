@@ -141,7 +141,7 @@ class Liepin(precedure.base.Base):
 def get_classify():
     import storage.gitinterface
     import storage.repojobtitles
-    from sources.datajobs import *
+    from sources.liepin import *
     repo = storage.gitinterface.GitInterface('liepin')
     repojt = storage.repojobtitles.JobTitles(repo)
     liepin = precedure.liepin.Liepin()
