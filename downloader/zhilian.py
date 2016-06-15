@@ -13,7 +13,7 @@ def classify_postdata():
         'CompanyName':'',
         'IsArecent':'false',
         'CompanyIndustry':121500,
-        'JobType':121300,
+        'JobType':1050000,
         'DesiredWorkLocation':'',
         'JobLocation':'',
         'AdegreeMin':-1,
@@ -48,6 +48,18 @@ def classify_search(data):
     headers = {'Cookie': cookies_str}
     url_params = urllib.urlencode(data)
     req = urllib2.Request(searchurl+url_params, headers=headers)
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+    res = opener.open(req)
+    text = res.read()
+    return text
+
+
+def cv(cv_url):
+    cookies_str = downloader.tools.getcookies().replace("\n", "")
+    CV_HREF = 'http://h.highpin.cn'
+    download_url = CV_HREF + cv_url
+    headers = {'Cookie': cookies_str}
+    req = urllib2.Request(download_url, headers=headers)
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
     res = opener.open(req)
     text = res.read()
