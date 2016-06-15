@@ -11,6 +11,10 @@ def md5(text):
     m.update(text)
     return unicode(m.hexdigest())
 
+def loadfile(path):
+    with open(path) as fp:
+        stream = fp.read()
+    return stream
 
 def save_yaml(infodict, path, filename):
     with open(os.path.join(path, filename), 'w') as f:
