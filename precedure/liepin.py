@@ -2,8 +2,10 @@
 
 import time
 
+import bs4
+
+import utils.tools
 import utils.builtin
-import htmlparser.liepin
 import downloader.urllib
 
 class Liepin(object):
@@ -32,16 +34,54 @@ class Liepin(object):
         self.ul_downloader = downloader.urllib.Urllib()
         self.ul_downloader.set_cookies(self.cookies_str)
 
-    def classify(self, data):
+    def urlget_classify(self, data):
         tmp_post = dict()
         tmp_post.update(self.post_data)
         tmp_post.update(data)
         searchurl = 'https://h.liepin.com/cvsearch/soResume/'
         return self.ul_downloader.post(searchurl, data=tmp_post)
 
-    def url_cv(self, url):
+    def urlget_cv(self, url):
         download_url = 'https://h.liepin.com' + url
         return self.ul_downloader.get(download_url)
+
+    def parse_classify(self, htmlsource):
+        bs = bs4.BeautifulSoup(htmlsource, "lxml")
+        up_data = bs.findAll(class_='table-list-peo')
+        down_data = bs.findAll(class_='table-list-info')
+        results = []
+        for index in range(len(up_data)):
+            storage_data = {'peo':[], 'info':[]}
+            index_bs = up_data[index]
+            storage_data['html'] = index_bs.prettify()
+            checkbox = index_bs.find(class_='checkbox')
+            storage_data['id'] = checkbox['value']
+            storage_data['date'] = time.time()
+            storage_data['data-name'] = checkbox['data-name']
+            storage_data['data-userid'] = checkbox['data-userid']
+            storage_data['recommend'] = \
+                index_bs.find(class_='icons16 icons16-recommend') is not None
+            storage_data['elite'] = \
+                index_bs.find(class_='icons16 icons16-elite') is not None
+            mark = index_bs.find(class_='mark')
+            storage_data['name'] = mark.text
+            storage_data['href'] = mark['href']
+            storage_data['title'] = mark['title']
+            storage_data['data-id'] = mark['data-id']
+            for td in up_data[index].findAll('td'):
+                info = utils.tools.replace_tnr(td.text)
+                if info:
+                    storage_data['peo'].append(info)
+            for td in down_data[index].findAll('td'):
+                if info:
+                    storage_data['info'].append(td.text)
+            results.append(storage_data)
+        return results
+
+    def classify(self, postdata):
+        text = self.urlget_classify(post_data)
+        results = self.parse_classify(text)
+        return results
 
     def logException(self, text):
         with open('/tmp/classification.log', 'a+') as fp:
@@ -53,8 +93,7 @@ class Liepin(object):
         id_str = postdict['jobtitles']
         for curPage in range(MAX_PAGE):
             post_data['curPage'] = curPage + 1
-            text = self.classify(post_data)
-            results = htmlparser.liepin.catchman(text)
+            results = self.classify(post_data)
             if len(results) == 0:
                 if '没有找到符合' in text:
                     break
@@ -74,7 +113,7 @@ class Liepin(object):
         return True
 
 
-if __name__ == '__main__':
+def get_classify():
     import storage.gitinterface
     import storage.repojobtitles
     from sources.datajobs import *
@@ -98,3 +137,7 @@ if __name__ == '__main__':
                     'jobtitles': id_str,
                     'curPage': 0}
         liepin.update_classify(postdict, repojt)
+
+
+if __name__ == '__main__':
+    get_classify()
