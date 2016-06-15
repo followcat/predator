@@ -38,16 +38,6 @@ def update_jobtitle(precedure, postdict, repojt, MAX_PAGE=100, sleeptime=10):
     repojt.add_datas(id_str, add_list, 'followcat')
     return True
 
-def update_all_jobtitles(precedure, repojt):
-    for id_str in localdatajobs['jobtitles']:
-        try:
-            int_id = int(id_str)
-        except ValueError:
-            continue
-        if len(id_str) > 3:
-            print localdatajobs['jobtitles'][id_str][0]
-            update_jobtitle(precedure, id_str, repojt)
-
 def update_select_jobtitles(precedure, repojt, selected):
     for id_str in selected:
         print localdatajobs['jobtitles'][id_str][0]
