@@ -156,7 +156,7 @@ def get_classify():
     '050080', #体系工程师/审核员
     '050020', #质量管理/测试主管(QA/QC主管)
     ]
-    for id_str in selected:
+    for id_str in selected_list:
         print localdatajobs['jobtitles'][id_str][0]
         postdict = {'industrys': 290,
                     'jobtitles': id_str,
