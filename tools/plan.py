@@ -1,15 +1,12 @@
 import os
 import time
 import random
-import datetime 
 
+import tools.mail
 import utils.builtin
-import htmlparser.liepin
-import downloader.webdriver
 import storage.repocv
 import storage.gitinterface
-import storage.repojobtitles
-import tools.mail
+import precedure.liepin
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -36,18 +33,17 @@ logging.basicConfig(level=logging.ERROR,
 
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
-jtrepo = storage.gitinterface.GitInterface('liepin')
-jt = storage.repojobtitles.JobTitles(jtrepo)
 cvrepo = storage.gitinterface.GitInterface('liepin_webdrivercv')
 cv = storage.repocv.CurriculumVitae(cvrepo)
 downloader = downloader.webdriver.Webdriver('/home/followcat/.mozilla/firefox/yffp11op.followcat')
+liepin_pre = precedure.liepin.Liepin()
 
 
 def tick():
     nums_tensec = random.randint(0, 18)
     time.sleep(nums_tensec*10)
     job_logger = logging.getLogger('schedJob')
-    print('Tick! The time is: %s' % datetime.datetime.now())
+    print('Tick! The time is: %s' % time.ctime())
     yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
     sorded_id = sorted(yamldata,
                        key = lambda cvid:yamldata[cvid]['peo'][-1],
@@ -58,8 +54,7 @@ def tick():
         cv_info = yamldata[cv_id]
         cv_url = cv_info['href']
         download_url = 'https://h.liepin.com' + cv_url
-        htmlsource = downloader.getsource(download_url)
-        cv_content = htmlparser.liepin.catchcv(htmlsource)
+        cv_content =  liepin_pre.cv(download_url)
         result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)

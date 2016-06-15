@@ -45,6 +45,10 @@ class Liepin(object):
         download_url = 'https://h.liepin.com' + url
         return self.ul_downloader.get(download_url)
 
+    def webdriverget_cv(self, downloader, url):
+        htmlsource = downloader.getsource(download_url)
+        return htmlsource
+
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
         up_data = bs.findAll(class_='table-list-peo')
@@ -78,10 +82,30 @@ class Liepin(object):
             results.append(storage_data)
         return results
 
+    def parse_cv(self, htmlsource):
+        bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        side = bs.find(class_='side')
+        side.decompose()
+        footer = bs.find('footer')
+        footer.decompose()
+        javascripts = bs.findAll('script')
+        for js in javascripts:
+            js.decompose()
+        alinks = bs.findAll('a')
+        for a in alinks:
+            a.decompose()
+        content = bs.find(class_='resume')
+        return content.prettify()
+
     def classify(self, postdata):
-        text = self.urlget_classify(post_data)
-        results = self.parse_classify(text)
-        return results
+        htmlsource = self.urlget_classify(post_data)
+        result = self.parse_classify(htmlsource)
+        return result
+
+    def cv(self, url):
+        htmlsource = self.webdriverget_cv(url)
+        result = self.parse_cv(htmlsource)
+        return result
 
     def logException(self, text):
         with open('/tmp/classification.log', 'a+') as fp:
