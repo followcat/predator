@@ -7,7 +7,7 @@ import htmlparser.tools
 
 def source():
     html = ""
-    with open("text.txt") as fp:
+    with open("cv.txt") as fp:
         html = fp.read()
     return html
 
@@ -45,3 +45,21 @@ def catchman():
             storage_data['info'].append(info_item.text)
         result.append(storage_data)
     return result
+
+
+def catchcv():
+    htmlsource = source()
+    bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+    recommand = bs.find(id='recommand-btn-area')
+    recommand.decompose()
+    send_contact = bs.find(id='haveSeenContact')
+    send_contact.decompose()
+    contact_type = bs.find(id='showContactType')
+    contact_type.decompose()
+    label = bs.find(class_='evalListsInnerBox')
+    label_link = label.findAll('a')
+    for e in label_link:
+        e.decompose()
+    detail_content = bs.find(class_='detail-con')
+    resume_content = bs.find(class_='detail-tabs-new')
+    return detail_content.prettify() + resume_content.prettify()
