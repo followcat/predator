@@ -35,7 +35,7 @@ class Liepin(precedure.base.Base):
 
     def urlget_classify(self, data):
         tmp_post = dict()
-        tmp_post.update(self.post_data)
+        tmp_post.update(self.urls_post)
         tmp_post.update(data)
         searchurl = 'https://h.liepin.com/cvsearch/soResume/'
         return self.ul_downloader.post(searchurl, data=tmp_post)
@@ -98,8 +98,13 @@ class Liepin(precedure.base.Base):
         return content.prettify()
 
     def classify(self, postdata):
-        htmlsource = self.urlget_classify(post_data)
+        htmlsource = self.urlget_classify(postdata)
         result = self.parse_classify(htmlsource)
+        if len(result) == 0:
+            if '没有找到符合' in result:
+                result = None
+            else:
+                self.logException(htmlsource)
         return result
 
     def cv(self, url):
@@ -110,19 +115,16 @@ class Liepin(precedure.base.Base):
     def logException(self, text):
         with open('/tmp/classification.log', 'a+') as fp:
             fp.write(text)
-        raise Exception
+        raise Exception(text)
 
     def update_classify(self, postdict, repojt, MAX_PAGE=100, sleeptime=10):
         add_list = []
         id_str = postdict['jobtitles']
         for curPage in range(MAX_PAGE):
-            post_data['curPage'] = curPage + 1
-            results = self.classify(post_data)
-            if len(results) == 0:
-                if '没有找到符合' in text:
-                    break
-                else:
-                    self.logException(text)
+            postdict['curPage'] = curPage + 1
+            results = self.classify(postdict)
+            if results is None:
+                break
             parts_results = []
             for result in results:
                 if not repojt.exists(id_str, result['id']):
@@ -144,10 +146,10 @@ def get_classify():
     from sources.liepin import localdatajobs
     cookies_str = utils.builtin.loadfile('cookies.data')
     ul_downloader = downloader._urllib.Urllib()
-    ul_downloader.set_cookies(self.cookies_str)
+    ul_downloader.set_cookies(cookies_str)
     repo = storage.gitinterface.GitInterface('liepin')
     repojt = storage.repojobtitles.JobTitles(repo)
-    liepin = precedure.liepin.Liepin(uldownloader=ul_downloader)
+    liepin = Liepin(uldownloader=ul_downloader)
     selected_list = [
     '290094', #医疗器械研发
     '290097', #医疗器械生产/质量管理
