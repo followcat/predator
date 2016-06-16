@@ -57,10 +57,10 @@ def tick(once=True):
         result = cv.add(cv_id, cv_content.encode('utf-8'), 'jeff')
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
-        if once:
-            break
         nums_tensec = random.randint(0, 18)
         time.sleep(nums_tensec*1)
+        if once:
+            break
     return True
 
 
@@ -78,7 +78,7 @@ def err_listener(ev):
 if __name__ == '__main__':
     scheduler.add_job(tick, 'cron', minute='*/5', hour='8-17')
     scheduler.add_job(tick, 'cron', minute='*/15', hour='18-23')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-2')
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-7')
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
