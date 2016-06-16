@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+import glob
+import os.path
 import time
 import bs4
+import urllib
+
 import utils.tools
 import utils.builtin
-import precedure.base
 import downloader.webdriver
+import precedure.base
 import precedure.zhilian
-import urllib
+
 
 class Zhilian(precedure.base.Base):
 
@@ -119,7 +123,7 @@ class Zhilian(precedure.base.Base):
         return result
 
     def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
+        htmlsource = self.urlget_cv(url)
         result = self.parse_cv(htmlsource)
         return result
 
@@ -134,7 +138,6 @@ class Zhilian(precedure.base.Base):
         for cur_page in range(MAX_PAGE):
             paramsdict['PageIndex'] = cur_page + 1
             results = self.classify(paramsdict)
-            print results
             if len(results) == 0:
                 if '没有找到符合' in text:
                     break
@@ -144,7 +147,7 @@ class Zhilian(precedure.base.Base):
             for result in results:
                 if not repojt.exists(id_str, result['id']):
                     parts_results.append(result)
-            print cur_page
+            print 'current page:' + str(cur_page)
             if len(parts_results) < len(results)*0.2:
                 break
             else:
@@ -153,6 +156,21 @@ class Zhilian(precedure.base.Base):
         repojt.add_datas(id_str, add_list, 'kabess')
         return True
 
+
+    def update_cv(self, repojt, repocv, sleeptime=10):
+        for pathfile in glob.glob(os.path.join(repojt.repo_path, '*.yaml')):
+            path, name = os.path.split(pathfile)
+            yamldata = utils.builtin.load_yaml(path, name)
+            for cv_id in yamldata:
+                if repocv.exists(cv_id):
+                    continue
+                cv_info = yamldata[cv_id]
+                cv_href = cv_info['href']
+                cv_content = self.cv(cv_href)
+                repocv.add(cv_id, cv_content.encode('utf-8'), 'kabess')
+                print 'current cv id: ' + str(cv_id)
+                time.sleep(sleeptime)
+        return True
 
 
 def get_classify():
@@ -174,5 +192,21 @@ def get_classify():
     zhilian.update_classify(paramsdict, repojt)
 
 
+def get_cv():
+    import downloader._urllib
+    import storage.gitinterface
+    import storage.repojobtitles
+    import storage.repocv
+    cookies_str = utils.builtin.loadfile('zhiliancookie.data').replace('\n','')
+    urldownloader = downloader._urllib.Urllib()
+    urldownloader.set_cookies(cookies_str)
+    repo = storage.gitinterface.GitInterface('zhilian')
+    repojt = storage.repojobtitles.JobTitles(repo)
+    cv_repo = storage.gitinterface.GitInterface('zhilian_cv')
+    repocv = storage.repocv.CurriculumVitae(cv_repo)
+    zhilian = precedure.zhilian.Zhilian(url_downloader=urldownloader)
+    zhilian.update_cv(repojt, repocv)
+
 if __name__ == '__main__':
     get_classify()
+    get_cv()
