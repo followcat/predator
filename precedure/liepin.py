@@ -45,6 +45,7 @@ class Liepin(precedure.base.Base):
         return self.ul_downloader.get(download_url)
 
     def webdriverget_cv(self, url):
+        download_url = 'https://h.liepin.com' + url
         htmlsource = self.wb_downloader.getsource(download_url)
         return htmlsource
 
