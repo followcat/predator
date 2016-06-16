@@ -55,8 +55,7 @@ def tick():
             continue
         cv_info = yamldata[cv_id]
         cv_url = cv_info['href']
-        download_url = 'https://h.liepin.com' + cv_url
-        cv_content =  liepin_pre.cv(download_url)
+        cv_content =  liepin_pre.cv(cv_url)
         result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
