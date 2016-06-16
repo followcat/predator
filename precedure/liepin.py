@@ -7,7 +7,7 @@ import bs4
 import utils.tools
 import utils.builtin
 import precedure.base
-import downloader.urllib
+import downloader._urllib
 
 class Liepin(precedure.base.Base):
 
@@ -32,7 +32,7 @@ class Liepin(precedure.base.Base):
 
     def __init__(self):
         self.cookies_str = utils.builtin.loadfile('cookies.data')
-        self.ul_downloader = downloader.urllib.Urllib()
+        self.ul_downloader = downloader._urllib.Urllib()
         self.ul_downloader.set_cookies(self.cookies_str)
 
     def urlget_classify(self, data):
