@@ -41,9 +41,9 @@ def err_listener(ev):
     scheduler.shutdown()
 
 
-def jobgenerator(yamldata, cvstorage):
+def jobgenerator(yamldata, cvstorage, sortfunc):
     sorted_id = sorted(yamldata,
-                       key = lambda cvid:yamldata[cvid]['peo'][-1],
+                       key = sortfunc,
                        reverse=True)
     for cv_id in sorted_id:
         if not cvstorage.exists(cv_id):
@@ -68,6 +68,7 @@ if __name__ == '__main__':
     PRECEDURE_CLASS = jobmodule.PRECEDURE_CLASS
     YAMLDATA = jobmodule.YAMLDATA
     PLAN = jobmodule.PLAN
+    SORTFUNC = jobmodule.SORTFUNC
 
     import storage.repocv
     import storage.gitinterface
@@ -78,7 +79,7 @@ if __name__ == '__main__':
     cvrepo = storage.gitinterface.GitInterface(CVDB_PATH)
     cvstorage = storage.repocv.CurriculumVitae(cvrepo)
 
-    cvinfo_gen = jobgenerator(yamldata, cvstorage)
+    cvinfo_gen = jobgenerator(yamldata, cvstorage, SORTFUNC)
     jobadder(scheduler, randomjob, PLAN,
              arguments=[cvinfo_gen, liepin_pre, cvstorage],
              kwarguments=dict(sleep=True))
