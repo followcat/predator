@@ -2,7 +2,7 @@ class NotImplementedInterface(Exception):
     pass
 
 
-class Base(objcet):
+class Base(object):
     
     def __init__(self):
         pass
