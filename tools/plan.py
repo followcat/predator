@@ -12,8 +12,11 @@ import apscheduler.schedulers.blocking
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
 
-def randomjob(cvinfo_gen, precedure, cvstorage):
+def randomjob(cvinfo_gen, precedure, cvstorage, sleep=True):
     result = False
+    if sleep is True:
+        nums_tensec = random.randint(0, 18)
+        time.sleep(nums_tensec*10)
     job_logger = logging.getLogger('schedJob')
     print('The time is: %s' % time.ctime())
     cv_info = cvinfo_gen.next()
@@ -46,11 +49,13 @@ def jobgenerator(yamldata, cvstorage):
             yield yamldata[cv_id]
 
 
-def jobadder(scheduler, job, plan, arguments=None):
+def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
     if arguments is None:
         arguments = []
+    if kwarguments is None:
+        kwarguments = {}
     for each in plan:
-        scheduler.add_job(job, 'cron', args=arguments, **each)
+        scheduler.add_job(job, 'cron', args=arguments, kwargs=kwarguments, **each)
 
 
 if __name__ == '__main__':
@@ -71,7 +76,9 @@ if __name__ == '__main__':
     cvstorage = storage.repocv.CurriculumVitae(cvrepo)
 
     cvinfo_gen = jobgenerator(yamldata, cvstorage)
-    jobadder(scheduler, randomjob, PLAN, arguments=[cvinfo_gen, liepin_pre, cvstorage])
+    jobadder(scheduler, randomjob, PLAN,
+             arguments=[cvinfo_gen, liepin_pre, cvstorage],
+             kwarguments=dict(sleep=True))
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
