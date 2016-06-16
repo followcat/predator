@@ -7,7 +7,6 @@ import bs4
 import utils.tools
 import utils.builtin
 import precedure.base
-import downloader.urllib
 
 class Liepin(precedure.base.Base):
 
@@ -30,10 +29,9 @@ class Liepin(precedure.base.Base):
         'sex':'',
         'pageSize':50}
 
-    def __init__(self):
-        self.cookies_str = utils.builtin.loadfile('cookies.data')
-        self.ul_downloader = downloader.urllib.Urllib()
-        self.ul_downloader.set_cookies(self.cookies_str)
+    def __init__(self, uldownloader=None, wbdownloader=None):
+        self.ul_downloader = uldownloader
+        self.wb_downloader = wbdownloader
 
     def urlget_classify(self, data):
         tmp_post = dict()
@@ -46,8 +44,8 @@ class Liepin(precedure.base.Base):
         download_url = 'https://h.liepin.com' + url
         return self.ul_downloader.get(download_url)
 
-    def webdriverget_cv(self, downloader, url):
-        htmlsource = downloader.getsource(download_url)
+    def webdriverget_cv(self, url):
+        htmlsource = self.wb_downloader.getsource(download_url)
         return htmlsource
 
     def parse_classify(self, htmlsource):
@@ -139,12 +137,16 @@ class Liepin(precedure.base.Base):
 
 
 def get_classify():
+    import downloader._urllib
     import storage.gitinterface
     import storage.repojobtitles
-    from sources.liepin import *
+    from sources.liepin import localdatajobs
+    cookies_str = utils.builtin.loadfile('cookies.data')
+    ul_downloader = downloader._urllib.Urllib()
+    ul_downloader.set_cookies(self.cookies_str)
     repo = storage.gitinterface.GitInterface('liepin')
     repojt = storage.repojobtitles.JobTitles(repo)
-    liepin = precedure.liepin.Liepin()
+    liepin = precedure.liepin.Liepin(uldownloader=ul_downloader)
     selected_list = [
     '290094', #医疗器械研发
     '290097', #医疗器械生产/质量管理

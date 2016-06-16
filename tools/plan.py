@@ -4,9 +4,10 @@ import random
 
 import tools.mail
 import utils.builtin
+import precedure.liepin
 import storage.repocv
 import storage.gitinterface
-import precedure.liepin
+import downloader.webdriver
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -35,8 +36,9 @@ scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
 cvrepo = storage.gitinterface.GitInterface('liepin_webdrivercv')
 cv = storage.repocv.CurriculumVitae(cvrepo)
-downloader = downloader.webdriver.Webdriver('/home/followcat/.mozilla/firefox/yffp11op.followcat')
-liepin_pre = precedure.liepin.Liepin()
+wb_downloader = downloader.webdriver.Webdriver(
+                    '/home/followcat/.mozilla/firefox/yffp11op.followcat')
+liepin_pre = precedure.liepin.Liepin(wbdownloader=wb_downloader)
 
 
 def tick():
