@@ -36,8 +36,9 @@ scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
 cvrepo = storage.gitinterface.GitInterface('liepin_webdrivercv')
 cv = storage.repocv.CurriculumVitae(cvrepo)
-downloader = downloader.webdriver.Webdriver('/home/followcat/.mozilla/firefox/yffp11op.followcat')
-liepin_pre = precedure.liepin.Liepin()
+wb_downloader = downloader.webdriver.Webdriver(
+                    '/home/followcat/.mozilla/firefox/yffp11op.followcat')
+liepin_pre = precedure.liepin.Liepin(wbdownloader=wb_downloader)
 
 
 def tick():
