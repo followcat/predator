@@ -1,7 +1,9 @@
 import os
 import time
 import random
+import logging
 
+import tools.log
 import tools.mail
 import utils.builtin
 import precedure.liepin
@@ -11,26 +13,6 @@ import downloader.webdriver
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
-
-import logging
-
-logging.basicConfig(level=logging.DEBUG,
-                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='plan.log',
-                filemode='a')
-
-logging.basicConfig(level=logging.INFO,
-                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='plan.log',
-                filemode='a')
-
-logging.basicConfig(level=logging.ERROR,
-                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%a, %d %b %Y %H:%M:%S',
-                filename='plan.log',
-                filemode='a')
 
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
