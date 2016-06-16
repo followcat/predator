@@ -18,7 +18,7 @@ class JobTitles(object):
             os.makedirs(self.repo_path)
 
     def add_datas(self, classify_id, datas, committer):
-        filename = classify_id + '.yaml'
+        filename = str(classify_id) + '.yaml'
         file_path = os.path.join(self.repo_path, filename)
 
         self._initclassify(classify_id)
@@ -35,14 +35,14 @@ class JobTitles(object):
     def exists(self, classify_id, data_id):
         if classify_id not in self.table:
             self._initclassify(classify_id)
-            self.table[classify_id] = utils.builtin.load_yaml(self.repo_path, classify_id+'.yaml')
+            self.table[classify_id] = utils.builtin.load_yaml(self.repo_path, str(classify_id)+'.yaml')
         exists = False
         if data_id in self.table[classify_id]:
             exists = True
         return exists
 
     def _initclassify(self, classify_id):
-        filename = classify_id + '.yaml'
+        filename = str(classify_id) + '.yaml'
         file_path = os.path.join(self.repo_path, filename)
         if not os.path.exists(file_path):
             table = {}
@@ -50,4 +50,3 @@ class JobTitles(object):
                 f.write(yaml.safe_dump(table, allow_unicode=True))
             self.repo.add_files(os.path.join(self.path, filename),
                                 "Add classify file: " + filename)
-
