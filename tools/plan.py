@@ -23,26 +23,22 @@ wb_downloader = downloader.webdriver.Webdriver(
 liepin_pre = precedure.liepin.Liepin(wbdownloader=wb_downloader)
 
 
-def tick():
+def tick(cvid_gen, yamldata):
+    result = False
     nums_tensec = random.randint(0, 18)
     time.sleep(nums_tensec*10)
     job_logger = logging.getLogger('schedJob')
     print('Tick! The time is: %s' % time.ctime())
-    yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
-    sorded_id = sorted(yamldata,
-                       key = lambda cvid:yamldata[cvid]['peo'][-1],
-                       reverse=True)
-    for cv_id in sorded_id:
-        if cv.exists(cv_id):
-            continue
-        cv_info = yamldata[cv_id]
-        cv_url = cv_info['href']
-        cv_content =  liepin_pre.cv(cv_url)
-        result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
-        print('Download: '+cv_id)
-        job_logger.info('Download: '+cv_id)
-        break
-    return True
+    cv_id = cvid_gen.next()
+    while cv.exists(cv_id):
+        cv_id = cvid_gen.next()
+    cv_info = yamldata[cv_id]
+    cv_content =  liepin_pre.cv(cv_info['href'])
+    result = cv.add(cv_id, cv_content.encode('utf-8'), 'followcat')
+    print('Download: '+cv_id)
+    job_logger.info('Download: '+cv_id)
+    result = True
+    return result
 
 
 def err_listener(ev):
@@ -57,9 +53,14 @@ def err_listener(ev):
 
 
 if __name__ == '__main__':
-    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-17')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='18-23')
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-2')
+    yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
+    sorded_id = sorted(yamldata,
+                       key = lambda cvid:yamldata[cvid]['peo'][-1],
+                       reverse=True)
+    cvid_gen = iter(sorded_id)
+    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-17', args=[cvid_gen, yamldata])
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='18-23', args=[cvid_gen, yamldata])
+    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-2', args=[cvid_gen, yamldata])
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
