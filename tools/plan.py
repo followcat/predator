@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import random
 import logging
@@ -59,12 +60,14 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
 
 
 if __name__ == '__main__':
-    import jobs.liepin
-    CVDB_PATH = jobs.liepin.CVDB_PATH
-    FF_PROFILE_PATH = jobs.liepin.FF_PROFILE_PATH
-    PRECEDURE_CLASS = jobs.liepin.PRECEDURE_CLASS
-    YAMLDATA = jobs.liepin.YAMLDATA
-    PLAN = jobs.liepin.PLAN
+    import importlib
+    jobmodule_name = sys.argv[1]
+    jobmodule = importlib.import_module(jobmodule_name)
+    CVDB_PATH = jobmodule.CVDB_PATH
+    FF_PROFILE_PATH = jobmodule.FF_PROFILE_PATH
+    PRECEDURE_CLASS = jobmodule.PRECEDURE_CLASS
+    YAMLDATA = jobmodule.YAMLDATA
+    PLAN = jobmodule.PLAN
 
     import storage.repocv
     import storage.gitinterface
