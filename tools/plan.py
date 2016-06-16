@@ -23,12 +23,12 @@ wb_downloader = downloader.webdriver.Webdriver(
 liepin_pre = precedure.liepin.Liepin(wbdownloader=wb_downloader)
 
 
-def tick(cvid_gen, yamldata):
+def randomjob(cvid_gen, yamldata):
     result = False
     nums_tensec = random.randint(0, 18)
     time.sleep(nums_tensec*10)
     job_logger = logging.getLogger('schedJob')
-    print('Tick! The time is: %s' % time.ctime())
+    print('The time is: %s' % time.ctime())
     cv_id = cvid_gen.next()
     while cv.exists(cv_id):
         cv_id = cvid_gen.next()
@@ -58,9 +58,9 @@ if __name__ == '__main__':
                        key = lambda cvid:yamldata[cvid]['peo'][-1],
                        reverse=True)
     cvid_gen = iter(sorded_id)
-    scheduler.add_job(tick, 'cron', minute='*/5', hour='8-17', args=[cvid_gen, yamldata])
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='18-23', args=[cvid_gen, yamldata])
-    scheduler.add_job(tick, 'cron', minute='*/15', hour='0-2', args=[cvid_gen, yamldata])
+    scheduler.add_job(randomjob, 'cron', minute='*/5', hour='8-17', args=[cvid_gen, yamldata])
+    scheduler.add_job(randomjob, 'cron', minute='*/15', hour='18-23', args=[cvid_gen, yamldata])
+    scheduler.add_job(randomjob, 'cron', minute='*/15', hour='0-2', args=[cvid_gen, yamldata])
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
