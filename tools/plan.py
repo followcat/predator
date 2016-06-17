@@ -14,7 +14,7 @@ import apscheduler.schedulers.blocking
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
 
-def randomjob(process_gen, sleep=True):
+def schedulerjob(process_gen, sleep=True):
     result = False
     if sleep is True:
         nums_tensec = random.randint(0, 18)
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     cvstorage = storage.repocv.CurriculumVitae(cvrepo)
 
     process_gen = jobgenerator(yamldata, liepin_pre, cvstorage, SORTFUNC)
-    jobadder(scheduler, randomjob, PLAN,
+    jobadder(scheduler, schedulerjob, PLAN,
              arguments=[process_gen],
              kwarguments=dict(sleep=True))
     scheduler.add_listener(err_listener,
