@@ -76,6 +76,7 @@ class Jingying(precedure.base.Base):
             storage_data['html'] = index_bs.prettify()
             storage_data['id'] = str(index_bs['objectoriginalid'])
             storage_data['data-name'] = ''
+            storage_data['date'] = time.time()
             storage_data['data-userid'] = ''
             storage_data['recommend'] = ''
             _elite = index_bs.find(class_='yu pos-l-22')
