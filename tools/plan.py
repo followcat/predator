@@ -3,6 +3,7 @@ import sys
 import time
 import random
 import logging
+import functools
 
 import tools.log
 import tools.mail
@@ -13,20 +14,14 @@ import apscheduler.schedulers.blocking
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
 
-def randomjob(cvinfo_gen, precedure, cvstorage, sleep=True):
+def randomjob(process_gen, sleep=True):
     result = False
     if sleep is True:
         nums_tensec = random.randint(0, 18)
         time.sleep(nums_tensec*10)
-    job_logger = logging.getLogger('schedJob')
     print('The time is: %s' % time.ctime())
-    cv_info = cvinfo_gen.next()
-    cv_id = cv_info['id']
-    cv_content =  precedure.cv(cv_info['href'])
-    result = cvstorage.add(cv_id, cv_content.encode('utf-8'), 'followcat')
-    print('Download: '+cv_id)
-    job_logger.info('Download: '+cv_id)
-    result = True
+    job_process = process_gen.next()
+    result = job_process()
     return result
 
 
@@ -41,13 +36,25 @@ def err_listener(ev):
     scheduler.shutdown()
 
 
-def jobgenerator(yamldata, cvstorage, sortfunc):
+def downloadjob(cv_info, precedure, cvstorage):
+    job_logger = logging.getLogger('schedJob')
+    cv_id = cv_info['id']
+    cv_content =  precedure.cv(cv_info['href'])
+    result = cvstorage.add(cv_id, cv_content.encode('utf-8'), 'followcat')
+    print('Download: '+cv_id)
+    job_logger.info('Download: '+cv_id)
+    result = True
+
+
+def jobgenerator(yamldata, precedure, cvstorage, sortfunc):
     sorted_id = sorted(yamldata,
                        key = sortfunc,
                        reverse=True)
     for cv_id in sorted_id:
         if not cvstorage.exists(cv_id):
-            yield yamldata[cv_id]
+            cv_info = yamldata[cv_id]
+            job_process = functools.partial(downloadjob, cv_info, precedure, cvstorage)
+            yield job_process
 
 
 def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
@@ -79,9 +86,9 @@ if __name__ == '__main__':
     cvrepo = storage.gitinterface.GitInterface(CVDB_PATH)
     cvstorage = storage.repocv.CurriculumVitae(cvrepo)
 
-    cvinfo_gen = jobgenerator(yamldata, cvstorage, SORTFUNC)
+    process_gen = jobgenerator(yamldata, liepin_pre, cvstorage, SORTFUNC)
     jobadder(scheduler, randomjob, PLAN,
-             arguments=[cvinfo_gen, liepin_pre, cvstorage],
+             arguments=[process_gen],
              kwarguments=dict(sleep=True))
     scheduler.add_listener(err_listener,
         apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
