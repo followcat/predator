@@ -26,6 +26,7 @@ class GitInterface(object):
             self.repo = dulwich.repo.Repo.init(path, mkdir=True)
         except OSError:
             self.repo = dulwich.repo.Repo(path)
+            self.path = path
 
     def add_files(self, filenames, message=None, committer=None):
         """
