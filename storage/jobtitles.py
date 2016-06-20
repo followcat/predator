@@ -46,8 +46,7 @@ class JobTitles(object):
         file_path = os.path.join(self.interface_path, filename)
         if not os.path.exists(file_path):
             table = {}
-            with open(file_path, 'w') as f:
-                f.write(yaml.safe_dump(table, allow_unicode=True))
-            self.interface.add_files(os.path.join(self.path, filename),
-                                     "Add classify file: " + filename)
+            self.interface.add_file(os.path.join(self.path, filename),
+                                    yaml.safe_dump(table, allow_unicode=True)
+                                    "Add classify file: " + filename)
 

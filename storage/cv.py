@@ -18,13 +18,9 @@ class CurriculumVitae(object):
         if unique and self.exists(cv_id):
             return False
         filename = cv_id + self.extension
-        file_path = os.path.join(self.interface_path, filename)
-        
-        with open(file_path, 'w') as f:
-            f.write(data)
-        self.interface.add_files(os.path.join(self.path, filename),
-                            "Add cv file: " + filename,
-                            committer=committer)
+        self.interface.add_file(os.path.join(self.path, filename),
+                                "Add cv file: " + filename,
+                                committer=committer)
         return True
 
     def exists(self, cv_id):
