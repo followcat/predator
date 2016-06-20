@@ -10,4 +10,6 @@ class FSInterface(object):
         return True
 
     def modify_file(self, filename, stream, **kwargs):
-        pass
+        with open(os.path.join(self.path, filename), 'w') as f:
+            f.write(stream)
+        return True
