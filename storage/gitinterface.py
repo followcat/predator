@@ -15,9 +15,9 @@ class GitInterface(object):
     def __init__(self, path):
         """
             >>> import shutil
-            >>> import repointerface.gitinterface
-            >>> repo_name = 'repointerface/test_repo'
-            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> import storage.gitinterface
+            >>> repo_name = 'storage/test_repo'
+            >>> storage = storage.gitinterface.GitInterface(repo_name)
             >>> storage.repo # doctest: +ELLIPSIS
             <Repo at ...
             >>> shutil.rmtree(repo_name)
@@ -26,45 +26,43 @@ class GitInterface(object):
             self.repo = dulwich.repo.Repo.init(path, mkdir=True)
         except OSError:
             self.repo = dulwich.repo.Repo(path)
+        self.path = path
 
-    def add_files(self, filenames, message=None, committer=None):
+    def add_file(self, filename, filedata, message=None, committer=None):
         """
             >>> import shutil
-            >>> import repointerface.gitinterface
-            >>> repo_name = 'repointerface/test_repo'
-            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> import storage.gitinterface
+            >>> repo_name = 'storage/test_repo'
+            >>> storage = storage.gitinterface.GitInterface(repo_name)
             >>> path = storage.repo.path
-            >>> with open('repointerface/test_repo/test_file', 'w') as file:
-            ...     file.write('test')
-            >>> commit_id = storage.add_files(['test_file'],
+            >>> commit_id = storage.add_file('test_file', 'test',
             ... b'Test commit', b'test<test@test.com>')
             >>> commit_id == storage.repo.head()
             True
             >>> shutil.rmtree(repo_name)
         """
-        self.repo.stage(filenames)
+        file_path = os.path.join(self.path, filename)
+        with open(file_path, 'w') as f:
+            f.write(filedata)
+        self.repo.stage(filename)
         if committer is None:
             committer = self.author
         if message is None:
-            message = ""
-            for each in filenames:
-                message += "Add file: " + each + ".\n"
+            message = "Add file: " + filename + ".\n"
         commit_id = self.repo.do_commit(message, committer=committer)
         return commit_id
 
     def modify_file(self, filename, stream, message=None, committer=None):
         """
             >>> import shutil
-            >>> import repointerface.gitinterface
-            >>> repo_name = 'repointerface/test_repo'
-            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> import storage.gitinterface
+            >>> repo_name = 'storage/test_repo'
+            >>> storage = storage.gitinterface.GitInterface(repo_name)
             >>> path = storage.repo.path
-            >>> with open('repointerface/test_repo/test_file', 'w') as file:
-            ...     file.write('test')
-            >>> commit_id = storage.add_files(['test_file'],
+            >>> commit_id = storage.add_file('test_file', 'test',
             ... b'Test commit', b'test<test@test.com>')
             >>> commit_id = storage.modify_file('test_file', b'Modify test')
-            >>> with open('repointerface/test_repo/test_file') as file:
+            >>> with open('storage/test_repo/test_file') as file:
             ...     data = file.read()
             >>> data
             'Modify test'
@@ -102,14 +100,12 @@ class GitInterface(object):
         """
             >>> import yaml
             >>> import shutil
-            >>> import repointerface.gitinterface
-            >>> repo_name = 'repointerface/test_repo'
-            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> import storage.gitinterface
+            >>> repo_name = 'storage/test_repo'
+            >>> storage = storage.gitinterface.GitInterface(repo_name)
             >>> path = storage.repo.path
             >>> data = {'name': u'中文名字'}
-            >>> with open('repointerface/test_repo/test_file.yaml', 'w') as file:
-            ...     file.write(yaml.dump(data))
-            >>> commit_id = storage.add_files(['test_file.yaml'],
+            >>> commit_id = storage.add_file('test_file.yaml', yaml.dump(data),
             ... b'Test commit', b'test<test@test.com>')
             >>> storage.grep_yaml('name', '.')
             ['test_file.yaml']
@@ -139,13 +135,11 @@ class GitInterface(object):
     def get_file_create_info(self, filename):
         """
             >>> import shutil
-            >>> import repointerface.gitinterface
-            >>> repo_name = 'repointerface/test_repo'
-            >>> storage = repointerface.gitinterface.GitInterface(repo_name)
+            >>> import storage.gitinterface
+            >>> repo_name = 'storage/test_repo'
+            >>> storage = storage.gitinterface.GitInterface(repo_name)
             >>> path = storage.repo.path
-            >>> with open('repointerface/test_repo/test_file', 'w') as file:
-            ...     file.write('test')
-            >>> commit_id = storage.add_files(['test_file'],
+            >>> commit_id = storage.add_file('test_file', 'test',
             ... b'Test commit', b'test<test@test.com>')
             >>> info = storage.get_file_create_info('test_file')
             >>> info['author']
