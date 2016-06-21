@@ -141,14 +141,14 @@ class Liepin(precedure.base.Base):
 
 def get_classify():
     import downloader._urllib
+    import storage.jobtitles
     import storage.gitinterface
-    import storage.repojobtitles
     from sources.liepin import localdatajobs
     cookies_str = utils.builtin.loadfile('cookies.data')
     ul_downloader = downloader._urllib.Urllib()
     ul_downloader.set_cookies(cookies_str)
     repo = storage.gitinterface.GitInterface('liepin')
-    repojt = storage.repojobtitles.JobTitles(repo)
+    repojt = storage.jobtitles.JobTitles(repo)
     liepin = Liepin(uldownloader=ul_downloader)
     selected_list = [
     '290094', #医疗器械研发
