@@ -1,3 +1,6 @@
+import os.path
+
+
 class FSInterface(object):
 
     def __init__(self, path):
