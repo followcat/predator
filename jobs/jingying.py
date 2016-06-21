@@ -2,8 +2,12 @@
 import functools
 
 import jobs.base
+import storage.cv
 import utils.builtin
 import precedure.jingying
+import storage.fsinterface
+import downloader.webdriver
+
 
 
 class Jingying(jobs.base.Base):
@@ -27,6 +31,12 @@ class Jingying(jobs.base.Base):
                       '36.yaml', #电气/电力/水利
                       '61.yaml'  #新能源
                     ]
+
+    def __init__(self):
+        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
+        self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
+        self.cvrepo = storage.fsinterface.FSInterface(self.CVDB_PATH)
+        self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
 
     def jobgenerator(self):
         for _file in self.industry_yamls:
