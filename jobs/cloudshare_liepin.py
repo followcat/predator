@@ -66,9 +66,9 @@ class Liepin(jobs.base.Base):
         cv_id = cv_info['id']
         print('Download: '+cv_id)
         cv_content =  self.precedure.cv(cv_info['href'])
-        cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'), 'followcat')
+        cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'))
         yamldata = self.extract_details(cv_info)
-        jtresult = self.jtstorage.add_datas(classify_id, [yamldata], 'followcat')
+        jtresult = self.jtstorage.add_datas(classify_id, [yamldata])
         job_logger.info('Download: '+cv_id)
         result = True
 
