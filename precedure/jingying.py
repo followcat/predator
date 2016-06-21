@@ -9,8 +9,8 @@ import utils.tools
 import utils.builtin
 import precedure.base
 import downloader._urllib
-import storage.gitinterface
-import storage.repojobtitles
+import storage.fsinterface
+import storage.jobtitles
 
 from sources.jingying import *
 
@@ -163,8 +163,8 @@ def get_classify():
     cookies_str = utils.builtin.loadfile('cookies.data').rstrip('\n')
     ul_downloader = downloader._urllib.Urllib()
     ul_downloader.set_cookies(cookies_str)
-    repo = storage.gitinterface.GitInterface('jingying')
-    repojt = storage.repojobtitles.JobTitles(repo)
+    repo = storage.fsinterface.FSInterface('jingying')
+    repojt = storage.jobtitles.JobTitles(repo)
     jingying = Jingying(uldownloader=ul_downloader)
     selected_list = [
     '47', #医疗设备/器械

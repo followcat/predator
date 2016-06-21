@@ -3,7 +3,7 @@ import logging
 import tools.log
 import precedure.base
 import storage.cv
-import storage.gitinterface
+import storage.fsinterface
 import downloader.webdriver
 
 
@@ -16,7 +16,7 @@ class Base(object):
     def __init__(self):
         self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
-        self.cvrepo = storage.gitinterface.GitInterface(self.CVDB_PATH)
+        self.cvrepo = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
 
     def downloadjob(self, cv_info):
