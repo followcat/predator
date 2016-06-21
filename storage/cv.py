@@ -19,6 +19,7 @@ class CurriculumVitae(object):
             return False
         filename = cv_id + self.extension
         self.interface.add_file(os.path.join(self.path, filename),
+                                data,
                                 "Add cv file: " + filename,
                                 committer=committer)
         return True
