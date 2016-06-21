@@ -77,7 +77,7 @@ class Liepin(jobs.base.Base):
 
         details['date'] = time.time()
         details['name'] = uploaded_details['name']
-        details['id'] = uploaded_details['data-id']
+        details['id'] = uploaded_details['id']
         details['age']= re.compile('[0-9]*').match(uploaded_details['peo'][2]).group()
         details['company'] = uploaded_details['peo'][7]
         details['position'] = uploaded_details['peo'][6]
@@ -86,8 +86,8 @@ class Liepin(jobs.base.Base):
         for education in re.compile(STUDIES, re.M).finditer(re.compile(PERIOD).sub(add_cr, uploaded_details['info'][0])):
             details['school'] = education.group('school')
             details['major'] = education.group('major')
-            details['education'] = education.group('education')
-
+            details['education'] = education.group('education').replace('\n', '')\
+                                    .replace('\t', '').replace('\r', '').replace(' ', '')
         for expe in uploaded_details['info']:
             for w in re.compile(WORKXP, re.M).finditer(re.compile(PERIOD).sub(add_cr, expe)):
                 details['experience'].append((fix_date(w.group('from')), fix_date(w.group('to')),
