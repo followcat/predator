@@ -35,7 +35,7 @@ class CurriculumVitae(object):
     def get(self, cv_id):
         data = None
         if self.exists(cv_id):
-            filename = cv_id + self.extension
+            filename = os.path.join(self.interface_path, cv_id) + self.extension
             with open(filename) as fp:
                 data = fp.read()
         return data
