@@ -58,7 +58,7 @@ class Liepin(jobs.base.Base):
         for cv_id in sorted_id:
             if not self.cvstorage.exists(cv_id):
                 cv_info = yamldata[cv_id]
-                job_process = functools.partial(self.downloadjob, cv_info, yamlname)
+                job_process = functools.partial(self.downloadjob, cv_info, classify_id)
                 yield job_process
 
     def downloadjob(self, cv_info, classify_id):
