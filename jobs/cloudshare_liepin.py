@@ -49,8 +49,7 @@ class Liepin(jobs.base.Base):
             }
         return template
 
-    def jobgenerator(self):
-        classify_id = '290097'
+    def jobgenerator(self, classify_id):
         yamlname = classify_id + '.yaml'
         yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', yamlname)
         sorted_id = sorted(yamldata,
@@ -105,7 +104,7 @@ class Liepin(jobs.base.Base):
 
 instance = Liepin()
 
-PROCESS_GEN = instance.jobgenerator()
+PROCESS_GEN = instance.jobgenerator('290097')
 PLAN = [dict(minute='*/5', hour='8-17'),
         dict(minute='*/15', hour='18-23'),
         dict(minute='*/15', hour='0-2')]
