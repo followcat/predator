@@ -48,9 +48,7 @@ class GitInterface(object):
         if committer is None:
             committer = self.author
         if message is None:
-            message = ""
-            for each in filenames:
-                message += "Add file: " + each + ".\n"
+            message = "Add file: " + each + ".\n"
         commit_id = self.repo.do_commit(message, committer=committer)
         return commit_id
 
