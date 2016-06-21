@@ -14,7 +14,7 @@ class CurriculumVitae(object):
         if not os.path.exists(self.interface_path):
             os.makedirs(self.interface_path)
 
-    def add(self, cv_id, data, committer, unique=True):
+    def add(self, cv_id, data, committer=None, unique=True):
         if unique and self.exists(cv_id):
             return False
         filename = cv_id + self.extension

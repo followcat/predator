@@ -17,7 +17,7 @@ class JobTitles(object):
         if not os.path.exists(self.interface_path):
             os.makedirs(self.interface_path)
 
-    def add_datas(self, classify_id, datas, committer):
+    def add_datas(self, classify_id, datas, committer=None):
         filename = classify_id + '.yaml'
         file_path = os.path.join(self.interface_path, filename)
 
