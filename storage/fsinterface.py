@@ -6,7 +6,7 @@ class FSInterface(object):
     def __init__(self, path):
         self.path = path
 
-    def add_file(self, filename, filedate, **kwargs):
+    def add_file(self, filename, filedate, *args, **kwargs):
         file_path = os.path.join(self.path, filename)
         with open(file_path, 'w') as f:
             f.write(filedate)

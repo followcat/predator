@@ -17,7 +17,7 @@ class JobTitles(object):
         if not os.path.exists(self.interface_path):
             os.makedirs(self.interface_path)
 
-    def add_datas(self, classify_id, datas, committer):
+    def add_datas(self, classify_id, datas, committer=None):
         filename = classify_id + '.yaml'
         file_path = os.path.join(self.interface_path, filename)
 
@@ -27,6 +27,14 @@ class JobTitles(object):
         for data in datas:
             table[data['id']] = data
         dump_data = yaml.safe_dump(table, allow_unicode=True)
+        self.interface.modify_file(os.path.join(self.path, filename), dump_data,
+                                   message="Add to classify id :" + filename,
+                                   committer=committer)
+        return True
+
+    def add_data(self, cvid, data, committer=None):
+        filename = cvid + '.yaml'
+        dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.modify_file(os.path.join(self.path, filename), dump_data,
                                    message="Add to classify id :" + filename,
                                    committer=committer)
