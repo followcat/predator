@@ -5,10 +5,10 @@ import storage.cv
 import storage.jobtitles
 import storage.fsinterface
 import storage.gitinterface
-import jobs.cloudshare_liepin
+import jobs.definition.cloudshare_liepin
 
 
-class Batchconvert(jobs.cloudshare_liepin.Liepin):
+class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
 
     CVDB_PATH = 'output/liepin'
     ORIGIN_CVDB_PATH = 'liepin_webdrivercv'
