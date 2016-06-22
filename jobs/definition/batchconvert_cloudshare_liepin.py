@@ -1,3 +1,4 @@
+import yaml
 import time
 import Queue
 import functools
@@ -13,7 +14,7 @@ import jobs.definition.cloudshare_liepin
 
 class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
 
-    CVDB_PATH = 'output/liepin'
+    CVDB_PATH = 'convert/liepin'
     ORIGIN_CVDB_PATH = 'liepin_webdrivercv'
 
     def __init__(self):
@@ -34,15 +35,14 @@ class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
         for cv_id in sorted_id:
             if self.oristorage.exists(cv_id):
                 cv_info = yamldata[cv_id]
-                job_process = functools.partial(self.downloadjob, cv_info)
+                job_process = functools.partial(self.convertjob, cv_info)
                 yield job_process
 
-    def downloadjob(self, cv_info):
+    def convertjob(self, cv_info):
         cv_id = cv_info['id']
         cv_content =  self.oristorage.get(cv_info['id'])
-        cvresult = self.cvstorage.add(cv_id, cv_content)
         yamldata = self.extract_details(cv_info)
-        return yamldata
+        return cv_content, self.classify_id, yamldata
 
 
 class ThreadConverter(threading.Thread):
@@ -57,31 +57,36 @@ class ThreadConverter(threading.Thread):
         while True:
             try:
                 process_job = self.process_gen.next()
-                print process_job
             except ValueError:
                 time.sleep(0.1)
                 continue
             except StopIteration:
                 break
-            result = process_job()
-            self.queue.put(result)
-            print(self.name, result['id'])
+            cv_content, classify_id, summary = process_job()
+            print(self.name, summary['id'])
+            self.queue.put((cv_content, classify_id, summary))
 
 
 class ThreadSaver(threading.Thread):
 
-    def __init__(self, name, queue):
+    def __init__(self, name, queue, cvstorage, jtstorage):
         super(ThreadSaver, self).__init__()
         self.name = name
         self.queue = queue
+        self.cvstorage = cvstorage
+        self.jtstorage = jtstorage
         self.yamldata = {}
         self.setDaemon(True)
 
     def run(self):
         while True:
-            single_yamldata = self.queue.get()
-            cvid = single_yamldata['id']
-            self.yamldata[cvid] = single_yamldata
+            cv_content, classify_id, summary = self.queue.get()
+            cv_id = summary['id']
+            if classify_id not in self.yamldata:
+                self.yamldata[classify_id] = []
+            self.yamldata[classify_id].append(summary)
+            self.cvstorage.add(cv_id, cv_content)
+            self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
 
 
 if __name__ == '__main__':
@@ -94,7 +99,7 @@ if __name__ == '__main__':
     t3 = ThreadConverter('3', queue_saver, PROCESS_GEN)
     t4 = ThreadConverter('4', queue_saver, PROCESS_GEN)
 
-    saver = ThreadSaver('saver', queue_saver)
+    saver = ThreadSaver('saver', queue_saver, instance.cvstorage, instance.jtstorage)
 
     saver.start()
     t1.start()
