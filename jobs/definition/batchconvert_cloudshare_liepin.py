@@ -52,6 +52,7 @@ class ThreadConverter(threading.Thread):
         self.name = name
         self.queue = queue
         self.process_gen = process_gen
+        self.setDaemon(True)
 
     def run(self):
         while True:
@@ -63,7 +64,6 @@ class ThreadConverter(threading.Thread):
             except StopIteration:
                 break
             cv_content, classify_id, summary = process_job()
-            print(self.name, summary['id'])
             self.queue.put((cv_content, classify_id, summary))
 
 
@@ -76,17 +76,20 @@ class ThreadSaver(threading.Thread):
         self.cvstorage = cvstorage
         self.jtstorage = jtstorage
         self.yamldata = {}
-        self.setDaemon(True)
 
     def run(self):
+        count = 0
         while True:
             cv_content, classify_id, summary = self.queue.get()
+            count += 1
+            print(count, classify_id, summary['id'])
             cv_id = summary['id']
             if classify_id not in self.yamldata:
                 self.yamldata[classify_id] = []
             self.yamldata[classify_id].append(summary)
             self.cvstorage.add(cv_id, cv_content)
             self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
+            #self.jtstorage.add_data(cv_id, summary)
 
 
 if __name__ == '__main__':
