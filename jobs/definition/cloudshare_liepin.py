@@ -3,18 +3,18 @@ import time
 import logging
 import functools
 
-import jobs.base
 import utils.builtin
 import precedure.liepin
 import storage.cv
 import storage.jobtitles
 import storage.fsinterface
 import downloader.webdriver
+import jobs.definition.base
 
 from extractor.utils_parsing import *
 
 
-class Liepin(jobs.base.Base):
+class Liepin(jobs.definition.base.Base):
 
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
@@ -101,10 +101,3 @@ class Liepin(jobs.base.Base):
                     details['company'] = xp[2].split('|')[0]
                     break
         return details
-
-instance = Liepin()
-
-PROCESS_GEN = instance.jobgenerator('290097')
-PLAN = [dict(minute='*/5', hour='8-17'),
-        dict(minute='*/15', hour='18-23'),
-        dict(minute='*/15', hour='0-2')]
