@@ -89,6 +89,7 @@ class ThreadSaver(threading.Thread):
             self.yamldata[classify_id].append(summary)
             self.cvstorage.add(cv_id, cv_content)
             self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
+            #self.jtstorage.add_data(cv_id, summary)
 
 
 if __name__ == '__main__':

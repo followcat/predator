@@ -32,6 +32,14 @@ class JobTitles(object):
                                    committer=committer)
         return True
 
+    def add_data(self, cvid, data, committer=None):
+        filename = cvid + '.yaml'
+        dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
+        self.interface.modify_file(os.path.join(self.path, filename), dump_data,
+                                   message="Add to classify id :" + filename,
+                                   committer=committer)
+        return True
+
     def exists(self, classify_id, data_id):
         if classify_id not in self.table:
             self._initclassify(classify_id)
