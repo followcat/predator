@@ -23,7 +23,7 @@ class Urllib(object):
         headers = {}
         if cookies:
             headers['Cookie'] = self.cookies
-        headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.6.1'})
+        headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'})
         urllib_data = urllib.urlencode(data)
         req = urllib2.Request(url, headers = headers)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
@@ -35,11 +35,9 @@ class Urllib(object):
         headers = {}
         if cookies:
             headers['Cookie'] = self.cookies
-        headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.6.1'})
+        headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'})
         req = urllib2.Request(url, headers = headers)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-        res = opener.open(req)
+        res = opener.open(req, timeout=30)
         text = res.read()
         return text
-
-    
