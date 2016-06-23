@@ -73,7 +73,7 @@ class Liepin(jobs.definition.base.Base):
             cvresult = False
         if cvresult is True:
             yamldata = self.extract_details(cv_info)
-            jtresult = self.jtstorage.add_datas(classify_id, [yamldata])
+            jtresult = self.jtstorage.add_data(cv_id, yamldata)
             job_logger.info('Download: '+cv_id)
         else:
             job_logger.info('Failed! Download: '+cv_id)
