@@ -112,9 +112,10 @@ class Zhilian(precedure.base.Base):
         contact_type = bs.find(id='showContactType')
         contact_type.decompose()
         label = bs.find(class_='evalListsInnerBox')
-        label_link = label.findAll('a')
-        for e in label_link:
-            e.decompose()
+        if label is not None:
+            label_link = label.findAll('a')
+            for e in label_link:
+                e.decompose()
         detail_content = bs.find(class_='detail-con')
         resume_content = bs.find(class_='detail-tabs-new')
         return detail_content.prettify() + resume_content.prettify()
