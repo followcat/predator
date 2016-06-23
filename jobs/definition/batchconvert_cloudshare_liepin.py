@@ -42,7 +42,7 @@ class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
         cv_id = cv_info['id']
         cv_content =  self.oristorage.get(cv_info['id'])
         yamldata = self.extract_details(cv_info)
-        return cv_content, self.classify_id, yamldata
+        return cv_content, yamldata
 
 
 class ThreadConverter(threading.Thread):
@@ -63,8 +63,8 @@ class ThreadConverter(threading.Thread):
                 continue
             except StopIteration:
                 break
-            cv_content, classify_id, summary = process_job()
-            self.queue.put((cv_content, classify_id, summary))
+            cv_content, summary = process_job()
+            self.queue.put((cv_content, summary))
 
 
 class ThreadSaver(threading.Thread):
@@ -75,26 +75,21 @@ class ThreadSaver(threading.Thread):
         self.queue = queue
         self.cvstorage = cvstorage
         self.jtstorage = jtstorage
-        self.yamldata = {}
 
     def run(self):
         count = 0
         while True:
-            cv_content, classify_id, summary = self.queue.get()
+            cv_content, summary = self.queue.get()
             count += 1
-            print(count, classify_id, summary['id'])
+            print(count, summary['id'])
             cv_id = summary['id']
-            if classify_id not in self.yamldata:
-                self.yamldata[classify_id] = []
-            self.yamldata[classify_id].append(summary)
             self.cvstorage.add(cv_id, cv_content)
-            self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
-            #self.jtstorage.add_data(cv_id, summary)
+            self.jtstorage.add_data(cv_id, summary)
 
 
 if __name__ == '__main__':
     instance = Batchconvert()
-    PROCESS_GEN = instance.jobgenerator('290097')
+    PROCESS_GEN = instance.jobgenerator('29009')
 
     queue_saver = Queue.Queue(0)
     t1 = ThreadConverter('1', queue_saver, PROCESS_GEN)
