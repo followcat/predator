@@ -65,12 +65,19 @@ class Liepin(jobs.definition.base.Base):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         print('Download: '+cv_id)
-        cv_content =  self.precedure.cv(cv_info['href'])
-        cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'))
-        yamldata = self.extract_details(cv_info)
-        jtresult = self.jtstorage.add_datas(classify_id, [yamldata])
-        job_logger.info('Download: '+cv_id)
-        result = True
+        try:
+            cv_content =  self.precedure.cv(cv_info['href'])
+            cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'))
+        except precedure.liepin.NocontentCVException:
+            print('Failed! Download: '+cv_id)
+            cvresult = False
+        if cvresult is True:
+            yamldata = self.extract_details(cv_info)
+            jtresult = self.jtstorage.add_datas(classify_id, [yamldata])
+            job_logger.info('Download: '+cv_id)
+        else:
+            job_logger.info('Failed! Download: '+cv_id)
+        return cvresult
 
     def extract_details(self, uploaded_details):
         details = self.cloudshare_yaml_template()
