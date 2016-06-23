@@ -8,6 +8,10 @@ import utils.tools
 import utils.builtin
 import precedure.base
 
+
+class NocontentCVException(Exception):
+    pass
+
 class Liepin(precedure.base.Base):
 
     urls_post = {
@@ -109,7 +113,10 @@ class Liepin(precedure.base.Base):
 
     def cv(self, url):
         htmlsource = self.webdriverget_cv(url)
-        result = self.parse_cv(htmlsource)
+        if u'处于猎聘网系统审核中' in htmlsource:
+            raise NocontentCVException
+        else:
+            result = self.parse_cv(htmlsource)
         return result
 
     def logException(self, text):
