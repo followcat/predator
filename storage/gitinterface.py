@@ -52,7 +52,7 @@ class GitInterface(object):
         commit_id = self.repo.do_commit(message, committer=committer)
         return commit_id
 
-    def modify_file(self, filename, stream, message=None, committer=None):
+    def modify_file(self, filename, filedata, message=None, committer=None):
         """
             >>> import shutil
             >>> import storage.gitinterface
@@ -68,13 +68,14 @@ class GitInterface(object):
             'Modify test'
             >>> shutil.rmtree(repo_name)
         """
-        if message is None:
-            message = "Change %s." % filename
+        file_path = os.path.join(self.path, filename)
+        with open(file_path, 'w') as f:
+            f.write(filedata)
+        self.repo.stage(filename)
         if committer is None:
             committer = self.author
-        with open(os.path.join(self.repo.path, filename), 'w') as f:
-            f.write(stream)
-        self.repo.stage([filename])
+        if message is None:
+            message = "Change %s." % filename
         commit_id = self.repo.do_commit(message, committer=committer)
         return commit_id
 
