@@ -93,22 +93,7 @@ class ThreadSaver(threading.Thread):
 
 
 if __name__ == '__main__':
-    industry_yamls = ['47', #医疗设备/器械
-                      '01', #计算机软件
-                      '37', #计算机硬件
-                      '38', #计算机服务(系统、数据服务、维修)
-                      '31', #通信/电信/网络设备
-                      '35', #仪器仪表/工业自动化
-                      '14', #机械/设备/重工
-                      '52', #检测，认证
-                      '07', #专业服务(咨询、人力资源、财会)
-                      '24', #学术/科研
-                      '21', #交通/运输/物流
-                      '55', #航天/航空
-                      '36', #电气/电力/水利
-                      '61'  #新能源
-                    ]
-
+    industry_yamls = jobs.definition.cloudshare_jingying.industry_yamls
     instance = Batchconvert()
     PROCESS_GEN = instance.jobgenerator(industry_yamls)
     queue_saver = Queue.Queue(0)
