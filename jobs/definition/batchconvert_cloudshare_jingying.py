@@ -24,11 +24,9 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
         self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
-        self.save_yamldatas = []
 
     def jobgenerator(self, idlist):
         for classify_id in idlist:
-            self.save_yamldatas = []
             yamlname = classify_id + '.yaml'
             yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', yamlname)
             sorted_id = sorted(yamldata,
@@ -101,7 +99,6 @@ if __name__ == '__main__':
     t2 = ThreadConverter('2', queue_saver, PROCESS_GEN)
     t3 = ThreadConverter('3', queue_saver, PROCESS_GEN)
     t4 = ThreadConverter('4', queue_saver, PROCESS_GEN)
-
 
     saver = ThreadSaver('saver', queue_saver, instance.cvstorage, instance.jtstorage)
 
