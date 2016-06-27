@@ -45,7 +45,7 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
         print('Convert: '+cv_id)
         cv_content =  self.oristorage.get(cv_info['id'])
         yamldata = self.extract_details(cv_info, cv_content)
-        return cv_content, cv_info['id'], yamldata
+        return cv_content, yamldata
 
 
 class ThreadConverter(threading.Thread):
@@ -66,9 +66,8 @@ class ThreadConverter(threading.Thread):
             except StopIteration as e:
                 print(e)
                 break
-            cv_content, classify_id, summary = process_job()
-            print(self.name, summary['id'])
-            self.queue.put((cv_content, classify_id, summary))
+            cv_content, summary = process_job()
+            self.queue.put((cv_content, summary))
 
 
 class ThreadSaver(threading.Thread):
@@ -83,14 +82,13 @@ class ThreadSaver(threading.Thread):
         self.setDaemon(True)
 
     def run(self):
+        count = 0
         while True:
-            cv_content, classify_id, summary = self.queue.get()
+            cv_content, summary = self.queue.get()
+            count += 1
             cv_id = summary['id']
-            if classify_id not in self.yamldata:
-                self.yamldata[classify_id] = []
-            self.yamldata[classify_id].append(summary)
+            print(count, cv_id)
             self.cvstorage.add(cv_id, cv_content)
-            #self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
             self.jtstorage.add_data(cv_id, summary)
 
 
