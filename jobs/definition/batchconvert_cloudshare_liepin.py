@@ -26,7 +26,6 @@ class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
         self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
 
     def jobgenerator(self, classify_id):
-        self.classify_id = classify_id
         yamlname = classify_id + '.yaml'
         yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', yamlname)
         sorted_id = sorted(yamldata,
