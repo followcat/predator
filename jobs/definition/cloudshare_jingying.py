@@ -94,7 +94,7 @@ class Jingying(jobs.definition.base.Base):
         cv_content =  self.precedure.cv(cv_info['href'])
         result = self.cvstorage.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         yamldata = self.extract_details(cv_info, cv_content)
-        jtresult = self.jtstorage.add_datas(classify_id, [yamldata], 'followcat')
+        jtresult = self.jtstorage.add_data(cv_id, yamldata)
         job_logger.info('Download: '+cv_id)
         result = True
 
