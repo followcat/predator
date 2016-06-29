@@ -38,7 +38,6 @@ industry_yamls = ['47', #医疗设备/器械
 class Jingying(jobs.definition.base.Base):
 
     CVDB_PATH = 'jingying_webdrivercv'
-    JT_PATH = 'additional/jingying'
     FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
@@ -47,8 +46,6 @@ class Jingying(jobs.definition.base.Base):
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.cvrepo = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
-        self.fsinterface = storage.fsinterface.FSInterface(self.JT_PATH)
-        self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
 
     def cloudshare_yaml_template(self):
         template = {
@@ -80,7 +77,7 @@ class Jingying(jobs.definition.base.Base):
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
             for cv_id in sorted_id:
-                if not self.cvstorage.exists(cv_id):
+                if not self.cvstorage.existscv(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
@@ -92,9 +89,8 @@ class Jingying(jobs.definition.base.Base):
         cv_id = cv_info['id']
         print('Download: '+cv_id)
         cv_content =  self.precedure.cv(cv_info['href'])
-        result = self.cvstorage.add(cv_id, cv_content.encode('utf-8'), 'followcat')
         yamldata = self.extract_details(cv_info, cv_content)
-        jtresult = self.jtstorage.add_data(cv_id, yamldata)
+        result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
         job_logger.info('Download: '+cv_id)
         result = True
 
@@ -116,6 +112,7 @@ class Jingying(jobs.definition.base.Base):
         md = pypandoc.convert(cv_content, 'markdown', format='docbook')
         details['date'] = time.time()
         details['id'] = uploaded_details['id']
+        details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']
         experiences = []
         extracted_data = fix(md)
