@@ -24,11 +24,9 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
         self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
-        self.save_yamldatas = []
 
     def jobgenerator(self, idlist):
         for classify_id in idlist:
-            self.save_yamldatas = []
             yamlname = classify_id + '.yaml'
             yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', yamlname)
             sorted_id = sorted(yamldata,
@@ -45,7 +43,7 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
         print('Convert: '+cv_id)
         cv_content =  self.oristorage.get(cv_info['id'])
         yamldata = self.extract_details(cv_info, cv_content)
-        return cv_content, cv_info['id'], yamldata
+        return cv_content, yamldata
 
 
 class ThreadConverter(threading.Thread):
@@ -66,9 +64,8 @@ class ThreadConverter(threading.Thread):
             except StopIteration as e:
                 print(e)
                 break
-            cv_content, classify_id, summary = process_job()
-            print(self.name, summary['id'])
-            self.queue.put((cv_content, classify_id, summary))
+            cv_content, summary = process_job()
+            self.queue.put((cv_content, summary))
 
 
 class ThreadSaver(threading.Thread):
@@ -83,34 +80,18 @@ class ThreadSaver(threading.Thread):
         self.setDaemon(True)
 
     def run(self):
+        count = 0
         while True:
-            cv_content, classify_id, summary = self.queue.get()
+            cv_content, summary = self.queue.get()
+            count += 1
             cv_id = summary['id']
-            if classify_id not in self.yamldata:
-                self.yamldata[classify_id] = []
-            self.yamldata[classify_id].append(summary)
+            print(count, cv_id)
             self.cvstorage.add(cv_id, cv_content)
-            #self.jtstorage.add_datas(classify_id, self.yamldata[classify_id])
             self.jtstorage.add_data(cv_id, summary)
 
 
 if __name__ == '__main__':
-    industry_yamls = ['47', #医疗设备/器械
-                      '01', #计算机软件
-                      '37', #计算机硬件
-                      '38', #计算机服务(系统、数据服务、维修)
-                      '31', #通信/电信/网络设备
-                      '35', #仪器仪表/工业自动化
-                      '14', #机械/设备/重工
-                      '52', #检测，认证
-                      '07', #专业服务(咨询、人力资源、财会)
-                      '24', #学术/科研
-                      '21', #交通/运输/物流
-                      '55', #航天/航空
-                      '36', #电气/电力/水利
-                      '61'  #新能源
-                    ]
-
+    industry_yamls = jobs.definition.cloudshare_jingying.industry_yamls
     instance = Batchconvert()
     PROCESS_GEN = instance.jobgenerator(industry_yamls)
     queue_saver = Queue.Queue(0)
@@ -118,7 +99,6 @@ if __name__ == '__main__':
     t2 = ThreadConverter('2', queue_saver, PROCESS_GEN)
     t3 = ThreadConverter('3', queue_saver, PROCESS_GEN)
     t4 = ThreadConverter('4', queue_saver, PROCESS_GEN)
-
 
     saver = ThreadSaver('saver', queue_saver, instance.cvstorage, instance.jtstorage)
 
