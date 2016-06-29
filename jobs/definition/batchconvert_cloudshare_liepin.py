@@ -8,22 +8,20 @@ import utils.builtin
 import storage.cv
 import storage.jobtitles
 import storage.fsinterface
-import storage.gitinterface
 import jobs.definition.cloudshare_liepin
 
 
 class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
 
     CVDB_PATH = 'convert/liepin'
-    ORIGIN_CVDB_PATH = 'liepin_webdrivercv'
+    ORIGIN_CVDB_PATH = 'output/liepin'
 
     def __init__(self):
-        self.gitinterface = storage.gitinterface.GitInterface(self.ORIGIN_CVDB_PATH)
-        self.oristorage = storage.cv.CurriculumVitae(self.gitinterface)
+        self.oriinterface = storage.fsinterface.FSInterface(self.ORIGIN_CVDB_PATH)
+        self.oristorage = storage.cv.CurriculumVitae(self.oriinterface)
 
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
-        self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
 
     def jobgenerator(self, classify_id):
         self.classify_id = classify_id
@@ -33,7 +31,7 @@ class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
                            key = lambda cvid: yamldata[cvid]['peo'][-1],
                            reverse=True)
         for cv_id in sorted_id:
-            if self.oristorage.exists(cv_id):
+            if self.oristorage.exists(cv_id) and not self.cvstorage.existscv(cv_id):
                 cv_info = yamldata[cv_id]
                 job_process = functools.partial(self.convertjob, cv_info)
                 yield job_process
@@ -69,12 +67,11 @@ class ThreadConverter(threading.Thread):
 
 class ThreadSaver(threading.Thread):
 
-    def __init__(self, name, queue, cvstorage, jtstorage):
+    def __init__(self, name, queue, cvstorage):
         super(ThreadSaver, self).__init__()
         self.name = name
         self.queue = queue
         self.cvstorage = cvstorage
-        self.jtstorage = jtstorage
 
     def run(self):
         count = 0
@@ -83,13 +80,12 @@ class ThreadSaver(threading.Thread):
             count += 1
             print(count, summary['id'])
             cv_id = summary['id']
-            self.cvstorage.add(cv_id, cv_content)
-            self.jtstorage.add_data(cv_id, summary)
+            self.cvstorage.addcv(cv_id, cv_content, summary)
 
 
 if __name__ == '__main__':
     instance = Batchconvert()
-    PROCESS_GEN = instance.jobgenerator('29009')
+    PROCESS_GEN = instance.jobgenerator('290094')
 
     queue_saver = Queue.Queue(0)
     t1 = ThreadConverter('1', queue_saver, PROCESS_GEN)
@@ -97,7 +93,7 @@ if __name__ == '__main__':
     t3 = ThreadConverter('3', queue_saver, PROCESS_GEN)
     t4 = ThreadConverter('4', queue_saver, PROCESS_GEN)
 
-    saver = ThreadSaver('saver', queue_saver, instance.cvstorage, instance.jtstorage)
+    saver = ThreadSaver('saver', queue_saver, instance.cvstorage)
 
     saver.start()
     t1.start()
