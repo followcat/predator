@@ -114,34 +114,8 @@ class Jingying(jobs.definition.base.Base):
         details['id'] = uploaded_details['id']
         details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']
-        experiences = []
-        extracted_data = fix(md)
-        RE = re.compile(DURATION)
-        if not extracted_data[1]:
-            (company, position) = extracted_data[0]
-            for (i,c) in enumerate(company):
-                current_positions = [p for p in position if p[4] == i]
-                try:
-                    if details['position'] == '':
-                        details['position'] = current_positions[0][2]
-                    if details['company'] == '':
-                        details['company'] = company[0][2]
-                except IndexError:
-                    pass
-                for p in current_positions:
-                    if c[3] and len(current_positions) == 1 and not RE.search(p[2]):
-                        experiences.append((p[0], p[1], c[2]+'|'+p[2]+'('+c[3]+')'))
-                    elif c[3]:
-                        experiences.append((p[0], p[1], c[2]+'('+c[3]+')'+'|'+p[2]))
-                    else:
-                        experiences.append((p[0], p[1], c[2]+'|'+p[2]))
-                else:
-                    if not len(current_positions):
-                        experiences.append((c[0], c[1], c[2]))
-            details['experience'] = experiences
-            if u'…' in details['company']:
-                details['company'] = company[0]
 
+        details.update(get_experience(md))
         re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
         res = get_infofromrestr(md.encode('utf-8'), re_born_date)
 
