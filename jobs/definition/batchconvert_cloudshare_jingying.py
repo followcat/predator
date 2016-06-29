@@ -23,7 +23,6 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
 
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
-        self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
 
     def jobgenerator(self, idlist):
         for classify_id in idlist:
@@ -33,7 +32,7 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
             for cv_id in sorted_id:
-                if self.oristorage.exists(cv_id) and not self.cvstorage.exists(cv_id):
+                if self.oristorage.exists(cv_id) and not self.cvstorage.existscv(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.convertjob, cv_info)
                     yield job_process
@@ -70,12 +69,11 @@ class ThreadConverter(threading.Thread):
 
 class ThreadSaver(threading.Thread):
 
-    def __init__(self, name, queue, cvstorage, jtstorage):
+    def __init__(self, name, queue, cvstorage):
         super(ThreadSaver, self).__init__()
         self.name = name
         self.queue = queue
         self.cvstorage = cvstorage
-        self.jtstorage = jtstorage
         self.yamldata = {}
         self.setDaemon(True)
 
@@ -86,8 +84,7 @@ class ThreadSaver(threading.Thread):
             count += 1
             cv_id = summary['id']
             print(count, cv_id)
-            self.cvstorage.add(cv_id, cv_content)
-            self.jtstorage.add_data(cv_id, summary)
+            self.cvstorage.addcv(cv_id, cv_content, summary)
 
 
 if __name__ == '__main__':
@@ -100,7 +97,7 @@ if __name__ == '__main__':
     t3 = ThreadConverter('3', queue_saver, PROCESS_GEN)
     t4 = ThreadConverter('4', queue_saver, PROCESS_GEN)
 
-    saver = ThreadSaver('saver', queue_saver, instance.cvstorage, instance.jtstorage)
+    saver = ThreadSaver('saver', queue_saver, instance.cvstorage)
 
     saver.start()
     t1.start()
