@@ -1,5 +1,7 @@
+import os
 import yaml
 import time
+import glob
 import Queue
 import functools
 import threading
@@ -23,10 +25,12 @@ class Batchconvert(jobs.definition.cloudshare_liepin.Liepin):
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
 
-    def jobgenerator(self, classify_id):
-        self.classify_id = classify_id
-        yamlname = classify_id + '.yaml'
-        yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', yamlname)
+    def jobgenerator(self, classify_path):
+        yamldata = {}
+        for f in glob.glob(os.path.join(classify_path, '*.yaml')):
+            path, name = os.path.split(f)
+            singledata = utils.builtin.load_yaml(path, name)
+            yamldata.update(singledata)
         sorted_id = sorted(yamldata,
                            key = lambda cvid: yamldata[cvid]['peo'][-1],
                            reverse=True)
@@ -85,7 +89,7 @@ class ThreadSaver(threading.Thread):
 
 if __name__ == '__main__':
     instance = Batchconvert()
-    PROCESS_GEN = instance.jobgenerator('290094')
+    PROCESS_GEN = instance.jobgenerator('liepin/JOBTITLES')
 
     queue_saver = Queue.Queue(0)
     t1 = ThreadConverter('1', queue_saver, PROCESS_GEN)
