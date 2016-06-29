@@ -124,12 +124,15 @@ class Liepin(precedure.base.Base):
             fp.write(text)
         raise Exception(text)
 
-    def update_classify(self, postdict, repojt, MAX_PAGE=100, sleeptime=10):
+    def update_classify(self, postdict, repojt, MAX_PAGE=100, sleeptime=5):
         add_list = []
         id_str = postdict['jobtitles']
         for curPage in range(MAX_PAGE):
             postdict['curPage'] = curPage + 1
-            results = self.classify(postdict)
+            try:
+                results = self.classify(postdict)
+            except Exception:
+                break
             if results is None:
                 break
             parts_results = []
@@ -137,7 +140,7 @@ class Liepin(precedure.base.Base):
                 if not repojt.exists(id_str, result['id']):
                     parts_results.append(result)
             print curPage
-            if len(parts_results) < len(results)*0.2:
+            if len(parts_results) < len(results)* 0.05:
                 break
             else:
                 add_list.extend(parts_results)
