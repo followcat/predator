@@ -29,7 +29,7 @@ def err_listener(ev):
         err_logger.error('%s error.', str(ev.job_id))
     else:
         err_logger.info('%s miss', str(ev.job_id))
-    tools.mail.send_mail(['fengliji@willendare.com'], ev.job_id, "Wrong and stop!")
+    tools.mail.send_mail(['chenjunkai@willendare.com'], ev.job_id, "Wrong and stop!")
     global scheduler
     scheduler.shutdown()
 
@@ -53,9 +53,9 @@ if __name__ == '__main__':
 
     jobadder(scheduler, schedulerjob, PLAN,
              arguments=[PROCESS_GEN],
-             kwarguments=dict(sleep=True))
+             kwarguments=dict(sleep=False))
     scheduler.add_listener(err_listener,
-        apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED) 
+        apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED)
     print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
     try:
         scheduler.start()
