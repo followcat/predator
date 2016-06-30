@@ -20,7 +20,7 @@ class Batchconvert(BatchconvertCloudshare,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
             for cv_id in sorted_id:
-                if self.oristorage.exists(cv_id) and not self.cvstorage.existscv(cv_id):
+                if self.oristorage.existsraw(cv_id) and not self.cvstorage.existscv(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.convertjob, cv_info)
                     yield job_process
