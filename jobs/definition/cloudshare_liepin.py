@@ -5,10 +5,6 @@ import functools
 
 import utils.builtin
 import precedure.liepin
-import storage.cv
-import storage.jobtitles
-import storage.fsinterface
-import downloader.webdriver
 import jobs.definition.cloudshare
 
 from extractor.utils_parsing import *

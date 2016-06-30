@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-import re
 import time
 import logging
 import datetime
 import functools
-import threading
 
 import pypandoc
 
-import storage.cv
 import utils.builtin
 import precedure.jingying
-import storage.fsinterface
-import downloader.webdriver
 import jobs.definition.cloudshare
 
 from extractor.extract_experience import *
