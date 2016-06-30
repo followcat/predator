@@ -91,10 +91,6 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
         res = get_infofromrestr(md, re_born_date)
 
-        if details['company'] == '':
-            details['company'] = uploaded_details['peo'][2]
-        if details['position'] == '':
-            details['position'] = uploaded_details['peo'][0]
         if len(res) > 0 and len(res[0]) == 3:
             age_res = res[0]
             born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
