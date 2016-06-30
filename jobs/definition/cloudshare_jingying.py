@@ -37,7 +37,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
-        template = super(Liepin, self).cloudshare_yaml_template()
+        template = super(Jingying, self).cloudshare_yaml_template()
         template['origin'] = u'无忧精英爬取'
         return template
 
@@ -89,7 +89,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
 
         details.update(get_experience(md))
         re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
-        res = get_infofromrestr(md.encode('utf-8'), re_born_date)
+        res = get_infofromrestr(md, re_born_date)
 
         if details['company'] == '':
             details['company'] = uploaded_details['peo'][2]
@@ -108,8 +108,8 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             else:
                 age = today.year - born.year
             details['age'] = age
-        details['education'] = get_tagfromstring('学历', md.encode('utf-8'))
-        details['school'] = get_tagfromstring('学校', md.encode('utf-8'))
+        details['education'] = get_tagfromstring(u'学历', md)
+        details['school'] = get_tagfromstring(u'学校', md)
 
         return details
 
