@@ -21,7 +21,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
     def cloudshare_yaml_template(self):
-        template = super(Liepin, self).cloudshare_yaml_template()
+        template = super(Zhilian, self).cloudshare_yaml_template()
         template['origin'] = u'智联卓聘爬取'
         return template
 
