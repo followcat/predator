@@ -1,10 +1,6 @@
-import os
-import glob
 import Queue
-import functools
 
 import jobs.definition.cloudshare_liepin
-
 from jobs.definition.batchconvert import *
 
 

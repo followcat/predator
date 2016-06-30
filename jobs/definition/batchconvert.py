@@ -1,4 +1,7 @@
+import os
+import glob
 import time
+import functools
 import threading
 
 import utils.builtin
@@ -62,6 +65,7 @@ class ThreadConverter(threading.Thread):
                 time.sleep(0.1)
                 continue
             except StopIteration:
+                print(e)
                 break
             cv_content, summary = process_job()
             self.queue.put((cv_content, summary))

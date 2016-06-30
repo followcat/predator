@@ -1,28 +1,16 @@
-# -*- coding: utf-8 -*-
-import time
 import Queue
 import functools
-import threading
 
 import utils.builtin
-import storage.cv
-import storage.jobtitles
-import storage.fsinterface
 import jobs.definition.cloudshare_jingying
+from jobs.definition.batchconvert import *
 
 
-class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
+class Batchconvert(BatchconvertCloudshare,
+                   jobs.definition.cloudshare_jingying.Jingying):
 
     CVDB_PATH = 'convert/jingying'
-    #CVDB_PATH = 'additional/jingying'
-    ORIGIN_CVDB_PATH = 'jingying_webdrivercv'
-
-    def __init__(self):
-        self.orinterface = storage.fsinterface.FSInterface(self.ORIGIN_CVDB_PATH)
-        self.oristorage = storage.cv.CurriculumVitae(self.orinterface)
-
-        self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
-        self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
+    ORIGIN_CVDB_PATH = 'output/jingying'
 
     def jobgenerator(self, idlist):
         for classify_id in idlist:
@@ -36,55 +24,6 @@ class Batchconvert(jobs.definition.cloudshare_jingying.Jingying):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.convertjob, cv_info)
                     yield job_process
-
-    def convertjob(self, cv_info):
-        cv_id = cv_info['id']
-        print('Convert: '+cv_id)
-        cv_content =  self.oristorage.get(cv_info['id'])
-        yamldata = self.extract_details(cv_info, cv_content)
-        return cv_content, yamldata
-
-
-class ThreadConverter(threading.Thread):
-
-    def __init__(self, name, queue, process_gen):
-        super(ThreadConverter, self).__init__()
-        self.name = name
-        self.queue = queue
-        self.process_gen = process_gen
-
-    def run(self):
-        while True:
-            try:
-                process_job = self.process_gen.next()
-            except ValueError:
-                time.sleep(0.1)
-                continue
-            except StopIteration as e:
-                print(e)
-                break
-            cv_content, summary = process_job()
-            self.queue.put((cv_content, summary))
-
-
-class ThreadSaver(threading.Thread):
-
-    def __init__(self, name, queue, cvstorage):
-        super(ThreadSaver, self).__init__()
-        self.name = name
-        self.queue = queue
-        self.cvstorage = cvstorage
-        self.yamldata = {}
-        self.setDaemon(True)
-
-    def run(self):
-        count = 0
-        while True:
-            cv_content, summary = self.queue.get()
-            count += 1
-            cv_id = summary['id']
-            print(count, cv_id)
-            self.cvstorage.addcv(cv_id, cv_content, summary)
 
 
 if __name__ == '__main__':
