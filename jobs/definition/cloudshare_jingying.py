@@ -8,12 +8,12 @@ import threading
 
 import pypandoc
 
-import jobs.definition.base
 import storage.cv
 import utils.builtin
 import precedure.jingying
 import storage.fsinterface
 import downloader.webdriver
+import jobs.definition.cloudshare
 
 from extractor.extract_experience import *
 from extractor.information_explorer import *
@@ -35,38 +35,15 @@ industry_yamls = ['47', #医疗设备/器械
                   '61'  #新能源
                 ]
 
-class Jingying(jobs.definition.base.Base):
+class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'jingying_webdrivercv'
     FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
-    def __init__(self):
-        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
-        self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
-        self.cvrepo = storage.fsinterface.FSInterface(self.CVDB_PATH)
-        self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
-
     def cloudshare_yaml_template(self):
-        template = {
-            'age': 0,
-            'comment': [],
-            'committer': "SCRAPPY",
-            'company': "",
-            'date': 0.,
-            'education': "",
-            'email': '',
-            'experience': [],
-            'filename': "",
-            'id': '',
-            'name': "",
-            'origin': u'无忧精英爬取',
-            'phone': "",
-            'position': "",
-            'school': "",
-            'tag': [],
-            'tracking': [],
-            }
+        template = super(Liepin, self).cloudshare_yaml_template()
+        template['origin'] = u'无忧精英爬取'
         return template
 
     def jobgenerator(self):

@@ -9,44 +9,20 @@ import storage.cv
 import storage.jobtitles
 import storage.fsinterface
 import downloader.webdriver
-import jobs.definition.base
+import jobs.definition.cloudshare
 
 from extractor.utils_parsing import *
 
 
-class Liepin(jobs.definition.base.Base):
+class Liepin(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin
 
-    def __init__(self):
-        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
-        self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
-        self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
-        self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
-
     def cloudshare_yaml_template(self):
-        template = {
-            'age': 0,
-            'comment': [],
-            'committer': "SCRAPPY",
-            'company': "",
-            'date': 0.,
-            'education': "",
-            'email': '',
-            'experience': [],
-            'filename': "",
-            'id': '',
-            'originid': '',
-            'name': "",
-            'origin': u'猎聘爬取',
-            'phone': "",
-            'position': "",
-            'school': "",
-            'tag': [],
-            'tracking': [],
-            }
+        template = super(Liepin, self).cloudshare_yaml_template()
+        template['origin'] = u'猎聘爬取'
         return template
 
     def jobgenerator(self, classify_id):
