@@ -11,7 +11,7 @@ class Batchconvert(BatchconvertCloudshare,
                    jobs.definition.cloudshare_zhilian.Zhilian):
 
     CVDB_PATH = 'convert/zhilian'
-    ORIGIN_CVDB_PATH = 'zhilian_cv'
+    ORIGIN_CVDB_PATH = 'output/zhilian'
 
     def jobgenerator(self, classify_id_list):
         for classify_id in classify_id_list:
