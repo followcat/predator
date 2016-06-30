@@ -2,9 +2,7 @@
 import re
 import time
 import logging
-import datetime
 import functools
-import threading
 
 import pypandoc
 
@@ -22,19 +20,17 @@ from extractor.information_explorer import *
 
 class Zhilian(jobs.definition.base.Base):
 
-    CVDB_PATH = 'zhilian_cv_first'
-    JT_PATH = 'additional/zhilian_first'
+    CVDB_PATH = 'output/zhilian'
     FF_PROFILE_PATH = '/home/kabess/.mozilla/firefox/g648khbx.default'
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
-    industry_yamls = ['249.yaml']
+
 
     def __init__(self):
         self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
-        self.cvrepo = storage.fsinterface.FSInterface(self.CVDB_PATH)
-        self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
-        self.fsinterface = storage.fsinterface.FSInterface(self.JT_PATH)
+        self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
+        self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
         self.jtstorage = storage.jobtitles.JobTitles(self.fsinterface)
 
     def cloudshare_yaml_template(self):
@@ -59,31 +55,38 @@ class Zhilian(jobs.definition.base.Base):
             }
         return template
 
-    def jobgenerator(self):
-        for _classify_id in self.industry_yamls:
-            _file = _classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('zhilian_first/JOBTITLES', _file)
+    def jobgenerator(self, industry_yamls):
+        for _file in industry_yamls:
+            #_file = _classify_id + '.yaml'
+            yamldata = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
             for cv_id in sorted_id:
                 if not self.cvstorage.exists(cv_id):
                     cv_info = yamldata[cv_id]
-                    job_process = functools.partial(self.downloadjob, cv_info, classify_id)
+                    job_process = functools.partial(self.downloadjob, cv_info)
                     t1 = time.time()
                     yield job_process
                     print(time.time() - t1)
 
-    def downloadjob(self, cv_info, classify_id):
+    def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         print('Download: '+cv_id)
-        cv_content =  self.precedure.cv(cv_info['href'])
-        cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'))
-        yamldata = self.extract_details(cv_info, cv_content)
-        jtresult = self.jtstorage.add_datas(classify_id, [yamldata], 'kabess')
-        job_logger.info('Download: '+cv_id)
-        result = True
+        try:
+            cv_content =  self.precedure.cv(cv_info['href'])
+            cvresult = self.cvstorage.add(cv_id, cv_content.encode('utf-8'))
+        except precedure.zhilian.NocontentCVException:
+            print('Failed! Download: '+cv_id)
+            cvresult = False
+        if cvresult is True:
+            yamldata = self.extract_details(cv_info, cv_content)
+            jtresult = self.jtstorage.add_data(cv_id, yamldata)
+            job_logger.info('Download: '+cv_id)
+        else:
+            job_logger.info('Failed! Download: '+cv_id)
+        return cvresult
 
     def extract_details(self, uploaded_details, cv_content):
         details = self.cloudshare_yaml_template()

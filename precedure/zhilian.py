@@ -11,6 +11,8 @@ import downloader.webdriver
 import precedure.base
 import precedure.zhilian
 
+class NocontentCVException(Exception):
+    pass
 
 class Zhilian(precedure.base.Base):
 
