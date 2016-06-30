@@ -36,5 +36,5 @@ class Cloudshare(jobs.definition.base.Base):
             }
         return template
 
-    def extract_details(self, uploaded_details):
+    def extract_details(self, uploaded_details, cv_content):
         pass

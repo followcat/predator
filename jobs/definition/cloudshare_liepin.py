@@ -44,14 +44,14 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
             print('Failed! Download: '+cv_id)
             cvresult = False
         if cvresult is True:
-            yamldata = self.extract_details(cv_info)
+            yamldata = self.extract_details(cv_info, cv_content)
             cvresult = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
             job_logger.info('Download: '+cv_id)
         else:
             job_logger.info('Failed! Download: '+cv_id)
         return cvresult
 
-    def extract_details(self, uploaded_details):
+    def extract_details(self, uploaded_details, cv_content):
         details = self.cloudshare_yaml_template()
 
         details['date'] = time.time()

@@ -29,7 +29,7 @@ class BatchconvertCloudshare(Batchconvert,
     def convertjob(self, cv_info):
         cv_id = cv_info['id']
         cv_content =  self.oristorage.getraw(cv_info['id'])
-        yamldata = self.extract_details(cv_info)
+        yamldata = self.extract_details(cv_info, cv_content.decode('utf-8'))
         return cv_content, yamldata
 
     def jobgenerator(self, classify_path):
@@ -64,7 +64,7 @@ class ThreadConverter(threading.Thread):
             except ValueError:
                 time.sleep(0.1)
                 continue
-            except StopIteration:
+            except StopIteration as e:
                 print(e)
                 break
             cv_content, summary = process_job()
