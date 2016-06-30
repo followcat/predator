@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import time
 import logging
 import functools
+
+import pypandoc
 
 import utils.builtin
 import precedure.liepin
@@ -52,32 +53,17 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         return cvresult
 
     def extract_details(self, uploaded_details, cv_content):
-        details = self.cloudshare_yaml_template()
-
-        details['date'] = time.time()
-        details['name'] = uploaded_details['name']
-        details['id'] = uploaded_details['id']
-        details['originid'] = uploaded_details['id']
-        details['age']= re.compile('[0-9]*').match(uploaded_details['peo'][2]).group()
-        details['filename'] = uploaded_details['href']
+        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
+        details = super(Liepin, self).extract_details(uploaded_details, md)
+        if not details['name']:
+            details['name'] = uploaded_details['name']
+        if not details['age']:
+            details['age']= re.compile('[0-9]*').match(uploaded_details['peo'][2]).group()
         add_cr = lambda x:'\n'+x.group()
         for education in re.compile(STUDIES, re.M).finditer(re.compile(PERIOD).sub(add_cr, uploaded_details['info'][0])):
-            details['school'] = education.group('school')
-            details['major'] = education.group('major')
-            details['education'] = education.group('education').replace('\n', '')\
-                                    .replace('\t', '').replace('\r', '').replace(' ', '')
-        for expe in uploaded_details['info']:
-            for w in re.compile(WORKXP, re.M).finditer(re.compile(PERIOD).sub(add_cr, expe)):
-                details['experience'].append((fix_date(w.group('from')), fix_date(w.group('to')),
-                    fix_name(w.group('company'))+'|'+fix_name(w.group('position'))+'('+fix_duration(w.group('duration'))+')'))
-        if details['experience'] and re.match(TODAY, details['experience'][0][1]) is not None:
-            details['company'] = uploaded_details['peo'][7]
-            details['position'] = uploaded_details['peo'][6]
-            if u'…' in details['company']:
-                no_braket = lambda x:x.replace('(','').replace(')','')
-                escape_star = lambda x:x.replace('*','\*')
-                RE = re.compile(escape_star(no_braket(details['company'])[:-1]))
-                xp = details['experience'][0]
-                if RE.match(no_braket(xp[2])):
-                    details['company'] = xp[2].split('|')[0]
+            if not details['school']:
+                details['school'] = education.group('school')
+            if not details['education']:
+                details['education'] = education.group('education').replace('\n', '')\
+                                       .replace('\t', '').replace('\r', '').replace(' ', '')
         return details
