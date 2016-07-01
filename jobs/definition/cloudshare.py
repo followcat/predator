@@ -46,7 +46,7 @@ class Cloudshare(jobs.definition.base.Base):
         for key in catch_info:
             if catch_info[key]:
                 details[key] = catch_info[key]
-        details['date'] = time.time()
+        details['date'] = uploaded_details['date']
         details['id'] = uploaded_details['id']
         details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']

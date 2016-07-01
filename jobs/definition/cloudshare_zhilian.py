@@ -62,7 +62,6 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         md = pypandoc.convert(cv_content, 'markdown', format='docbook')
         details = super(Zhilian, self).extract_details(uploaded_details, md)
 
-        details['date'] = time.time()
         if not details['name']:
             name = uploaded_details['name']
             if len(name) == 0:
