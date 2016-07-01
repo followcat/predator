@@ -66,4 +66,20 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
             if not details['education']:
                 details['education'] = education.group('education').replace('\n', '')\
                                        .replace('\t', '').replace('\r', '').replace(' ', '')
+        if (not details['experience'] or
+            re.match(TODAY, details['experience'][0][1]) and not details['position']):
+            for expe in uploaded_details['info']:
+                for w in re.compile(WORKXP, re.M).finditer(re.compile(PERIOD).sub(add_cr, expe)):
+                    details['experience'].append((fix_date(w.group('from')), fix_date(w.group('to')),
+                        fix_name(w.group('company'))+'|'+fix_name(w.group('position'))+'('+fix_duration(w.group('duration'))+')'))
+            if details['experience'] and re.match(TODAY, details['experience'][0][1]) is not None:
+                details['company'] = uploaded_details['peo'][7]
+                details['position'] = uploaded_details['peo'][6]
+                if u'…' in details['company']:
+                    no_braket = lambda x:x.replace('(','').replace(')','')
+                    escape_star = lambda x:x.replace('*','\*')
+                    RE = re.compile(escape_star(no_braket(details['company'])[:-1]))
+                    xp = details['experience'][0]
+                    if RE.match(no_braket(xp[2])):
+                        details['company'] = xp[2].split('|')[0]
         return details

@@ -49,4 +49,5 @@ class Cloudshare(jobs.definition.base.Base):
         details['date'] = time.time()
         details['id'] = uploaded_details['id']
         details['originid'] = uploaded_details['id']
+        details['filename'] = uploaded_details['href']
         return details
