@@ -59,26 +59,27 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         return cvresult
 
     def extract_details(self, uploaded_details, cv_content):
-        details = self.cloudshare_yaml_template()
+        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
+        details = super(Zhilian, self).extract_details(uploaded_details, md)
 
         details['date'] = time.time()
-        name = uploaded_details['name']
-        if len(name) == 0:
-            details['name'] = uploaded_details['id']
-        else:
-            details['name'] = uploaded_details['name']
-        details['id'] = uploaded_details['id']
-        age = uploaded_details['peo'][3]
-        age_pattern = re.compile(r'(\d+)')
-        details['age'] = re.findall(age_pattern, age)[0]
+        if not details['name']:
+            name = uploaded_details['name']
+            if len(name) == 0:
+                details['name'] = uploaded_details['id']
+            else:
+                details['name'] = uploaded_details['name']
 
-        details['education'] = uploaded_details['peo'][4]
-        details['filename'] = uploaded_details['href']
+        if not details['age']:
+            age = uploaded_details['peo'][3]
+            age_pattern = re.compile(r'(\d+)')
+            details['age'] = re.findall(age_pattern, age)[0]
+
+        if not details['education']:
+            details['education'] = uploaded_details['peo'][4]
+
         if uploaded_details['info'] is not None:
             education = uploaded_details['info'][1].split('|')
-            details['school'] = education[1]
-            details['major'] = education[2]
-
-        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
-        details.update(get_experience(md))
+            if not details['school']:
+                details['school'] = education[1]
         return details
