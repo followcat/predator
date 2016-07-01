@@ -80,32 +80,25 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             return today.year - born.year
 
     def extract_details(self, uploaded_details, cv_content):
-        details = self.cloudshare_yaml_template()
         md = pypandoc.convert(cv_content, 'markdown', format='docbook')
-        details['date'] = time.time()
-        details['id'] = uploaded_details['id']
-        details['originid'] = uploaded_details['id']
-        details['filename'] = uploaded_details['href']
+        details = super(Jingying, self).extract_details(uploaded_details, md)
 
-        details.update(get_experience(md))
-        re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
-        res = get_infofromrestr(md, re_born_date)
-
-        if len(res) > 0 and len(res[0]) == 3:
-            age_res = res[0]
-            born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
-            today = datetime.date.today()
-            try:
-                birthday = born.replace(year=today.year)
-            except ValueError:
-                birthday = born.replace(year=today.year, day=born.day-1)
-            if birthday > today:
-                age = today.year - born.year - 1
-            else:
-                age = today.year - born.year
-            details['age'] = age
-        details['education'] = get_tagfromstring(u'学历', md)
-        details['school'] = get_tagfromstring(u'学校', md)
+        if not details['age']:
+            re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
+            res = get_infofromrestr(md, re_born_date)
+            if len(res) > 0 and len(res[0]) == 3:
+                age_res = res[0]
+                born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
+                today = datetime.date.today()
+                try:
+                    birthday = born.replace(year=today.year)
+                except ValueError:
+                    birthday = born.replace(year=today.year, day=born.day-1)
+                if birthday > today:
+                    age = today.year - born.year - 1
+                else:
+                    age = today.year - born.year
+                details['age'] = age
 
         return details
 
