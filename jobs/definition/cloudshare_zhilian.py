@@ -4,14 +4,9 @@ import time
 import logging
 import functools
 
-import pypandoc
-
 import utils.builtin
 import precedure.zhilian
 import jobs.definition.cloudshare
-
-from extractor.extract_experience import *
-from extractor.information_explorer import *
 
 
 class Zhilian(jobs.definition.cloudshare.Cloudshare):
@@ -59,8 +54,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         return cvresult
 
     def extract_details(self, uploaded_details, cv_content):
-        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
-        details = super(Zhilian, self).extract_details(uploaded_details, md)
+        details = super(Zhilian, self).extract_details(uploaded_details)
 
         if not details['name']:
             name = uploaded_details['name']

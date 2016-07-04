@@ -2,13 +2,9 @@
 import logging
 import functools
 
-import pypandoc
-
 import utils.builtin
 import precedure.liepin
 import jobs.definition.cloudshare
-
-from extractor.utils_parsing import *
 
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
@@ -53,8 +49,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         return cvresult
 
     def extract_details(self, uploaded_details, cv_content):
-        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
-        details = super(Liepin, self).extract_details(uploaded_details, md)
+        details = super(Liepin, self).extract_details(uploaded_details)
         if not details['name']:
             details['name'] = uploaded_details['name']
         if not details['age']:

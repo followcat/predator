@@ -4,14 +4,9 @@ import logging
 import datetime
 import functools
 
-import pypandoc
-
 import utils.builtin
 import precedure.jingying
 import jobs.definition.cloudshare
-
-from extractor.extract_experience import *
-from extractor.information_explorer import *
 
 
 industry_yamls = ['47', #医疗设备/器械
@@ -80,12 +75,11 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             return today.year - born.year
 
     def extract_details(self, uploaded_details, cv_content):
-        md = pypandoc.convert(cv_content, 'markdown', format='docbook')
-        details = super(Jingying, self).extract_details(uploaded_details, md)
+        details = super(Jingying, self).extract_details(uploaded_details)
 
         if not details['age']:
             re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
-            res = get_infofromrestr(md, re_born_date)
+            res = get_infofromrestr(cv_content, re_born_date)
             if len(res) > 0 and len(res[0]) == 3:
                 age_res = res[0]
                 born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
