@@ -1,6 +1,5 @@
 import yaml
 import os.path
-import pypandoc
 
 
 class CurriculumVitae(object):
@@ -25,8 +24,6 @@ class CurriculumVitae(object):
 
     def addcv(self, cv_id, data, yamldata, committer=None, unique=True):
         rawpath = self.addraw(cv_id, data, committer)
-        md = pypandoc.convert(data, 'markdown', format='docbook')
-        self.addmd(cv_id, md.encode('utf-8'), committer)
         self.addyaml(cv_id, yamldata, committer)
         return True
 
@@ -41,12 +38,6 @@ class CurriculumVitae(object):
     def _add(self, path, filename, data, committer):
         self.interface.add_file(path, data, "Add cv file: " + filename,
                                 committer=committer)
-
-    def addmd(self, cv_id, data, committer=None, unique=True):
-        filename = cv_id + self.mdextension
-        filepath = os.path.join(self.mdpath, filename)
-        self._add(filepath, filename, data, committer)
-        return filepath
 
     def addyaml(self, cv_id, data, committer=None, unique=True):
         filename = cv_id + self.yamlextension
@@ -72,18 +63,9 @@ class CurriculumVitae(object):
     def existscv(self, cv_id):
         result = False
         if (self.existsyaml(cv_id) and
-            self.existsmd(cv_id) and
             self.existsraw(cv_id)):
             result = True
         return result
-
-    def existsmd(self, cv_id):
-        exists = False
-        filename = cv_id + self.mdextension
-        file_path = os.path.join(self.interface_path, filename)
-        if os.path.exists(file_path):
-            exists = True
-        return exists
 
     def existsyaml(self, cv_id):
         exists = False
@@ -111,13 +93,6 @@ class CurriculumVitae(object):
     def _get(self, path):
         with open(path) as fp:
             data = fp.read()
-        return data
-
-    def getmd(self, cv_id):
-        data = None
-        if self.existsmd(cv_id):
-            filename = os.path.join(self.interface_path, cv_id) + self.mdextension
-            data = self._get(filename)
         return data
 
     def getyaml(self, cv_id):
