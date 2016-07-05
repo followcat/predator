@@ -40,7 +40,7 @@ class Cloudshare(jobs.definition.base.Base):
 
     def extract_details(self, uploaded_details):
         details = self.cloudshare_yaml_template()
-        details['date'] = uploaded_details['date']
+        details['date'] = time.time()
         details['id'] = uploaded_details['id']
         details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']

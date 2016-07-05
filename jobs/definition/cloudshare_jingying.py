@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import time
 import logging
 import datetime
@@ -79,7 +80,8 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
 
         if not details['age']:
             re_born_date = u'(\d{4})年(\d{1,2})月(\d{1,2})日'
-            res = get_infofromrestr(cv_content, re_born_date)
+            regex = re.compile(re_born_date, re.IGNORECASE)
+            res = re.findall(regex, cv_content)
             if len(res) > 0 and len(res[0]) == 3:
                 age_res = res[0]
                 born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))

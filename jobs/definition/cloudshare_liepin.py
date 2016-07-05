@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import logging
 import functools
 
@@ -6,6 +7,7 @@ import utils.builtin
 import precedure.liepin
 import jobs.definition.cloudshare
 
+from utils.utils_parsing import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
@@ -53,11 +55,15 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         if not details['name']:
             details['name'] = uploaded_details['name']
         if not details['age']:
-            details['age']= re.compile('[0-9]*').match(uploaded_details['peo'][2]).group()
+            try:
+                details['age'] = int(re.compile('[0-9]*').match(uploaded_details['peo'][2]).group())
+            except ValueError:
+                details['age'] = re.compile('[0-9]*').match(uploaded_details['peo'][2]).group()
         add_cr = lambda x:'\n'+x.group()
         for education in re.compile(STUDIES, re.M).finditer(re.compile(PERIOD).sub(add_cr, uploaded_details['info'][0])):
             if not details['school']:
-                details['school'] = education.group('school')
+                details['school'] = education.group('school').replace('\n', '')\
+                                       .replace('\t', '').replace('\r', '').replace(' ', '')
             if not details['education']:
                 details['education'] = education.group('education').replace('\n', '')\
                                        .replace('\t', '').replace('\r', '').replace(' ', '')
