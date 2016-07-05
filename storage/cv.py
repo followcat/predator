@@ -4,21 +4,15 @@ import os.path
 
 class CurriculumVitae(object):
 
-    mdpath = 'CV'
-    mdextension = '.md'
-    yamlpath = 'CV'
     yamlextension = '.yaml'
     rawpath = 'RAW'
     rawextension = '.html'
 
     def __init__(self, interface):
         self.interface = interface
-        self.interface_path = self.interface.path + "/" + self.mdpath
         self.interface_rawpath = self.interface.path + "/" + self.rawpath
         self.info = ""
         self.table = {}
-        if not os.path.exists(self.interface_path):
-            os.makedirs(self.interface_path)
         if not os.path.exists(self.interface_rawpath):
             os.makedirs(self.interface_rawpath)
 
@@ -31,7 +25,7 @@ class CurriculumVitae(object):
         if unique and self.exists(cv_id):
             return False
         filename = cv_id + self.rawextension
-        filepath = os.path.join(self.mdpath, filename)
+        filepath = os.path.join(self.rawpath, filename)
         self._add(filepath, filename, data, committer)
         return True
 
@@ -41,7 +35,7 @@ class CurriculumVitae(object):
 
     def addyaml(self, cv_id, data, committer=None, unique=True):
         filename = cv_id + self.yamlextension
-        filepath = os.path.join(self.yamlpath, filename)
+        filepath = os.path.join(self.rawpath, filename)
         dump_data = yaml.safe_dump(data, allow_unicode=True)
         self._add(filepath, filename, dump_data, committer)
         return filepath
@@ -55,7 +49,7 @@ class CurriculumVitae(object):
     def exists(self, cv_id):
         exists = False
         filename = cv_id + self.rawextension
-        file_path = os.path.join(self.interface_path, filename)
+        file_path = os.path.join(self.interface_rawpath, filename)
         if os.path.exists(file_path):
             exists = True
         return exists
@@ -70,7 +64,7 @@ class CurriculumVitae(object):
     def existsyaml(self, cv_id):
         exists = False
         filename = cv_id + self.yamlextension
-        file_path = os.path.join(self.interface_path, filename)
+        file_path = os.path.join(self.interface_rawpath, filename)
         if os.path.exists(file_path):
             exists = True
         return exists
@@ -86,7 +80,7 @@ class CurriculumVitae(object):
     def get(self, cv_id):
         data = None
         if self.exists(cv_id):
-            filename = os.path.join(self.interface_path, cv_id) + self.rawextension
+            filename = os.path.join(self.interface_rawpath, cv_id) + self.rawextension
             data = self._get(filename)
         return data
 
@@ -98,7 +92,7 @@ class CurriculumVitae(object):
     def getyaml(self, cv_id):
         data = None
         if self.existsyaml(cv_id):
-            filename = os.path.join(self.interface_path, cv_id) + self.yamlextension
+            filename = os.path.join(self.interface_rawpath, cv_id) + self.yamlextension
             data = self._get(filename)
         return data
 
