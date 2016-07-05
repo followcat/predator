@@ -25,6 +25,11 @@ class Batchconvert(BatchconvertCloudshare,
                     job_process = functools.partial(self.convertjob, cv_info)
                     yield job_process
 
+    def extract_details(self, uploaded_details, cv_content):
+        details = super(Batchconvert, self).extract_details(uploaded_details, cv_content)
+        details['date'] = uploaded_details['date']
+        return details
+
 
 if __name__ == '__main__':
     industry_yamls = jobs.definition.cloudshare_jingying.industry_yamls

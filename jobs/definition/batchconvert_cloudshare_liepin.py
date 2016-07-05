@@ -10,6 +10,11 @@ class Batchconvert(BatchconvertCloudshare,
     CVDB_PATH = 'convert/liepin'
     ORIGIN_CVDB_PATH = 'output/liepin'
 
+    def extract_details(self, uploaded_details, cv_content):
+        details = super(Batchconvert, self).extract_details(uploaded_details, cv_content)
+        details['date'] = uploaded_details['date']
+        return details
+
 
 if __name__ == '__main__':
     instance = Batchconvert()
