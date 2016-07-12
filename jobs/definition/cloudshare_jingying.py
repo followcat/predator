@@ -28,7 +28,7 @@ industry_yamls = ['47', #医疗设备/器械
 
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
-    CVDB_PATH = 'jingying_webdrivercv'
+    CVDB_PATH = 'output/jingying'
     FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
