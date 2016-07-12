@@ -166,7 +166,7 @@ def get_classify():
     repo = storage.fsinterface.FSInterface('jingying')
     repojt = storage.jobtitles.JobTitles(repo)
     jingying = Jingying(uldownloader=ul_downloader)
-    selected_list = [
+    industry_list = [
     '47', #医疗设备/器械
     '01', #计算机软件
     '37', #计算机硬件
@@ -183,7 +183,7 @@ def get_classify():
     '55', #航天/航空
     '61', #新能源
     ]
-    for id_str in selected_list:
+    for id_str in industry_list:
         print localdatajobs['industry'][id_str]
         postdict = {'indtype': id_str,
                     'nisseniordb': 0, #0-高级人才库, 1-全部人才库, 2-御用精英人才库
