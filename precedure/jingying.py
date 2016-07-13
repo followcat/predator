@@ -19,6 +19,8 @@ class Jingying(precedure.base.Base):
 
     post_data = {
         'url': '/spy/searchmanager.php?act=getSpySearch',
+        'nisseniordb': 1, #0-高级人才库, 1-全部人才库, 2-御用精英人才库
+        'indtype': '',
         'potext': '',
         'cotext': '',
         'fulltext': '',
@@ -134,17 +136,13 @@ class Jingying(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def update_classify(self, postdict, repojt, MAX_PAGE=20, sleeptime=10):
+    def update_classify(self, id_str, postdict, repojt, MAX_PAGE=20, sleeptime=10):
         add_list = []
-        id_str = postdict['indtype']
         for curPage in range(MAX_PAGE):
             postdict['curr_page'] = curPage + 1
             results = self.classify(postdict)
             if len(results) == 0:
-                if '没有找到符合' in text:
-                    break
-                else:
-                    self.logException(text)
+                break
             parts_results = []
             for result in results:
                 if not repojt.exists(id_str, result['id']):
@@ -166,6 +164,7 @@ def get_classify():
     repo = storage.fsinterface.FSInterface('jingying')
     repojt = storage.jobtitles.JobTitles(repo)
     jingying = Jingying(uldownloader=ul_downloader)
+    #start from industry
     industry_list = [
     '47', #医疗设备/器械
     '01', #计算机软件
@@ -186,9 +185,37 @@ def get_classify():
     for id_str in industry_list:
         print localdatajobs['industry'][id_str]
         postdict = {'indtype': id_str,
-                    'nisseniordb': 0, #0-高级人才库, 1-全部人才库, 2-御用精英人才库
                     'curr_page': '0'}
-        jingying.update_classify(postdict, repojt)
+        jingying.update_classify(id_str, postdict, repojt)
+
+    #Then go on with company names group by area
+    company_area_list = [
+        'GuangDong',        #广东
+        'ShangHai',         #上海
+        'JiangSu',          #江苏
+        'BeiJing',          #北京
+        'ZheJiang',         #浙江
+        'HuNan',            #湖南
+        'AnHui',            #安徽
+        'JiangXi',          #江西
+        'GuangXi',          #广西
+        'SiChuan',          #四川
+        'NorthEast',        #东北
+        'ShanDong',         #山东
+        'TianJin',          #天津
+        'ShanXi(Shan)',     #陕西（陕）
+        'ShanXi(Jin)',      #山西（晋）
+        'HeBei',            #河北
+        'HuBei',            #湖北
+        'FuJian',           #福建
+        'Others',           #其他
+        ]
+    for _area in company_area_list:
+        for c_name in localdatajobs['company_name'][_area]:
+            print c_name
+            postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
+                        'curr_page': '0'}
+            jingying.update_classify(_area, postdict, repojt)
 
 
 if __name__ == '__main__':
