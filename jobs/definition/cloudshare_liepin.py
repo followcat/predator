@@ -11,6 +11,7 @@ from utils.utils_parsing import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
+    JTDB_PATH = 'liepin'
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin
@@ -21,8 +22,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def jobgenerator(self, classify_id):
-        yamlname = classify_id + '.yaml'
-        yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', yamlname)
+        yamldata = self.jtstorage.get(classify_id)
         sorted_id = sorted(yamldata,
                            key = lambda cvid: yamldata[cvid]['peo'][-1],
                            reverse=True)
