@@ -32,16 +32,16 @@ class JobTitles(object):
                                 committer=committer)
         return True
 
-    def add_data(self, cvid, data, committer=None):
-        filename = cvid + '.yaml'
+    def add_data(self, classify_id, data, committer=None):
+        filename = classify_id + '.yaml'
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
                                 message="Add to classify id :" + filename,
                                 committer=committer)
         return True
 
-    def modify_data(self, cvid, data, committer=None):
-        filename = cvid + '.yaml'
+    def modify_data(self, classify_id, data, committer=None):
+        filename = classify_id + '.yaml'
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.modify_file(os.path.join(self.path, filename), dump_data,
                                    message="Add to classify id :" + filename,
