@@ -14,6 +14,8 @@ class NocontentCVException(Exception):
 
 class Liepin(precedure.base.Base):
 
+    BASE_URL='https://h.liepin.com'
+
     urls_post = {
         'form_submit':1,
         'keys':'',
@@ -45,13 +47,8 @@ class Liepin(precedure.base.Base):
         return self.ul_downloader.post(searchurl, data=tmp_post)
 
     def urlget_cv(self, url):
-        download_url = 'https://h.liepin.com' + url
+        download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
-
-    def webdriverget_cv(self, url):
-        download_url = 'https://h.liepin.com' + url
-        htmlsource = self.wb_downloader.getsource(download_url)
-        return htmlsource
 
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
@@ -112,7 +109,8 @@ class Liepin(precedure.base.Base):
         return result
 
     def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
+        download_url = BASE_URL + url
+        htmlsource = self.wb_downloader.getsource(download_url)
         if u'处于猎聘网系统审核中' in htmlsource:
             raise NocontentCVException
         else:
