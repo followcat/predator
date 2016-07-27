@@ -6,10 +6,12 @@ reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
 import time
+import datetime
 import re
 import bs4
 import json
 import urllib
+import math
 
 import utils.tools
 import utils.builtin
@@ -19,77 +21,91 @@ import downloader.webdriver
 import storage.fsinterface
 import storage.jobtitles
 
+from sources.yingcai_all import *
+from sources.yingcai_needed import *
+
 class Yingcai(precedure.base.Base):
-	
-    #get_data={
-    #         'gtid':'4965e9b4-55e3-45de-a39b-c459163eae54'
-    #         }
-	
+
+    BASE_URL=''
+    FF_PROFILE_PATH='/home/winky/.mozilla/firefox/jvqqz5ch.winky'
+    FF_PROFILE_PATH2='/home/winky/.mozilla/firefox/bs9yw52t.winky2'
+    START_TIME=datetime.datetime.now()
+
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
-        self.webdriver_downloader = wbdownloader
+        self.wb_downloader = wbdownloader
 
     def urlget_classify(self, data):
         tmp_data = dict()
-       #tmp_data.update(self.get_data)
         tmp_data.update(data)
         searchurl = 'http://qy.chinahr.com/cv/sou?'
         params_str = urllib.urlencode(tmp_data)
         download_url = searchurl + params_str
         print 'download url: ' + download_url
-        #return self.url_downloader.get(download_url)
-        return self.webdriver_downloader.getsource(download_url)
+        return self.wb_downloader.getsource(download_url)
         
     def webdriverget_cv(self, url):
         download_url = 'http://qy.chinahr.com/cv/sou?' + url
         print 'download url: ' + download_url
-        htmlsource = self.webdriver_downloader.getsource(download_url)
-        return htmlsource    
-   
-    def parse_classify(self, htmlsource):
+        htmlsource = self.wb_downloader.getsource(download_url)
+        return htmlsource
+
+    def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
-        data_lists = bs.findAll(class_='searchChild')
+        content = bs.find(class_='box-myResume')
+        return content.prettify()
+
+    def cv(self,url,profile_path):
+        download_url=self.BASE_URL+url
+        if profile_path==None:
+            htmlsource=self.wb_downloader.getsource(download_url)
+        else:
+            self.wb_downloader.close()
+            wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=profile_path)
+            yingcai=Yingcai(wbdownloader=wbdriverdownloader)
+            htmlsource=self.wb_downloader.getsource(download_url)
+        result=self.parse_cv(htmlsource)
+        return result
+
+    def parse_classify(self, htmlsource):
         result = []
-        for index in range(len(data_lists)):
-            storage_data = { 'peo': [], 'info': [] }
-            storage_data['date'] = time.time()
-            storage_data['recommend'] = ''
-            storage_data['elite'] = ''
-            storage_data['name'] = ''
-            storage_data['data-name'] = ''
-            storage_data['data-id'] = ''
-            cur_situation = data_lists[index]
-            #print cur_situation
-            abstract = data_lists[int(index)]
-            #print abstract
-            storage_data['html'] = cur_situation.prettify() + abstract.prettify()
-            if cur_situation.find("a") is not None:
-                element_a=cur_situation.find("a")
-                storage_data['href'] = element_a.get('href')
-                #print storage_data['href']
-            query_str = utils.tools.queryString(element_a.get('href'))
-            idmatch=re.search(r'cvid=(\w+)&from',cur_situation.find("a").get('href'))
-            print idmatch.group(1)
-            storage_data['id']=idmatch.group(1)
-            peo_list = cur_situation.findAll(class_='rInfo1')
-            #print peo_list
-            for peo_item in peo_list:
-                if peo_item.find("a") is not None:
-                    element_a = peo_item.find("a")
+        bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        text_lists=bs.findAll(class_='searchList')
+        if len(text_lists)==0:
+            return result
+        data_lists=text_lists[0].findAll("li")
+        if len(data_lists)==0:
+            return result
+        else:
+            for index in range(len(data_lists)):
+                storage_data = { 'peo': [], 'info': [] }
+                storage_data['date'] = time.time()
+                storage_data['recommend'] = ''
+                storage_data['elite'] = ''
+                storage_data['data-name'] = ''
+                storage_data['data-id'] = ''
+                storage_data['title']=''
+                storage_data['data-userid']=''
+                cur_situation = data_lists[index]
+                storage_data['html'] = cur_situation.prettify()
+                if cur_situation.find("a") is not None:
+                    element_a=cur_situation.find("a")
                     storage_data['href'] = element_a.get('href')
-                    query_str = utils.tools.queryString(element_a.get('href'))
-                    storage_data['id'] = query_str['resumeID']
-                    storage_data['data-userid'] = query_str['seekerUserID']
-                    storage_data['title'] = peo_item.get('title')
-                    storage_data['peo'].append(peo_item.get('title'))
-                else:
-                    storage_data['peo'].append(peo_item.text)
-                #print storage_data
-            info_list = abstract.find_all("p")
-            #print info_list
-            for info_item in info_list:
-                storage_data['info'].append(info_item.text)
-            result.append(storage_data)
+                query_str = utils.tools.queryString(element_a.get('href'))
+                storage_data['id']=data_lists[index].attrs['cvid']
+                storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
+                storage_data['info'].append((data_lists[index].find(class_='sex').string).decode('utf-8'))
+                storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
+                storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
+                storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
+                update_text=data_lists[index].find(class_='source')
+                update_time=update_text.find('em').getText()
+                storage_data['info'].append(update_time)
+                info_text=data_lists[index].find(class_='rInfo2')
+                info_lists=info_text.findAll('span')
+                for info_index in range(len(info_lists)):
+                    storage_data['peo'].append(info_lists[info_index].getText())
+                result.append(storage_data)
         return result
  
     def logException(self, text):
@@ -99,22 +115,17 @@ class Yingcai(precedure.base.Base):
 
     def classify(self, params_data):
         htmlsource = self.urlget_classify(params_data)
-        #print htmlsource
-        #htmlsource = self.webdriverget_cv()
-        htmlfile=open('/home/winky/predator/html','w')
-        htmlfile.write(htmlsource)
-        htmlfile.close()
         result = self.parse_classify(htmlsource)
         if len(result) == 0:
-            if '抱歉没有找到当前搜索条件的相关结果' in htmlsource:
+            if '对不起，没有找到合适条件的简历' in htmlsource:
                 result = None
             else:
                 self.logException(htmlsource)
         return result
 
-    def update_classify(self, paramsdict, repojt, MIN_PAGE=0, MAX_PAGE=150, sleeptime=5):
+    def update_classify(self, paramsdict, industry,repojt, MIN_PAGE, MAX_PAGE, sleeptime=60):
         add_list = []
-        id_str = paramsdict['jobs']
+        id_str = industry
         for cur_page in range(MIN_PAGE, MAX_PAGE):
             paramsdict['page'] = cur_page + 1
             results = self.classify(paramsdict)
@@ -130,41 +141,100 @@ class Yingcai(precedure.base.Base):
             else:
                 add_list.extend(parts_results)
             time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'winky')
-        return True
+        return add_list
 
 def get_classify():
-    #cookies_str = utils.builtin.loadfile('cookies.data')
-    #urldownloader = downloader._urllib.Urllib()
-    #urldownloader.set_cookies(cookies_str)
-    profile_path='/home/winky/.mozilla/firefox/jvqqz5ch.winky'
-    wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=profile_path)
-    #print urldownloader.get(url,True)
+    wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=Yingcai.FF_PROFILE_PATH)
     repo = storage.fsinterface.FSInterface('yingcai')
     repojt = storage.jobtitles.JobTitles(repo)
-    #yingcai= Yingcai(url_downloader=urldownloader)
     yingcai=Yingcai(wbdownloader=wbdriverdownloader)
-    jobs_list=[
-           '1001', #计算机／互联网／通信／电子发
-           '1002', #销售／客服／技术支持
-           '1003', #会计／金融／银行／保险
-           '1004', #生产／营运／采购／物流
-           '1005', #生物／制药／医疗／护理
-           '1006', #广告／市场／媒体／艺术
-           '1007', #建筑／房地产
-           '1008', #人事／行政／高级管理
-           '1009', #咨询／法律／教育／科研
-           '1010', #服务业
-           '1011', #公务员／翻译／其它
+    live_places=[
+            '18',#安徽
+            '44',#澳门特别行政区
+            '34',#北京
+            '37',#重庆
+            '19',#福建
+            '31',#甘肃
+            '25',#广东
+            '38',#广西壮族自治区
+            '28',#贵州
+            '26',#海南
+            '45',#海外
+            '11',#河北
+            '22',#河南
+            '15',#黑龙江
+            '23',#湖北
+            '24',#湖南
+            '14',#吉林
+            '16',#江苏
+            '20',#江西
+            '13',#辽宁
+            '39',#内蒙古自治区
+            '41',#宁夏回族自治区
+            '32',#青海
+            '21',#山东
+            '30',#陕西
+            '12',#山西
+            '36',#上海
+            '27',#四川
+            '33',#台湾
+            '35',#天津　
+            '40',#西藏自治区
+            '43',#香港特别行政区
+            '42',#新疆维吾尔自治区
+            '29',#云南
+            '17',#浙江
             ]
-    for job_item in jobs_list:
-        print job_item
-        getdict = {
-                   'live':'25,291',
-                   'jobs':job_item, 
-                   'page':'0'
-		  }
-	yingcai.update_classify(getdict,repojt)
-	
+    for industry in job_list.keys():
+        if len(job_list[industry].keys())==0:
+            for key in industry_list[industry]:
+                job_list[industry][key]=industry_list[indystry][key]
+        for job in job_list[industry].keys():
+            if len(job_list[industry][job])==0:
+                job_list[industry][job]=industry_list[industry][job]
+            for position in job_list[industry][job]:
+                job_item=industry+','+job+','+position
+                print job_item
+                live_lists=[]
+                chunk_len=5
+                place_chunk=math.ceil(len(live_places)/chunk_len)
+                for place_index in range(int(place_chunk)):
+                    live=''
+                    for index in range(chunk_len-1):
+                        live+=(live_places[place_index*chunk_len+index]+';')
+                    live=live+(live_places[place_index*chunk_len+index+1])
+                    live_lists.append(live)
+
+                block_size=10
+                tot_block=15
+                for live_index in range(0,len(live_lists)):
+                    live_place=live_lists[live_index]
+                    print live_place
+                    getdict = {
+                        'jobType':1,
+                        'live':live_place,
+                        'jobs':job_item,
+                        'page':'0'
+                         }
+                    for index in range(0,tot_block):
+                        current_time=datetime.datetime.now()
+                        duration=(current_time-Yingcai.START_TIME).seconds
+                        if duration > 600:
+                            wbdriverdownloader.close()
+                            temp_path=''
+                            temp_path=Yingcai.FF_PROFILE_PATH2
+                            Yingcai.FF_PROFILE_PATH2=Yingcai.FF_PROFILE_PATH
+                            Yingcai.FF_PROFILE_PATH=temp_path
+                            Yingcai.START_TIME=current_time
+                            get_classify()
+                        minpage=index*block_size
+                        maxpage=(index+1)*block_size
+                        add_list=yingcai.update_classify(getdict,industry,repojt,minpage,maxpage)
+                        if len(add_list)==0:
+                            break
+                        else:
+                            id_str = industry
+                            repojt.add_datas(id_str, add_list, 'winky')
+
 if __name__ == '__main__':
     get_classify()
