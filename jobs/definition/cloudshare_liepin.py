@@ -43,7 +43,8 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         except precedure.liepin.NocontentCVException:
             print('Failed! Download: '+cv_id)
             self.urlsdata[cv_id]['Nocontent'] = True
-            self.jtstorage.modify_data(classify_id, self.urlsdata)
+            self.jtstorage.modify_data(classify_id, self.urlsdata,
+                                       message='Add Nocontent to: '+cv_id)
             cvresult = False
         if cvresult is True:
             yamldata = self.extract_details(cv_info, cv_content)
