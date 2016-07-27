@@ -22,6 +22,12 @@ class JobTitles(object):
         yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
         return yamldata
 
+    def remove(self, classify_id, cv_id):
+        yamldata = self.get(classify_id)
+        removed = yamldata.pop(cv_id)
+        self.modify_data(classify_id, yamldata)
+        return removed
+
     def add_datas(self, classify_id, datas, committer=None):
         filename = classify_id + '.yaml'
         file_path = os.path.join(self.interface_path, filename)
@@ -49,7 +55,7 @@ class JobTitles(object):
         filename = classify_id + '.yaml'
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.modify_file(os.path.join(self.path, filename), dump_data,
-                                   message="Add to classify id :" + filename,
+                                   message="Moidfy classify id :" + filename,
                                    committer=committer)
         return True
 
