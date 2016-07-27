@@ -1,11 +1,13 @@
 class NotImplementedInterface(Exception):
     pass
 
-
 class Base(object):
-    
+
+    BASE_URL=''
+
     def __init__(self):
-        pass
+        self.url_downloader = url_downloader
+        self.wb_downloader = wbdownloader
 
     def urlget_classify(self):
         raise NotImplementedInterface
@@ -28,5 +30,8 @@ class Base(object):
     def classify(self):
         raise NotImplementedInterface
 
-    def cv(self):
-        raise NotImplementedInterface
+    def cv(self,url):
+        download_url=self.BASE_URL+url
+        htmlsource=self.wb_downloader.getsource(download_url)
+        result=self.parse_cv(htmlsource)
+        return result
