@@ -9,7 +9,7 @@ import utils.builtin
 
 
 class GitInterface(object):
-    author = b'developer'
+    author = b'developer<developer@email.com>'
     encoding = b'UTF-8'
 
     def __init__(self, path):
