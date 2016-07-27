@@ -71,12 +71,12 @@ class GitInterface(object):
         file_path = os.path.join(self.path, filename)
         with open(file_path, 'w') as f:
             f.write(filedata)
-        self.repo.stage(filename)
         if committer is None:
             committer = self.author
         if message is None:
             message = "Change %s." % filename
-        commit_id = self.repo.do_commit(message, committer=committer)
+        self.repo.stage([bytes(filename)])
+        commit_id = self.repo.do_commit(message, committer=bytes(committer))
         return commit_id
 
     def grep(self, restrings, path):
