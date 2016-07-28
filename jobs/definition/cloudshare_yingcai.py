@@ -27,8 +27,12 @@ industry_yamls = ['1001', #计算机／互联网／通信／电子
 class Yingcai(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/yingcai'
-    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
-    FF_PROFILE_PATH2='/home/winky/.mozilla/firefox/bs9yw52t.winky2'
+    FF_PROFILE_PATH_LIST = ['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
+                           '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
+                            '/home/winky/.mozilla/firefox/4idae7tm.winky3'
+                            ]
+    profilepath_index=0
+    FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
     PRECEDURE_CLASS = precedure.yingcai.Yingcai
     START_TIME=datetime.datetime.now()
 
@@ -60,11 +64,9 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
         print (cv_info['href'])
         current_time=datetime.datetime.now()
         duration=(current_time-self.START_TIME).seconds
-        if duration > 600:
-            temp_path=''
-            temp_path=self.FF_PROFILE_PATH2
-            self.FF_PROFILE_PATH2=self.FF_PROFILE_PATH
-            self.FF_PROFILE_PATH=temp_path
+        if duration > 1800:
+            self.profilepath_index+=1
+            self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index]
             self.START_TIME=current_time
             cv_content =  self.precedure.cv(cv_info['href'],self.FF_PROFILE_PATH)
         else:

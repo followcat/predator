@@ -27,8 +27,12 @@ from sources.yingcai_needed import *
 class Yingcai(precedure.base.Base):
 
     BASE_URL=''
-    FF_PROFILE_PATH='/home/winky/.mozilla/firefox/jvqqz5ch.winky'
-    FF_PROFILE_PATH2='/home/winky/.mozilla/firefox/bs9yw52t.winky2'
+    FF_PROFILE_PATH_LIST=['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
+                          '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
+                          '/home/winky/.mozilla/firefox/4idae7t.winky3'
+                         ]
+    profilepath_index=0
+    FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
     START_TIME=datetime.datetime.now()
 
     def __init__(self, url_downloader=None, wbdownloader=None):
@@ -61,8 +65,8 @@ class Yingcai(precedure.base.Base):
             htmlsource=self.wb_downloader.getsource(download_url)
         else:
             self.wb_downloader.close()
-            wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=profile_path)
-            yingcai=Yingcai(wbdownloader=wbdriverdownloader)
+            wbdriver_downloader = downloader.webdriver.Webdriver(profilepath=profile_path)
+            yingcai=Yingcai(wbdownloader=wbdriver_downloader)
             htmlsource=self.wb_downloader.getsource(download_url)
         result=self.parse_cv(htmlsource)
         return result
@@ -217,16 +221,6 @@ def get_classify():
                         'page':'0'
                          }
                     for index in range(0,tot_block):
-                        current_time=datetime.datetime.now()
-                        duration=(current_time-Yingcai.START_TIME).seconds
-                        if duration > 600:
-                            wbdriverdownloader.close()
-                            temp_path=''
-                            temp_path=Yingcai.FF_PROFILE_PATH2
-                            Yingcai.FF_PROFILE_PATH2=Yingcai.FF_PROFILE_PATH
-                            Yingcai.FF_PROFILE_PATH=temp_path
-                            Yingcai.START_TIME=current_time
-                            get_classify()
                         minpage=index*block_size
                         maxpage=(index+1)*block_size
                         add_list=yingcai.update_classify(getdict,industry,repojt,minpage,maxpage)
@@ -235,6 +229,18 @@ def get_classify():
                         else:
                             id_str = industry
                             repojt.add_datas(id_str, add_list, 'winky')
+
+                        current_time=datetime.datetime.now()
+                        duration=(current_time-Yingcai.START_TIME).seconds
+                        if duration > 1800:
+                            wbdriverdownloader.close()
+                            Yingcai.profilepath_index+=1
+                            Yingcai.FF_PROFILE_PATH=Yingcai.FF_PROFILE_PATH_LIST[Yingcai.profilepath_index%len(Yingcai.FF_PROFILE_PATH_LIST)]
+                            Yingcai.START_TIME=current_time
+                            get_classify()
+                        else:
+                            continue
+
 
 if __name__ == '__main__':
     get_classify()
