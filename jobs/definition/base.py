@@ -14,7 +14,7 @@ class Base(object):
     PRECEDURE_CLASS = precedure.base.Base
 
     def __init__(self):
-        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
+        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.cvrepo = storage.gitinterface.GitInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
@@ -27,6 +27,9 @@ class Base(object):
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
         result = True
+
+    def get_wb_downloader(self, profile_path):
+        return downloader.webdriver.Webdriver(profile_path)
 
     def jobgenerator(self):
         pass
