@@ -27,9 +27,10 @@ industry_yamls = ['1001', #计算机／互联网／通信／电子
 class Yingcai(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/yingcai'
-    FF_PROFILE_PATH_LIST = ['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
-                           '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
-                            '/home/winky/.mozilla/firefox/4idae7tm.winky3'
+    FF_PROFILE_PATH_LIST = [
+                           '/home/winky/.mozilla/firefox/4idae7tm.winky3',
+                           '/home/winky/.mozilla/firefox/jvqqz5ch.winky',
+                           '/home/winky/.mozilla/firefox/bs9yw52t.winky2'
                             ]
     profilepath_index=0
     FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
@@ -42,8 +43,8 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def jobgenerator(self):
-        self.START_TIME=datetime.datetime.now()
         for _classify_id in industry_yamls:
+            print _classify_id
             _file = _classify_id + '.yaml'
             yamldata = utils.builtin.load_yaml('yingcai/JOBTITLES', _file)
             sorted_id = sorted(yamldata,
@@ -55,22 +56,25 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
                     yield job_process
-                    print(time.time() - t1)
+                current_time=datetime.datetime.now()
+                duration=(current_time-self.START_TIME).seconds
+                if duration > 1800:
+                    self.wb_downloader.close()
+                    time.sleep(1)
+                    self.profilepath_index+=1
+                    self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index%len(self.FF_PROFILE_PATH_LIST)]
+                    self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
+                    self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
+                    self.START_TIME=current_time
+                else:
+                    continue
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         print('Download: '+cv_id)
         print (cv_info['href'])
-        current_time=datetime.datetime.now()
-        duration=(current_time-self.START_TIME).seconds
-        if duration > 1800:
-            self.profilepath_index+=1
-            self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index]
-            self.START_TIME=current_time
-            cv_content =  self.precedure.cv(cv_info['href'],self.FF_PROFILE_PATH)
-        else:
-            cv_content =  self.precedure.cv(cv_info['href'],None)
+        cv_content =  self.precedure.cv(cv_info['href'])
         yamldata = self.extract_details(cv_info, cv_content)
         result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
         job_logger.info('Download: '+cv_id)
