@@ -29,7 +29,7 @@ class Yingcai(precedure.base.Base):
     BASE_URL=''
     FF_PROFILE_PATH_LIST=['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
                           '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
-                          '/home/winky/.mozilla/firefox/4idae7t.winky3'
+                          '/home/winky/.mozilla/firefox/4idae7tm.winky3'
                          ]
     profilepath_index=0
     FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
@@ -59,18 +59,6 @@ class Yingcai(precedure.base.Base):
         content = bs.find(class_='box-myResume')
         return content.prettify()
 
-    def cv(self,url,profile_path):
-        download_url=self.BASE_URL+url
-        if profile_path==None:
-            htmlsource=self.wb_downloader.getsource(download_url)
-        else:
-            self.wb_downloader.close()
-            wbdriver_downloader = downloader.webdriver.Webdriver(profilepath=profile_path)
-            yingcai=Yingcai(wbdownloader=wbdriver_downloader)
-            htmlsource=self.wb_downloader.getsource(download_url)
-        result=self.parse_cv(htmlsource)
-        return result
-
     def parse_classify(self, htmlsource):
         result = []
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
@@ -83,6 +71,17 @@ class Yingcai(precedure.base.Base):
         else:
             for index in range(len(data_lists)):
                 storage_data = { 'peo': [], 'info': [] }
+                workyear_text= data_lists[index].find(class_='workYear').string
+                yearmatch=re.search('(\d+).*',workyear_text)
+                age_text=data_lists[index].find(class_='age').string
+                agematch=re.search('(\d+).*',age_text)
+                try:
+                    workyear=int(yearmatch.group(1))
+                    age=int(agematch.group(1))
+                except Exception:
+                    continue
+                if workyear < 3 or age < 25:
+                    continue
                 storage_data['date'] = time.time()
                 storage_data['recommend'] = ''
                 storage_data['elite'] = ''
@@ -236,8 +235,9 @@ def get_classify():
                             wbdriverdownloader.close()
                             Yingcai.profilepath_index+=1
                             Yingcai.FF_PROFILE_PATH=Yingcai.FF_PROFILE_PATH_LIST[Yingcai.profilepath_index%len(Yingcai.FF_PROFILE_PATH_LIST)]
+                            wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=Yingcai.FF_PROFILE_PATH)
+                            yingcai.wb_downloader=wbdriverdownloader
                             Yingcai.START_TIME=current_time
-                            get_classify()
                         else:
                             continue
 
