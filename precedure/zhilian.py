@@ -16,6 +16,8 @@ class NocontentCVException(Exception):
 
 class Zhilian(precedure.base.Base):
 
+    BASE_URL='http://h.highpin.cn'
+
     urls_data = {
         'Q':'',
         'IsJobTitleOnly':'false',
@@ -49,7 +51,7 @@ class Zhilian(precedure.base.Base):
 
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
-        self.webdriver_downloader = wbdownloader
+        self.wb_downloader = wbdownloader
 
     def urlget_classify(self, data):
         tmp_data = dict()
@@ -65,12 +67,6 @@ class Zhilian(precedure.base.Base):
         download_url = 'http://h.highpin.cn' + url
         print 'download url: ' + download_url
         return self.url_downloader.get(download_url)
-
-    def webdriverget_cv(self, url):
-        download_url = 'http://h.highpin.cn' + url
-        print 'download url: ' + download_url
-        htmlsource = self.webdriver_downloader.getsource(download_url)
-        return htmlsource
 
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
@@ -130,11 +126,6 @@ class Zhilian(precedure.base.Base):
                 result = None
             else:
                 self.logException(htmlsource)
-        return result
-
-    def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
-        result = self.parse_cv(htmlsource)
         return result
 
     def logException(self, text):

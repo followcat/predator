@@ -17,6 +17,8 @@ from sources.jingying import *
 
 class Jingying(precedure.base.Base):
 
+    BASE_URL='http://www.51jingying.com'
+
     post_data = {
         'url': '/spy/searchmanager.php?act=getSpySearch',
         'nisseniordb': 1, #0-高级人才库, 1-全部人才库, 2-御用精英人才库
@@ -60,13 +62,8 @@ class Jingying(precedure.base.Base):
         return self.ul_downloader.post(searchurl, data=tmp_post)
 
     def urlget_cv(self, url):
-        download_url = 'http://www.51jingying.com' + url
+        download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
-
-    def webdriverget_cv(self, url):
-        download_url = 'http://www.51jingying.com' + url
-        htmlsource = self.wb_downloader.getsource(download_url)
-        return htmlsource
 
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
@@ -124,11 +121,6 @@ class Jingying(precedure.base.Base):
         except KeyError:
             pass
         result = self.parse_classify(htmlsource)
-        return result
-
-    def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
-        result = self.parse_cv(htmlsource)
         return result
 
     def logException(self, text):
