@@ -27,8 +27,11 @@ class Urllib(object):
         urllib_data = urllib.urlencode(data)
         req = urllib2.Request(url, headers = headers)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-        res = opener.open(req, urllib_data)
-        text = res.read()
+        try:
+            res = opener.open(req, urllib_data)
+            text = res.read()
+        except urllib2.URLError:
+            text = ''
         return text
 
     def get(self, url, cookies=True):

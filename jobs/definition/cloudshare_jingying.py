@@ -26,9 +26,31 @@ industry_yamls = ['47', #医疗设备/器械
                   '61'  #新能源
                 ]
 
+company_area_list = [
+    'GuangDong',        #广东
+    'ShangHai',         #上海
+    'JiangSu',          #江苏
+    'BeiJing',          #北京
+    'ZheJiang',         #浙江
+    'HuNan',            #湖南
+    'AnHui',            #安徽
+    'JiangXi',          #江西
+    'GuangXi',          #广西
+    'SiChuan',          #四川
+    'NorthEast',        #东北
+    'ShanDong',         #山东
+    'TianJin',          #天津
+    'ShanXi(Shan)',     #陕西（陕）
+    'ShanXi(Jin)',      #山西（晋）
+    'HeBei',            #河北
+    'HuBei',            #湖北
+    'FuJian',           #福建
+    'Others',           #其他
+    ]
+
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
-    CVDB_PATH = 'jingying_webdrivercv'
+    CVDB_PATH = 'output/jingying'
     FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
@@ -38,9 +60,12 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def jobgenerator(self):
-        for _classify_id in industry_yamls:
+        for _classify_id in industry_yamls + company_area_list:
             _file = _classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+            try:
+                yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+            except IOError:
+                continue
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
