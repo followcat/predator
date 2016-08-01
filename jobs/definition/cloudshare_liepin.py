@@ -11,6 +11,7 @@ from utils.utils_parsing import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
+    JTDB_PATH = 'liepin'
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin
@@ -21,16 +22,16 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def jobgenerator(self, classify_id):
-        yamlname = classify_id + '.yaml'
-        yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', yamlname)
-        sorted_id = sorted(yamldata,
-                           key = lambda cvid: yamldata[cvid]['peo'][-1],
+        self.urlsdata = self.jtstorage.get(classify_id)
+        sorted_id = sorted(self.urlsdata,
+                           key = lambda cvid: self.urlsdata[cvid]['peo'][-1],
                            reverse=True)
         for cv_id in sorted_id:
             if not self.cvstorage.existscv(cv_id):
-                cv_info = yamldata[cv_id]
-                job_process = functools.partial(self.downloadjob, cv_info, classify_id)
-                yield job_process
+                if 'Nocontent' not in self.urlsdata[cv_id] or not self.urlsdata[cv_id]['Nocontent']:
+                    cv_info = self.urlsdata[cv_id]
+                    job_process = functools.partial(self.downloadjob, cv_info, classify_id)
+                    yield job_process
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
@@ -41,6 +42,9 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
             cvresult = True
         except precedure.liepin.NocontentCVException:
             print('Failed! Download: '+cv_id)
+            self.urlsdata[cv_id]['Nocontent'] = True
+            self.jtstorage.modify_data(classify_id, self.urlsdata,
+                                       message='Add Nocontent to: '+cv_id)
             cvresult = False
         if cvresult is True:
             yamldata = self.extract_details(cv_info, cv_content)

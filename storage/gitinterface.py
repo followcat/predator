@@ -9,7 +9,7 @@ import utils.builtin
 
 
 class GitInterface(object):
-    author = b'developer'
+    author = b'developer<developer@email.com>'
     encoding = b'UTF-8'
 
     def __init__(self, path):
@@ -44,12 +44,12 @@ class GitInterface(object):
         file_path = os.path.join(self.path, filename)
         with open(file_path, 'w') as f:
             f.write(filedata)
-        self.repo.stage(filename)
         if committer is None:
             committer = self.author
         if message is None:
             message = "Add file: " + filename + ".\n"
-        commit_id = self.repo.do_commit(message, committer=committer)
+        self.repo.stage(bytes(filename))
+        commit_id = self.repo.do_commit(bytes(message), committer=bytes(committer))
         return commit_id
 
     def modify_file(self, filename, filedata, message=None, committer=None):
@@ -71,12 +71,12 @@ class GitInterface(object):
         file_path = os.path.join(self.path, filename)
         with open(file_path, 'w') as f:
             f.write(filedata)
-        self.repo.stage(filename)
         if committer is None:
             committer = self.author
         if message is None:
             message = "Change %s." % filename
-        commit_id = self.repo.do_commit(message, committer=committer)
+        self.repo.stage([bytes(filename)])
+        commit_id = self.repo.do_commit(bytes(message), committer=bytes(committer))
         return commit_id
 
     def grep(self, restrings, path):

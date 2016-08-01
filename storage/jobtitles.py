@@ -17,6 +17,17 @@ class JobTitles(object):
         if not os.path.exists(self.interface_path):
             os.makedirs(self.interface_path)
 
+    def get(self, classify_id):
+        yamlname = classify_id + '.yaml'
+        yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
+        return yamldata
+
+    def remove(self, classify_id, cv_id):
+        yamldata = self.get(classify_id)
+        removed = yamldata.pop(cv_id)
+        self.modify_data(classify_id, yamldata)
+        return removed
+
     def add_datas(self, classify_id, datas, committer=None):
         filename = classify_id + '.yaml'
         file_path = os.path.join(self.interface_path, filename)
@@ -32,20 +43,19 @@ class JobTitles(object):
                                 committer=committer)
         return True
 
-    def add_data(self, cvid, data, committer=None):
-        filename = cvid + '.yaml'
+    def add_data(self, classify_id, data, committer=None):
+        filename = classify_id + '.yaml'
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
                                 message="Add to classify id :" + filename,
                                 committer=committer)
         return True
 
-    def modify_data(self, cvid, data, committer=None):
-        filename = cvid + '.yaml'
+    def modify_data(self, classify_id, data, committer=None, message=None):
+        filename = classify_id + '.yaml'
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.modify_file(os.path.join(self.path, filename), dump_data,
-                                   message="Add to classify id :" + filename,
-                                   committer=committer)
+                                   message=message, committer=committer)
         return True
 
     def exists(self, classify_id, data_id):
