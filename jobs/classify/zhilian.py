@@ -10,7 +10,6 @@ import utils.builtin
 cookies_str = utils.builtin.loadfile('zhiliancookie.data').replace('\n','')
 urldownloader = downloader._urllib.Urllib()
 urldownloader.set_cookies(cookies_str)
-import ipdb;ipdb.set_trace()
 webdriverdownloader = downloader.webdriver.Webdriver()
 repo = storage.gitinterface.GitInterface('zhilian')
 repojt = storage.repojobtitles.JobTitles(repo)
