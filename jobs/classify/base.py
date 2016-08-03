@@ -4,7 +4,7 @@ import downloader._urllib
 import downloader.webdriver
 
 
-def Base(object):
+class Base(object):
 
     ff_profile = None
     cookies_file = None
