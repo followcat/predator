@@ -5,35 +5,18 @@ import sys
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
-import time
-import datetime
 import re
 import bs4
 import json
-import urllib
-import math
+import time
 
 import utils.tools
-import utils.builtin
 import precedure.base
-import downloader._urllib
-import downloader.webdriver
-import storage.fsinterface
-import storage.jobtitles
-
-from sources.yingcai_all import *
-from sources.yingcai_needed import *
+import urllib
 
 class Yingcai(precedure.base.Base):
 
     BASE_URL=''
-    FF_PROFILE_PATH_LIST=['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
-                          '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
-                          '/home/winky/.mozilla/firefox/4idae7tm.winky3'
-                         ]
-    profilepath_index=0
-    FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
-    START_TIME=datetime.datetime.now()
 
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
@@ -145,102 +128,3 @@ class Yingcai(precedure.base.Base):
                 add_list.extend(parts_results)
             time.sleep(sleeptime)
         return add_list
-
-def get_classify():
-    wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=Yingcai.FF_PROFILE_PATH)
-    repo = storage.fsinterface.FSInterface('yingcai')
-    repojt = storage.jobtitles.JobTitles(repo)
-    yingcai=Yingcai(wbdownloader=wbdriverdownloader)
-    live_places=[
-            '18',#安徽
-            '44',#澳门特别行政区
-            '34',#北京
-            '37',#重庆
-            '19',#福建
-            '31',#甘肃
-            '25',#广东
-            '38',#广西壮族自治区
-            '28',#贵州
-            '26',#海南
-            '45',#海外
-            '11',#河北
-            '22',#河南
-            '15',#黑龙江
-            '23',#湖北
-            '24',#湖南
-            '14',#吉林
-            '16',#江苏
-            '20',#江西
-            '13',#辽宁
-            '39',#内蒙古自治区
-            '41',#宁夏回族自治区
-            '32',#青海
-            '21',#山东
-            '30',#陕西
-            '12',#山西
-            '36',#上海
-            '27',#四川
-            '33',#台湾
-            '35',#天津　
-            '40',#西藏自治区
-            '43',#香港特别行政区
-            '42',#新疆维吾尔自治区
-            '29',#云南
-            '17',#浙江
-            ]
-    for industry in job_list.keys():
-        if len(job_list[industry].keys())==0:
-            for key in industry_list[industry]:
-                job_list[industry][key]=industry_list[indystry][key]
-        for job in job_list[industry].keys():
-            if len(job_list[industry][job])==0:
-                job_list[industry][job]=industry_list[industry][job]
-            for position in job_list[industry][job]:
-                job_item=industry+','+job+','+position
-                print job_item
-                live_lists=[]
-                chunk_len=5
-                place_chunk=math.ceil(len(live_places)/chunk_len)
-                for place_index in range(int(place_chunk)):
-                    live=''
-                    for index in range(chunk_len-1):
-                        live+=(live_places[place_index*chunk_len+index]+';')
-                    live=live+(live_places[place_index*chunk_len+index+1])
-                    live_lists.append(live)
-
-                block_size=10
-                tot_block=15
-                for live_index in range(0,len(live_lists)):
-                    live_place=live_lists[live_index]
-                    print live_place
-                    getdict = {
-                        'jobType':1,
-                        'live':live_place,
-                        'jobs':job_item,
-                        'page':'0'
-                         }
-                    for index in range(0,tot_block):
-                        minpage=index*block_size
-                        maxpage=(index+1)*block_size
-                        add_list=yingcai.update_classify(getdict,industry,repojt,minpage,maxpage)
-                        if len(add_list)==0:
-                            break
-                        else:
-                            id_str = industry
-                            repojt.add_datas(id_str, add_list, 'winky')
-
-                        current_time=datetime.datetime.now()
-                        duration=(current_time-Yingcai.START_TIME).seconds
-                        if duration > 1800:
-                            wbdriverdownloader.close()
-                            Yingcai.profilepath_index+=1
-                            Yingcai.FF_PROFILE_PATH=Yingcai.FF_PROFILE_PATH_LIST[Yingcai.profilepath_index%len(Yingcai.FF_PROFILE_PATH_LIST)]
-                            wbdriverdownloader = downloader.webdriver.Webdriver(profilepath=Yingcai.FF_PROFILE_PATH)
-                            yingcai.wb_downloader=wbdriverdownloader
-                            Yingcai.START_TIME=current_time
-                        else:
-                            continue
-
-
-if __name__ == '__main__':
-    get_classify()
