@@ -28,15 +28,17 @@ class Jingying(jobs.classify.base.Base):
         '21', #交通/运输/物流
         '55', #航天/航空
         '36', #电气/电力/水利
-        '55', #航天/航空
         '61', #新能源
         ]
         for id_str in industry_list:
-            print localdatajobs['industry'][id_str]
+            chs_indtype = localdatajobs['industry'][id_str]
+            print chs_indtype
             postdict = {'indtype': id_str}
+            postinfo = {'indtype': chs_indtype}
+            header = self.get_header(postdict, postinfo)
             job_process = functools.partial(jingying.update_classify,
                                             id_str, id_str,
-                                            postdict, self.repojt)
+                                            postdict, self.repojt, header)
             yield job_process
 
         #Then go on with company names group by area
@@ -64,11 +66,12 @@ class Jingying(jobs.classify.base.Base):
         for _area in company_area_list:
             for c_name in localdatajobs['company_name'][_area]:
                 print c_name
-                postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                            'curr_page': '0'}
+                postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
+                postinfo = {}
+                header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(jingying.update_classify,
                                                 _area, _area,
-                                                postdict, self.repojt)
+                                                postdict, self.repojt, header)
                 yield job_process
 
 repo = storage.fsinterface.FSInterface('jingying')
