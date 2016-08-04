@@ -132,12 +132,15 @@ class Zhilian(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def update_classify(self, filename, id_str, paramsdict, repojt):
+    def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
         for cur_page in range(self.CLASSIFY_MAXPAGE):
-            paramsdict['PageIndex'] = cur_page + 1
-            results = self.classify(paramsdict)
-            if results is None:
+            postdict['PageIndex'] = cur_page + 1
+            try:
+                results = self.classify(postdict)
+            except Exception:
+                break
+            if not results:
                 break
             parts_results = []
             for result in results:
@@ -149,5 +152,5 @@ class Zhilian(precedure.base.Base):
             else:
                 add_list.extend(parts_results)
             time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list)
+        repojt.add_datas(filename, add_list, header)
         return True

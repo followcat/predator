@@ -124,22 +124,25 @@ class Jingying(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def update_classify(self, filename, id_str, postdict, repojt):
+    def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
-        for curPage in range(self.CLASSIFY_MAXPAGE):
-            postdict['curr_page'] = curPage + 1
-            results = self.classify(postdict)
-            if len(results) == 0:
+        for cur_page in range(self.CLASSIFY_MAXPAGE):
+            postdict['curr_page'] = cur_page + 1
+            try:
+                results = self.classify(postdict)
+            except Exception:
+                break
+            if not results:
                 break
             parts_results = []
             for result in results:
                 if not repojt.exists(id_str, result['id']):
                     parts_results.append(result)
-            print curPage
+            print 'current page:' + str(cur_page + 1)
             if len(parts_results) < len(results)*0.2:
                 break
             else:
                 add_list.extend(parts_results)
             time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list)
+        repojt.add_datas(filename, add_list, header)
         return True

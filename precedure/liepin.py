@@ -125,20 +125,20 @@ class Liepin(precedure.base.Base):
 
     def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
-        for curPage in range(self.CLASSIFY_MAXPAGE):
-            postdict['curPage'] = curPage + 1
+        for cur_page in range(self.CLASSIFY_MAXPAGE):
+            postdict['curPage'] = cur_page + 1
             try:
                 results = self.classify(postdict)
             except Exception:
                 break
-            if results is None:
+            if not results:
                 break
             parts_results = []
             for result in results:
                 if not repojt.exists(id_str, result['id']):
                     parts_results.append(result)
-            print curPage
-            if len(parts_results) < len(results)* 0.05:
+            print 'current page:' + str(cur_page + 1)
+            if len(parts_results) < len(results)*0.2:
                 break
             else:
                 add_list.extend(parts_results)
