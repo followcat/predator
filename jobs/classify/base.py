@@ -2,6 +2,7 @@ import utils.builtin
 import storage.jobtitles
 import downloader._urllib
 import downloader.webdriver
+import sources.mapping.tags
 
 
 class Base(object):
@@ -20,3 +21,11 @@ class Base(object):
 
     def jobgenerator(self):
         pass
+
+    def get_header(self, postdict, postinfo):
+        header = {
+            'tags': dict([(info, sources.mapping.tags.tags_generator(
+                postinfo[info])) for info in postinfo]),
+            'postdict': postdict
+        }
+        return header

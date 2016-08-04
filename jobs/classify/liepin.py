@@ -4,7 +4,6 @@ import functools
 import precedure.liepin
 import jobs.classify.base
 import storage.gitinterface
-import sources.mapping.tags
 
 
 class Liepin(jobs.classify.base.Base):
@@ -32,18 +31,13 @@ class Liepin(jobs.classify.base.Base):
                 'industrys': industrys[indu]
             }
             for id_str in selected_list:
-                print postinfo['industrys'], selected_list[id_str]
+                print postinfo['industrys'], selected_list[id_str], id_str
                 postinfo['jobtitles'] = selected_list[id_str]
                 postdict = {
                     'industrys': indu,
                     'jobtitles': id_str,
                     'curPage': 0}
-                header = {
-                    'tags': dict([(info, sources.mapping.tags.tags_generator(
-                        postinfo[info])) for info in postinfo]),
-                    'postdict': postdict
-                }
-                tags = ()
+                header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(liepin.update_classify,
                                                 postdict, self.repojt, header)
                 yield job_process
