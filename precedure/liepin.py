@@ -143,5 +143,5 @@ class Liepin(precedure.base.Base):
             else:
                 add_list.extend(parts_results)
             time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list, header, 'followcat')
+        repojt.add_datas(filename, add_list, header)
         return True

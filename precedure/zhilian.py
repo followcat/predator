@@ -149,5 +149,5 @@ class Zhilian(precedure.base.Base):
             else:
                 add_list.extend(parts_results)
             time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list, 'kabess')
+        repojt.add_datas(filename, add_list)
         return True
