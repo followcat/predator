@@ -39,6 +39,7 @@ class Liepin(jobs.classify.base.Base):
                     'curPage': 0}
                 header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(liepin.update_classify,
+                                                id_str, id_str,
                                                 postdict, self.repojt, header)
                 yield job_process
 

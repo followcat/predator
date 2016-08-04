@@ -10,9 +10,10 @@ from sources.jingying import *
 cookies_str = utils.builtin.loadfile('cookies.data').rstrip('\n')
 ul_downloader = downloader._urllib.Urllib()
 ul_downloader.set_cookies(cookies_str)
+jingying = precedure.jingying.Jingying(uldownloader=ul_downloader)
+
 repo = storage.fsinterface.FSInterface('jingying')
 repojt = storage.jobtitles.JobTitles(repo)
-jingying = precedure.jingying.Jingying(uldownloader=ul_downloader)
 #start from industry
 industry_list = [
 '47', #医疗设备/器械
@@ -64,4 +65,4 @@ for _area in company_area_list:
         print c_name
         postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
                     'curr_page': '0'}
-        jingying.update_classify(_area, postdict, repojt)
+        jingying.update_classify(_area, _area, postdict, repojt)

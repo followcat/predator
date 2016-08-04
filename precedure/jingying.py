@@ -12,6 +12,8 @@ import precedure.base
 class Jingying(precedure.base.Base):
 
     BASE_URL='http://www.51jingying.com'
+    CLASSIFY_SLEEP = 10
+    CLASSIFY_MAXPAGE = 20
 
     post_data = {
         'url': '/spy/searchmanager.php?act=getSpySearch',
@@ -122,9 +124,9 @@ class Jingying(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def update_classify(self, id_str, postdict, repojt, MAX_PAGE=20, sleeptime=10):
+    def update_classify(self, filename, id_str, postdict, repojt):
         add_list = []
-        for curPage in range(MAX_PAGE):
+        for curPage in range(self.CLASSIFY_MAXPAGE):
             postdict['curr_page'] = curPage + 1
             results = self.classify(postdict)
             if len(results) == 0:
@@ -138,6 +140,6 @@ class Jingying(precedure.base.Base):
                 break
             else:
                 add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'zhangqunyun')
+            time.sleep(self.CLASSIFY_SLEEP)
+        repojt.add_datas(filename, add_list, 'zhangqunyun')
         return True

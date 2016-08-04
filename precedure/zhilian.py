@@ -14,6 +14,8 @@ class NocontentCVException(Exception):
 class Zhilian(precedure.base.Base):
 
     BASE_URL='http://h.highpin.cn'
+    CLASSIFY_SLEEP = 5
+    CLASSIFY_MAXPAGE = 100
 
     urls_data = {
         'Q':'',
@@ -130,10 +132,9 @@ class Zhilian(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def update_classify(self, paramsdict, repojt, MIN_PAGE=0, MAX_PAGE=100, sleeptime=5):
+    def update_classify(self, filename, id_str, paramsdict, repojt):
         add_list = []
-        id_str = paramsdict['JobType']
-        for cur_page in range(MIN_PAGE, MAX_PAGE):
+        for cur_page in range(self.CLASSIFY_MAXPAGE):
             paramsdict['PageIndex'] = cur_page + 1
             results = self.classify(paramsdict)
             if results is None:
@@ -147,6 +148,6 @@ class Zhilian(precedure.base.Base):
                 break
             else:
                 add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'kabess')
+            time.sleep(self.CLASSIFY_SLEEP)
+        repojt.add_datas(filename, add_list, 'kabess')
         return True

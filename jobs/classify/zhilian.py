@@ -91,4 +91,5 @@ for industry_item in industry_list:
                 'JobType':jobtype_item[0],
                 'PageIndex': 0
             }
-        zhilian.update_classify(paramsdict, repojt)
+        id_str = paramsdict['JobType']
+        zhilian.update_classify(id_str, id_str, paramsdict, repojt)

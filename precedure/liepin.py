@@ -14,6 +14,8 @@ class NocontentCVException(Exception):
 class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
+    CLASSIFY_SLEEP = 5
+    CLASSIFY_MAXPAGE = 100
 
     urls_post = {
         'form_submit':1,
@@ -121,10 +123,9 @@ class Liepin(precedure.base.Base):
             fp.write(text)
         raise Exception(text)
 
-    def update_classify(self, postdict, repojt, header=None, MAX_PAGE=100, sleeptime=5):
+    def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
-        id_str = postdict['jobtitles']
-        for curPage in range(MAX_PAGE):
+        for curPage in range(self.CLASSIFY_MAXPAGE):
             postdict['curPage'] = curPage + 1
             try:
                 results = self.classify(postdict)
@@ -141,6 +142,6 @@ class Liepin(precedure.base.Base):
                 break
             else:
                 add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, header, 'followcat')
+            time.sleep(self.CLASSIFY_SLEEP)
+        repojt.add_datas(filename, add_list, header, 'followcat')
         return True

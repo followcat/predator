@@ -4,6 +4,8 @@ class NotImplementedInterface(Exception):
 class Base(object):
 
     BASE_URL=''
+    CLASSIFY_SLEEP = 5
+    CLASSIFY_MAXPAGE = 20
 
     def __init__(self):
         self.url_downloader = url_downloader
