@@ -33,8 +33,7 @@ class Jingying(jobs.classify.base.Base):
         ]
         for id_str in industry_list:
             print localdatajobs['industry'][id_str]
-            postdict = {'indtype': id_str,
-                        'curr_page': '0'}
+            postdict = {'indtype': id_str}
             job_process = functools.partial(jingying.update_classify,
                                             id_str, id_str,
                                             postdict, self.repojt)

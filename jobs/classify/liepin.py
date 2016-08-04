@@ -35,8 +35,7 @@ class Liepin(jobs.classify.base.Base):
                 postinfo['jobtitles'] = selected_list[id_str]
                 postdict = {
                     'industrys': indu,
-                    'jobtitles': id_str,
-                    'curPage': 0}
+                    'jobtitles': id_str}
                 header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(liepin.update_classify,
                                                 id_str, id_str,

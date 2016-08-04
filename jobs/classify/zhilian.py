@@ -88,8 +88,7 @@ for industry_item in industry_list:
         print "正在抓取的职位: " + str(jobtype_item[1])
         paramsdict = {
                 'CompanyIndustry':industry_item[0],
-                'JobType':jobtype_item[0],
-                'PageIndex': 0
+                'JobType':jobtype_item[0]
             }
         id_str = paramsdict['JobType']
         zhilian.update_classify(id_str, id_str, paramsdict, repojt)
