@@ -402,10 +402,10 @@ tags = {
     u'检测': 'Quality',
     u'化妆品': 'Cosmetics',
     u'预定': 'Reservation',
-    u'预算': 'Bridge',
+    u'预算': 'Budget',
     u'设计师': 'Designer',
     u'无线': 'RF',
-    u'预': 'Budget',
+    u'结算': 'Cost',
     u'数据分析': 'Data',
     u'科研': 'Research',
     u'仓库': 'Warehouse',
@@ -477,6 +477,10 @@ tags = {
     u'运维': 'Operation',
     u'技术': 'Technical',
     u'支持': 'Support',
+    u'计算机': 'Computer',
+    u'预算师': 'Estimator',
+    u'工业': 'Industrial',
+    u'水利': 'Water Conservancy',
 }
 
 
