@@ -5,6 +5,8 @@ import jieba
 tags = {
     u'医疗': 'Medicine',
     u'器械': 'Equipment',
+    u'生物': 'Biotechnology',
+    u'制药': 'Pharmaceuticals',
     u'研发': 'R&D',
     u'药品': 'drug',
     u'生产': 'Manufacturing',
