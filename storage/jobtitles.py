@@ -72,9 +72,11 @@ class JobTitles(object):
             self._initclassify(classify_id)
             self.table[classify_id] = utils.builtin.load_yaml(self.interface_path, classify_id+'.yaml')
         exists = False
-        if data_id in self.table[classify_id]:
-            exists = True
-        return exists
+        if 'datas' in self.table[classify_id]:
+            datas = self.table[classify_id]['datas']
+        else:
+            datas = self.table[classify_id]
+        return data_id in datas
 
     def _initclassify(self, classify_id):
         filename = classify_id + '.yaml'
