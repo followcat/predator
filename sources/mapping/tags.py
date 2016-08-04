@@ -430,7 +430,7 @@ tags = {
     u'动物': 'Animal',
     u'技术员': 'Engineer',
     u'培训师': 'Trainers',
-    u'射频': '',
+    u'射频': 'RF',
     u'文字编辑': 'Copy',
     u'指导': 'Director',
     u'期货': 'Futures',
