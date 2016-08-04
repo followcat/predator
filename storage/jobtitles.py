@@ -28,15 +28,24 @@ class JobTitles(object):
         self.modify_data(classify_id, yamldata)
         return removed
 
-    def add_datas(self, classify_id, datas, committer=None):
+    def add_datas(self, classify_id, datas, header, committer=None):
+        if header is None:
+            header = dict()
         filename = classify_id + '.yaml'
         file_path = os.path.join(self.interface_path, filename)
 
         self._initclassify(classify_id)
         table = utils.builtin.load_yaml(self.interface_path, filename)
 
+        if 'datas' not in table:
+            new_table = dict()
+            new_table['datas'] = dict()
+            new_table['datas'].update(table)
+            table = new_table
+        table.update(header)
         for data in datas:
-            table[data['id']] = data
+            table['datas'][data['id']] = data
+
         dump_data = yaml.safe_dump(table, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
                                 message="Add to classify id :" + filename,

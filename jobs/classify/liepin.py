@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 import functools
 
 import precedure.liepin
 import jobs.classify.base
 import storage.gitinterface
+import sources.mapping.tags
 
 
 class Liepin(jobs.classify.base.Base):
@@ -11,6 +13,9 @@ class Liepin(jobs.classify.base.Base):
 
     def jobgenerator(self):
         liepin = precedure.liepin.Liepin(uldownloader=self.downloader)
+        industrys = {
+            290: u'生物/制药/医疗器械'
+        }
         selected_list = {
             '290094': u'医疗器械研发',
             '290097': u'医疗器械生产/质量管理',
@@ -22,13 +27,26 @@ class Liepin(jobs.classify.base.Base):
             '050080': u'体系工程师/审核员',
             '050020': u'质量管理/测试主管(QA/QC主管)',
         }
-        for id_str in selected_list:
-            print selected_list[id_str]
-            postdict = {'industrys': 290,
-                        'jobtitles': id_str,
-                        'curPage': 0}
-            job_process = functools.partial(liepin.update_classify, postdict, self.repojt)
-            yield job_process
+        for indu in industrys:
+            postinfo = {
+                'industrys': industrys[indu]
+            }
+            for id_str in selected_list:
+                print postinfo['industrys'], selected_list[id_str]
+                postinfo['jobtitles'] = selected_list[id_str]
+                postdict = {
+                    'industrys': indu,
+                    'jobtitles': id_str,
+                    'curPage': 0}
+                header = {
+                    'tags': dict([(info, sources.mapping.tags.tags_generator(
+                        postinfo[info])) for info in postinfo]),
+                    'postdict': postdict
+                }
+                tags = ()
+                job_process = functools.partial(liepin.update_classify,
+                                                postdict, self.repojt, header)
+                yield job_process
 
 
 repo = storage.gitinterface.GitInterface('liepin')

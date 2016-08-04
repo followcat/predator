@@ -121,7 +121,7 @@ class Liepin(precedure.base.Base):
             fp.write(text)
         raise Exception(text)
 
-    def update_classify(self, postdict, repojt, MAX_PAGE=100, sleeptime=5):
+    def update_classify(self, postdict, repojt, header=None, MAX_PAGE=100, sleeptime=5):
         add_list = []
         id_str = postdict['jobtitles']
         for curPage in range(MAX_PAGE):
@@ -142,5 +142,5 @@ class Liepin(precedure.base.Base):
             else:
                 add_list.extend(parts_results)
             time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'followcat')
+        repojt.add_datas(id_str, add_list, header, 'followcat')
         return True
