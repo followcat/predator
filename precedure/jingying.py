@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import time
+import json
 
 import bs4
-import json
 
 import utils.tools
 import precedure.base

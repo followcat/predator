@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import glob
-import os.path
+
 import time
-import bs4
 import urllib
+
+import bs4
 
 import utils.tools
 import precedure.base
