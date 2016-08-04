@@ -14,6 +14,7 @@ class NocontentCVException(Exception):
 class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
+    PAGE_VAR = 'curPage'
     CLASSIFY_SLEEP = 5
     CLASSIFY_MAXPAGE = 100
 
@@ -117,31 +118,3 @@ class Liepin(precedure.base.Base):
         else:
             result = self.parse_cv(htmlsource)
         return result
-
-    def logException(self, text):
-        with open('/tmp/classification.log', 'a+') as fp:
-            fp.write(text)
-        raise Exception(text)
-
-    def update_classify(self, filename, id_str, postdict, repojt, header=None):
-        add_list = []
-        for cur_page in range(self.CLASSIFY_MAXPAGE):
-            postdict['curPage'] = cur_page + 1
-            try:
-                results = self.classify(postdict)
-            except Exception:
-                break
-            if not results:
-                break
-            parts_results = []
-            for result in results:
-                if not repojt.exists(id_str, result['id']):
-                    parts_results.append(result)
-            print 'current page:' + str(cur_page + 1)
-            if len(parts_results) < len(results)*0.2:
-                break
-            else:
-                add_list.extend(parts_results)
-            time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list, header)
-        return True
