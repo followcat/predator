@@ -17,7 +17,7 @@ import urllib
 class Yingcai(precedure.base.Base):
 
     BASE_URL=''
-    PAGE_VAR = 'curPage'
+    PAGE_VAR = 'page'
     CLASSIFY_SLEEP = 5
     CLASSIFY_MAXPAGE = 150
 
@@ -83,7 +83,7 @@ class Yingcai(precedure.base.Base):
                 query_str = utils.tools.queryString(element_a.get('href'))
                 storage_data['id']=data_lists[index].attrs['cvid']
                 storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
-                storage_data['info'].append((data_lists[index].find(class_='sex').string).decode('utf-8'))
+                #storage_data['info'].append((data_lists[index].find(class_='sex').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
