@@ -17,6 +17,9 @@ import urllib
 class Yingcai(precedure.base.Base):
 
     BASE_URL=''
+    PAGE_VAR = 'curPage'
+    CLASSIFY_SLEEP = 5
+    CLASSIFY_MAXPAGE = 150
 
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
@@ -109,22 +112,3 @@ class Yingcai(precedure.base.Base):
                 self.logException(htmlsource)
         return result
 
-    def update_classify(self, paramsdict, industry,repojt, MIN_PAGE, MAX_PAGE, sleeptime=60):
-        add_list = []
-        id_str = industry
-        for cur_page in range(MIN_PAGE, MAX_PAGE):
-            paramsdict['page'] = cur_page + 1
-            results = self.classify(paramsdict)
-            if results is None:
-                break
-            parts_results = []
-            for result in results:
-               if not repojt.exists(id_str, result['id']):
-                   parts_results.append(result)
-            print 'current page:' + str(cur_page + 1)
-            if len(parts_results) < len(results)*0.2:
-                break
-            else:
-                add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        return add_list
