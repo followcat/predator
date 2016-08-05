@@ -481,6 +481,7 @@ tags = {
     u'预算师': 'Estimator',
     u'工业': 'Industrial',
     u'水利': 'Water Conservancy',
+    u'猎头': 'Headhunter'
 }
 
 
