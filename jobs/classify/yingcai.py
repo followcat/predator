@@ -7,7 +7,7 @@ import precedure.yingcai
 import storage.fsinterface
 import jobs.classify.base
 
-from sources.yingcai_source import *
+from sources.yingcai import *
 from jobs.yingcai_needed import *
 
 
@@ -32,7 +32,7 @@ class Yingcai(jobs.classify.base.Base):
 
     profilepath_index=0
     FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
-
+    
     cookies_file = None
     ff_profile = FF_PROFILE_PATH
 
@@ -54,7 +54,7 @@ class Yingcai(jobs.classify.base.Base):
                             }
                     #postinfo['jobtitles'] = industry_list[industry][job][position]['cn']
                     print '爬取行业：{0}:{1}'.format(industry, postinfo['industrys'])
-                    print '爬取职位：{0}:{1}'.format(job_item,postinfo['jobtitles'])
+                    #print '爬取职位：{0}:{1}'.format(job_item,postinfo['jobtitles'])
                     getdict = {
                             'jobType':1,
                             'live':'1,1,1',
@@ -65,12 +65,13 @@ class Yingcai(jobs.classify.base.Base):
                             'industrys': industry,
                             'jobtitles': job_item
                             }
+                    #import ipdb;ipdb.set_trace()
                     header = self.get_header(postdict, postinfo)
                     print "header:",header
                     job_process = functools.partial(yingcai.update_classify,
                                                     industry,industry,
                                                     getdict,self.repojt,header)
-                    yield job_process
+                    yield job_process                                
                     current_time = datetime.datetime.now()
                     duration=(current_time-start_time).seconds
                     if duration > 1800:
