@@ -41,7 +41,6 @@ class Yingcai(jobs.classify.base.Base):
         print start_time
         yingcai=precedure.yingcai.Yingcai(wbdownloader=self.downloader)
         for industry in job_list.keys():
-            #import ipdb;ipdb.set_trace()
             if len(job_list[industry].keys())==0:
                 job_list[industry]=industry_list[industry]
             for job in job_list[industry].keys():
@@ -62,15 +61,13 @@ class Yingcai(jobs.classify.base.Base):
                             'page':'0'
                             }
                     postdict = {
-                            'industrys': industry,
-                            'jobtitles': job_item
+                            'industrys': industry
                             }
-                    #import ipdb;ipdb.set_trace()
                     header = self.get_header(postdict, postinfo)
                     print "header:",header
                     job_process = functools.partial(yingcai.update_classify,
-                                                    industry,industry,
-                                                    getdict,self.repojt,header)
+                                                    industry, industry,
+                                                    getdict, self.repojt, header)
                     yield job_process                                
                     current_time = datetime.datetime.now()
                     duration=(current_time-start_time).seconds
