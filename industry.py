@@ -2,7 +2,7 @@
 import jieba
 
 from sources.yingcai_industry import industry_list as yingcai_industry
-from sources.liepin_wq_dict import industry_list as liepin_industry
+from sources.liepin_industry import industry_list as liepin_industry
 from sources.jingying_industry import industry_list as jingying_industry
 from sources.zhilian_industry import industry_list as zhilian_industry
 
