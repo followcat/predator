@@ -7,6 +7,9 @@ import storage.fsinterface
 
 from sources.jingying import *
 
+from sources.industry_sources import *
+from sources.industry_needed import *
+from sources.industry_id import *
 
 class Jingying(jobs.classify.base.Base):
 
@@ -14,6 +17,7 @@ class Jingying(jobs.classify.base.Base):
 
     def jobgenerator(self):
         jingying = precedure.jingying.Jingying(uldownloader=self.downloader)
+        '''
         industry_list = [
         '47', #医疗设备/器械
         '01', #计算机软件
@@ -29,17 +33,25 @@ class Jingying(jobs.classify.base.Base):
         '55', #航天/航空
         '36', #电气/电力/水利
         '61', #新能源
-        ]
-        for id_str in industry_list:
-            chs_indtype = localdatajobs['industry'][id_str]
-            print chs_indtype
-            postdict = {'indtype': id_str}
-            postinfo = {'indtype': chs_indtype}
-            header = self.get_header(postdict, postinfo)
-            job_process = functools.partial(jingying.update_classify,
-                                            id_str, id_str,
-                                            postdict, self.repojt, header)
-            yield job_process
+        ]'''
+        for industry in industry_needed:
+            industry = industry.encode('utf-8')
+            industryid = industryID[industry]
+            jingying_industry = industry_dict[industry]['jinying']
+            if len(jingying_industry) == 0:
+                raise AttributeError('input industry is empty!')
+            for index in jingying_industry:
+                industry_id = index[0]
+                industry_value = index[1]
+                filename = industryid + '_' +industry_id
+                print industry_value
+                postdict = {'indtype': industry_id}
+                postinfo = {'indtype': industry_value}
+                header = self.get_header(postdict, postinfo)
+                job_process = functools.partial(jingying.update_classify,
+                                                filename, filename,
+                                                postdict, self.repojt, header)
+                yield job_process
 
         #Then go on with company names group by area
         company_area_list = [
