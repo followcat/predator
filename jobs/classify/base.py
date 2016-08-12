@@ -26,8 +26,7 @@ class Base(object):
 
     def get_header(self, postdict, postinfo):
         header = {
-            'tags': dict([(info, sources.mapping.tags.tags_generator(
-                postinfo[info])) for info in postinfo]),
+            'tags' :  postinfo,
             'postdict': postdict
         }
         return header
