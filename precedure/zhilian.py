@@ -61,7 +61,7 @@ class Zhilian(precedure.base.Base):
         params_str = urllib.urlencode(tmp_data)
         download_url = searchurl + params_str
         print 'download url: ' + download_url
-        return self.url_downloader.get(download_url)
+        return self.wb_downloader.getsource(download_url)
 
     def urlget_cv(self, url):
         download_url = 'http://h.highpin.cn' + url
