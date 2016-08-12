@@ -5,13 +5,18 @@ import precedure.zhilian
 import jobs.classify.base
 import storage.gitinterface
 
+from sources.industry_sources import *
+from sources.industry_needed import *
+from sources.industry_id import *
 
 class Zhilian(jobs.classify.base.Base):
 
-    cookies_file = 'cookies.data'
+    ff_profile = '/home/winky/.mozilla/firefox/rikqqhcg.default'
 
     def jobgenerator(self):
-        zhilian = precedure.zhilian.Zhilian(url_downloader=self.downloader)
+        
+        zhilian = precedure.zhilian.Zhilian(wbdownloader = self.downloader)
+        '''
         industry_list = [
                 # ['129900', '大型设备/机电设备/重工业'],
                 # ['121200', '仪器仪表及工业自动化'],
@@ -32,6 +37,7 @@ class Zhilian(jobs.classify.base.Base):
                 ['201300', '检验/检测/认证'],
                 ['201400', '中介服务/外包服务']
                         ]
+        '''
         jobtype_list = [
                 ['160000', '全部(计算机/网络技术)'],
                 ['410', '测试/可靠性工程师(电子/电气/半导体/仪器仪表)'],
@@ -80,23 +86,33 @@ class Zhilian(jobs.classify.base.Base):
                 # ['128', '猎头顾问/助理(人力资源)'],
                 # ['255', '科研人员(公务员/事业单位/科研机构)']
                         ]
-        for industry_item in industry_list:
-            print '抓取的行业：' + str(industry_item[1])
-            postinfo = {
-                'industrys': industry_item[1]
-            }
-            for jobtype_item in jobtype_list:
-                print "正在抓取的职位: " + str(jobtype_item[1])
-                paramsdict = {
-                        'CompanyIndustry':industry_item[0],
-                        'JobType':jobtype_item[0],
-                    }
-                header = self.get_header(paramsdict, postinfo)
-                print header
-                job_process=functools.partial(zhilian.update_classify,
-                                            industry_item[0], industry_item[0],
-                                             paramsdict, self.repojt,header)
-                yield job_process
+        for industry in industry_needed:
+            industry = industry.encode('utf-8')
+            industryid = industryID[industry]
+            zhilian_industry = industry_dict[industry]['zhilian']
+            if len(zhilian_industry) == 0:
+                raise AttributeError('input industry is empty!')
+            for index in zhilian_industry:
+                industry_id = index[0]
+                industry_value = index[1]
+                filename = industryid + '_' +industry_id
+                print '抓取的行业：' + industry_value
+                postinfo = {
+                    'industrys': industry_value
+                            }
+                for jobtype_item in jobtype_list:
+                    print "正在抓取的职位: " + str(jobtype_item[1])
+                    paramsdict = {
+                            'CompanyIndustry':industry_id,
+                            'JobType':jobtype_item[0],
+                            'PageIndex':0
+                        }
+                    header = self.get_header(paramsdict, postinfo)
+                    print header
+                    job_process = functools.partial(zhilian.update_classify,
+                                                filename, filename,
+                                                 paramsdict, self.repojt,header)
+                    yield job_process
 
 repo = storage.gitinterface.GitInterface('zhilian')
 instance = Zhilian(repo)
