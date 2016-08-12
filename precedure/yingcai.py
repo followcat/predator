@@ -18,7 +18,7 @@ class Yingcai(precedure.base.Base):
 
     BASE_URL=''
     PAGE_VAR = 'page'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 60
     CLASSIFY_MAXPAGE = 150
 
     def __init__(self, url_downloader=None, wbdownloader=None):
@@ -57,16 +57,13 @@ class Yingcai(precedure.base.Base):
         else:
             for index in range(len(data_lists)):
                 storage_data = { 'peo': [], 'info': [] }
-                workyear_text= data_lists[index].find(class_='workYear').string
-                yearmatch=re.search('(\d+).*',workyear_text)
                 age_text=data_lists[index].find(class_='age').string
                 agematch=re.search('(\d+).*',age_text)
                 try:
-                    workyear=int(yearmatch.group(1))
                     age=int(agematch.group(1))
                 except Exception:
                     continue
-                if workyear < 3 or age < 25:
+                if age < 25:
                     continue
                 storage_data['date'] = time.time()
                 storage_data['recommend'] = ''
