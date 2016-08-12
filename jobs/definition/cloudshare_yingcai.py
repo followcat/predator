@@ -11,12 +11,12 @@ import utils.builtin
 import precedure.yingcai
 import jobs.definition.cloudshare
 
-industry_yamls = ['1001', #计算机／互联网／通信／电子
-                  '1002', #销售／客服／技术支持
-                  '1003', #会计／金融／银行／保险
-                  '1004', #生产／营运／采购／物流
+industry_yamls = [#'1001', #计算机／互联网／通信／电子
+                  #'1002', #销售／客服／技术支持
+                  #'1003', #会计／金融／银行／保险
+                  #'1004', #生产／营运／采购／物流
                   '1005', #生物／制药／医疗／护理
-                  '1006', #广告／市场／媒体／艺术
+                  #'1006', #广告／市场／媒体／艺术
                   '1007', #建筑／房地产
                   '1008', #人事／行政／高级管理
                   '1009', #咨询／法律／教育／科研
@@ -46,7 +46,8 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
         for _classify_id in industry_yamls:
             print _classify_id
             _file = _classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('yingcai/JOBTITLES', _file)
+            yamldata = utils.builtin.load_yaml('yingcai/JOBTITLES', _file)['datas']
+           #import ipdb;ipdb.set_trace()
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['info'][-1],
                                reverse=True)
