@@ -104,8 +104,7 @@ class Zhilian(jobs.classify.base.Base):
                     print "正在抓取的职位: " + str(jobtype_item[1])
                     paramsdict = {
                             'CompanyIndustry':industry_id,
-                            'JobType':jobtype_item[0],
-                            'PageIndex':0
+                            'JobType':jobtype_item[0]
                         }
                     header = self.get_header(paramsdict, postinfo)
                     print header
