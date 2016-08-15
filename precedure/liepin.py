@@ -5,7 +5,6 @@ import time
 import bs4
 
 import utils.tools
-import utils.builtin
 import precedure.base
 
 
@@ -13,6 +12,11 @@ class NocontentCVException(Exception):
     pass
 
 class Liepin(precedure.base.Base):
+
+    BASE_URL='https://h.liepin.com'
+    PAGE_VAR = 'curPage'
+    CLASSIFY_SLEEP = 5
+    CLASSIFY_MAXPAGE = 100
 
     urls_post = {
         'form_submit':1,
@@ -45,13 +49,8 @@ class Liepin(precedure.base.Base):
         return self.ul_downloader.post(searchurl, data=tmp_post)
 
     def urlget_cv(self, url):
-        download_url = 'https://h.liepin.com' + url
+        download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
-
-    def webdriverget_cv(self, url):
-        download_url = 'https://h.liepin.com' + url
-        htmlsource = self.wb_downloader.getsource(download_url)
-        return htmlsource
 
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
@@ -112,72 +111,10 @@ class Liepin(precedure.base.Base):
         return result
 
     def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
+        download_url = BASE_URL + url
+        htmlsource = self.wb_downloader.getsource(download_url)
         if u'处于猎聘网系统审核中' in htmlsource:
             raise NocontentCVException
         else:
             result = self.parse_cv(htmlsource)
         return result
-
-    def logException(self, text):
-        with open('/tmp/classification.log', 'a+') as fp:
-            fp.write(text)
-        raise Exception(text)
-
-    def update_classify(self, postdict, repojt, MAX_PAGE=100, sleeptime=5):
-        add_list = []
-        id_str = postdict['jobtitles']
-        for curPage in range(MAX_PAGE):
-            postdict['curPage'] = curPage + 1
-            try:
-                results = self.classify(postdict)
-            except Exception:
-                break
-            if results is None:
-                break
-            parts_results = []
-            for result in results:
-                if not repojt.exists(id_str, result['id']):
-                    parts_results.append(result)
-            print curPage
-            if len(parts_results) < len(results)* 0.05:
-                break
-            else:
-                add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'followcat')
-        return True
-
-
-def get_classify():
-    import downloader._urllib
-    import storage.jobtitles
-    import storage.gitinterface
-    from sources.liepin import localdatajobs
-    cookies_str = utils.builtin.loadfile('cookies.data')
-    ul_downloader = downloader._urllib.Urllib()
-    ul_downloader.set_cookies(cookies_str)
-    repo = storage.gitinterface.GitInterface('liepin')
-    repojt = storage.jobtitles.JobTitles(repo)
-    liepin = Liepin(uldownloader=ul_downloader)
-    selected_list = [
-    '290094', #医疗器械研发
-    '290097', #医疗器械生产/质量管理
-    '060010', #市场总监
-    '020010', #销售总监
-    '040020', #项目经理/主管
-    '040040', #项目专员/助理
-    '050010', #质量管理/测试经理(QA/QC经理)
-    '050080', #体系工程师/审核员
-    '050020', #质量管理/测试主管(QA/QC主管)
-    ]
-    for id_str in selected_list:
-        print localdatajobs['jobtitles'][id_str][0]
-        postdict = {'industrys': 290,
-                    'jobtitles': id_str,
-                    'curPage': 0}
-        liepin.update_classify(postdict, repojt)
-
-
-if __name__ == '__main__':
-    get_classify()

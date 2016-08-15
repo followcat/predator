@@ -14,6 +14,8 @@ class Cloudshare(jobs.definition.base.Base):
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)
+        self.jtrepo = storage.gitinterface.GitInterface(self.JTDB_PATH)
+        self.jtstorage = storage.jobtitles.JobTitles(self.jtrepo)
 
     def cloudshare_yaml_template(self):
         template = {

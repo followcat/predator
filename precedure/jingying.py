@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import time
-
-import bs4
 import json
 
-import utils.tools
-import utils.builtin
-import precedure.base
-import downloader._urllib
-import storage.fsinterface
-import storage.jobtitles
+import bs4
 
-from sources.jingying import *
+import utils.tools
+import precedure.base
 
 
 class Jingying(precedure.base.Base):
+
+    BASE_URL='http://www.51jingying.com'
+    PAGE_VAR = 'curr_page'
+    CLASSIFY_SLEEP = 10
+    CLASSIFY_MAXPAGE = 20
 
     post_data = {
         'url': '/spy/searchmanager.php?act=getSpySearch',
@@ -60,13 +59,8 @@ class Jingying(precedure.base.Base):
         return self.ul_downloader.post(searchurl, data=tmp_post)
 
     def urlget_cv(self, url):
-        download_url = 'http://www.51jingying.com' + url
+        download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
-
-    def webdriverget_cv(self, url):
-        download_url = 'http://www.51jingying.com' + url
-        htmlsource = self.wb_downloader.getsource(download_url)
-        return htmlsource
 
     def parse_classify(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
@@ -125,98 +119,3 @@ class Jingying(precedure.base.Base):
             pass
         result = self.parse_classify(htmlsource)
         return result
-
-    def cv(self, url):
-        htmlsource = self.webdriverget_cv(url)
-        result = self.parse_cv(htmlsource)
-        return result
-
-    def logException(self, text):
-        with open('/tmp/classification.log', 'a+') as fp:
-            fp.write(text)
-        raise Exception
-
-    def update_classify(self, id_str, postdict, repojt, MAX_PAGE=20, sleeptime=10):
-        add_list = []
-        for curPage in range(MAX_PAGE):
-            postdict['curr_page'] = curPage + 1
-            results = self.classify(postdict)
-            if len(results) == 0:
-                break
-            parts_results = []
-            for result in results:
-                if not repojt.exists(id_str, result['id']):
-                    parts_results.append(result)
-            print curPage
-            if len(parts_results) < len(results)*0.2:
-                break
-            else:
-                add_list.extend(parts_results)
-            time.sleep(sleeptime)
-        repojt.add_datas(id_str, add_list, 'zhangqunyun')
-        return True
-
-
-def get_classify():
-    cookies_str = utils.builtin.loadfile('cookies.data').rstrip('\n')
-    ul_downloader = downloader._urllib.Urllib()
-    ul_downloader.set_cookies(cookies_str)
-    repo = storage.fsinterface.FSInterface('jingying')
-    repojt = storage.jobtitles.JobTitles(repo)
-    jingying = Jingying(uldownloader=ul_downloader)
-    #start from industry
-    industry_list = [
-    '47', #医疗设备/器械
-    '01', #计算机软件
-    '37', #计算机硬件
-    '38', #计算机服务(系统、数据服务、维修)
-    '31', #通信/电信/网络设备
-    '35', #仪器仪表/工业自动化
-    '14', #机械/设备/重工
-    '52', #检测，认证
-    '07', #专业服务(咨询、人力资源、财会)
-    '24', #学术/科研
-    '21', #交通/运输/物流
-    '55', #航天/航空
-    '36', #电气/电力/水利
-    '55', #航天/航空
-    '61', #新能源
-    ]
-    for id_str in industry_list:
-        print localdatajobs['industry'][id_str]
-        postdict = {'indtype': id_str,
-                    'curr_page': '0'}
-        jingying.update_classify(id_str, postdict, repojt)
-
-    #Then go on with company names group by area
-    company_area_list = [
-        'GuangDong',        #广东
-        'ShangHai',         #上海
-        'JiangSu',          #江苏
-        'BeiJing',          #北京
-        'ZheJiang',         #浙江
-        'HuNan',            #湖南
-        'AnHui',            #安徽
-        'JiangXi',          #江西
-        'GuangXi',          #广西
-        'SiChuan',          #四川
-        'NorthEast',        #东北
-        'ShanDong',         #山东
-        'TianJin',          #天津
-        'ShanXi(Shan)',     #陕西（陕）
-        'ShanXi(Jin)',      #山西（晋）
-        'HeBei',            #河北
-        'HuBei',            #湖北
-        'FuJian',           #福建
-        'Others',           #其他
-        ]
-    for _area in company_area_list:
-        for c_name in localdatajobs['company_name'][_area]:
-            print c_name
-            postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                        'curr_page': '0'}
-            jingying.update_classify(_area, postdict, repojt)
-
-
-if __name__ == '__main__':
-    get_classify()

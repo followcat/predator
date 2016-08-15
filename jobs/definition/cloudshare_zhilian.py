@@ -23,7 +23,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
     def jobgenerator(self, industry_yamls):
         for _file in industry_yamls:
             #_file = _classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)
+            yamldata = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)['datas']
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)

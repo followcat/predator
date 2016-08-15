@@ -9,15 +9,19 @@ import downloader.webdriver
 
 class Base(object):
 
-    CVDB_PATH = 'default_webdrivercv'
-    FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/mtj6ft0d.default'
+    JTDB_PATH = 'sourcename'
+    CVDB_PATH = 'output/sourcename'
+
+    FF_PROFILE_PATH = '/home/user/.mozilla/firefox/mtj6ft0d.default'
     PRECEDURE_CLASS = precedure.base.Base
 
     def __init__(self):
-        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
+        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.cvrepo = storage.gitinterface.GitInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
+        self.jtrepo = storage.gitinterface.GitInterface(self.JTDB_PATH)
+        self.jtstorage = storage.jobtitles.JobTitles(self.jtrepo)
 
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
@@ -27,6 +31,9 @@ class Base(object):
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
         result = True
+
+    def get_wb_downloader(self, profile_path):
+        return downloader.webdriver.Webdriver(profile_path)
 
     def jobgenerator(self):
         pass
