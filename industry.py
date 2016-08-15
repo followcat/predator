@@ -164,7 +164,6 @@ industry_list = [
 for process_industry in industry_list:
     print process_industry[0]
     final_dict = Merge(process_industry[0],industrylist,final_dict,process_industry[1])
-print final_dict
 
 filepath = '/home/winky/predator/sources/source.py'
 sources=open(filepath,'w')
@@ -172,45 +171,16 @@ sources.write('#encoding: utf-8\n')
 sources.write('industry_dict = {\n')
 for key1 in final_dict.keys():
     sources.write('\t\'{0}\':{1}\n'.format(key1,'{'))
-    sources.write('\t\t\'yingcai\': [')
-    for index in range(len(final_dict[key1]['yingcai'])):
-        if index != (len(final_dict[key1]['yingcai'])-1):
-            sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1]['yingcai'][index][0], 
-                                                    final_dict[key1]['yingcai'][index][1]))
-        else:
-            sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1]['yingcai'][index][0], 
-                                                    final_dict[key1]['yingcai'][index][1]))
-    sources.write('],\n')
-
-    sources.write('\t\t\'liepin\': [')
-    for index in range(len(final_dict[key1]['liepin'])):
-        if index != (len(final_dict[key1]['liepin'])-1):
-            sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1]['liepin'][index][0], 
-                                                    final_dict[key1]['liepin'][index][1]))
-        else:
-            sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1]['liepin'][index][0], 
-                                                    final_dict[key1]['liepin'][index][1]))
-    sources.write('],\n')
-
-    sources.write('\t\t\'jingying\': [')
-    for index in range(len(final_dict[key1]['jingying'])):
-        if index != (len(final_dict[key1]['jingying'])-1):
-            sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1]['jingying'][index][0], 
-                                                    final_dict[key1]['jingying'][index][1]))
-        else:
-            sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1]['jingying'][index][0], 
-                                                    final_dict[key1]['jingying'][index][1]))
-    sources.write('],\n')
-
-    sources.write('\t\t\'zhilian\': [')
-    for index in range(len(final_dict[key1]['zhilian'])):
-        if index != (len(final_dict[key1]['zhilian'])-1):
-            sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1]['zhilian'][index][0], 
-                                                    final_dict[key1]['zhilian'][index][1]))
-        else:
-            sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1]['zhilian'][index][0], 
-                                                    final_dict[key1]['zhilian'][index][1]))
-    sources.write(']\n')
+    for key2 in final_dict[key1].keys():
+        sources.write('\t\t\'{}\': ['.format(key2))
+        for index in range(len(final_dict[key1][key2])):
+            if index != (len(final_dict[key1][key2])-1):
+                sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1][key2][index][0], 
+                                                        final_dict[key1][key2][index][1]))
+            else:
+                sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1][key2][index][0], 
+                                                        final_dict[key1][key2][index][1]))
+        sources.write('],\n')
     sources.write('\t\t},\n')
 sources.write('\t}\n')
 
