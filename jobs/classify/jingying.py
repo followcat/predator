@@ -17,43 +17,26 @@ class Jingying(jobs.classify.base.Base):
 
     def jobgenerator(self):
         jingying = precedure.jingying.Jingying(uldownloader=self.downloader)
-        '''
-        industry_list = [
-        '47', #医疗设备/器械
-        '01', #计算机软件
-        '37', #计算机硬件
-        '38', #计算机服务(系统、数据服务、维修)
-        '31', #通信/电信/网络设备
-        '35', #仪器仪表/工业自动化
-        '14', #机械/设备/重工
-        '52', #检测，认证
-        '07', #专业服务(咨询、人力资源、财会)
-        '24', #学术/科研
-        '21', #交通/运输/物流
-        '55', #航天/航空
-        '36', #电气/电力/水利
-        '61', #新能源
-        ]'''
+
         for industry in industry_needed:
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
-            jingying_industry = industry_dict[industry]['jinying']
+            jingying_industry = industry_dict[industry]['jingying']
             if len(jingying_industry) == 0:
-                raise AttributeError('input industry is empty!')
+                continue
             for index in jingying_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                filename = industryid + '_' +industry_id
+                filename = industryid
                 print industry_value
                 postdict = {'indtype': industry_id}
-                postinfo = {'indtype': industry_value}
+                postinfo = {'industry': industry_value}
                 header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(jingying.update_classify,
                                                 filename, filename,
                                                 postdict, self.repojt, header)
                 yield job_process
 
-        #Then go on with company names group by area
         company_area_list = [
             'GuangDong',        #广东
             'ShangHai',         #上海
@@ -75,16 +58,20 @@ class Jingying(jobs.classify.base.Base):
             'FuJian',           #福建
             'Others',           #其他
             ]
-        for _area in company_area_list:
-            for c_name in localdatajobs['company_name'][_area]:
-                print c_name
-                postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
-                postinfo = {}
-                header = self.get_header(postdict, postinfo)
-                job_process = functools.partial(jingying.update_classify,
-                                                _area, _area,
-                                                postdict, self.repojt, header)
-                yield job_process
+        for industry in industry_needed:
+            industry = industry.encode('utf-8')
+            industryid = industryID[industry]
+            filename = industryid
+            for _area in company_area_list:
+                for c_name in localdatajobs['company_name'][_area]:
+                    print c_name
+                    postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
+                    postinfo = {'cotext': c_name}
+                    header = self.get_header(postdict, postinfo)
+                    job_process = functools.partial(jingying.update_classify,
+                                                    filename, filename,
+                                                    postdict, self.repojt, header)
+                    yield job_process
 
 repo = storage.fsinterface.FSInterface('jingying')
 instance = Jingying(repo)
