@@ -11,7 +11,7 @@ class Base(object):
 
     def __init__(self, interface):
         if self.cookies_file is not None:
-            self.cookies_str = utils.builtin.loadfile('cookies.data')
+            self.cookies_str = utils.builtin.loadfile('cookies.data').strip()
             self.downloader = downloader._urllib.Urllib()
             self.downloader.set_cookies(self.cookies_str)
         elif self.ff_profile is not None:
