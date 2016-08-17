@@ -18,7 +18,7 @@ class Yingcai(precedure.base.Base):
 
     BASE_URL=''
     PAGE_VAR = 'page'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 60
     CLASSIFY_MAXPAGE = 150
 
     def __init__(self, url_downloader=None, wbdownloader=None):
