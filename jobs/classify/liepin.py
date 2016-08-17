@@ -30,9 +30,9 @@ class Liepin(jobs.classify.base.Base):
                 postinfo = {
                     'industrys': industry_value
                             }
-                for id_str in liepin_job[industry_id].keys():
-                    print postinfo['industrys'], id_str, liepin_job[industry_id][id_str]['cn']
-                    postinfo['jobtitles'] = liepin_job[industry_id][id_str]['cn']
+                for id_str in liepin_job.keys():
+                    print postinfo['industrys'], id_str, liepin_job[id_str]['cn']
+                    postinfo['jobtitles'] = liepin_job[id_str]['cn']
                     postdict = {
                         'industrys': industry_id,
                         'jobtitles': id_str}
