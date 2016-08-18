@@ -15,7 +15,7 @@ class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
     PAGE_VAR = 'curPage'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 10
     CLASSIFY_MAXPAGE = 100
 
     urls_post = {
