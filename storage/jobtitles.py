@@ -19,6 +19,8 @@ class JobTitles(object):
 
     def get(self, classify_id):
         yamlname = classify_id + '.yaml'
+        if not os.path.exists(os.path.join(self.interface_path, yamlname)):
+            return None
         yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
         return yamldata
 
@@ -87,3 +89,9 @@ class JobTitles(object):
                                     yaml.safe_dump(table, allow_unicode=True),
                                     "Add classify file: " + filename)
 
+    def lenght(self, classify_id):
+        result = None
+        info = self.get(classify_id)
+        if info is not None:
+            result = len(info['datas'])
+        return result
