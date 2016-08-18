@@ -31,6 +31,8 @@ class JobTitles(object):
         return removed
 
     def add_datas(self, classify_id, datas, update_datas, header, committer=None):
+        if len(datas) == 0:
+            return True
         if header is None:
             header = dict()
         filename = classify_id + '.yaml'
@@ -56,7 +58,7 @@ class JobTitles(object):
                         current['tags'][key] = set()
                     current['tags'][key] = current['tags'][key].union(data['tags'][key])
 
-        dump_data = yaml.safe_dump(table, allow_unicode=True)
+        dump_data = yaml.dump(table, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
                                 message="Add to classify id :" + filename,
                                 committer=committer)
@@ -94,6 +96,6 @@ class JobTitles(object):
         if not os.path.exists(file_path):
             table = {}
             self.interface.add_file(os.path.join(self.path, filename),
-                                    yaml.safe_dump(table, allow_unicode=True),
+                                    yaml.dump(table, Dumper=yaml.CSafeDumper, allow_unicode=True)
                                     "Add classify file: " + filename)
 
