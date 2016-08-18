@@ -21,20 +21,24 @@ class Jingying(jobs.classify.base.Base):
         for industry in industry_needed:
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
+            filename = industryid
             jingying_industry = industry_dict[industry]['jingying']
+            add_list = []
+            update_list = []
             if len(jingying_industry) == 0:
                 continue
             for index in jingying_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                filename = industryid
                 print industry_value
                 postdict = {'indtype': industry_id}
                 postinfo = {'industry': industry_value}
                 header = self.get_header(postdict, postinfo)
                 job_process = functools.partial(jingying.update_classify,
                                                 filename, filename,
-                                                postdict, self.repojt, header)
+                                                postdict, self.repojt,
+                                                add_list, update_list,
+                                                header)
                 yield job_process
 
         company_area_list = [
@@ -63,10 +67,15 @@ class Jingying(jobs.classify.base.Base):
             industryid = industryID[industry]
             filename = industryid
             jingying_industry = industry_dict[industry]['jingying']
+            add_list = []
+            update_list = []
             for index in jingying_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                for _area in company_area_list:
+                flush = False
+                for _index, _area in enumerate(company_area_list):
+                    if _index == len(company_area_list) - 1:
+                        flush = True
                     for c_name in localdatajobs['company_name'][_area]:
                         print c_name
                         postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
@@ -76,7 +85,9 @@ class Jingying(jobs.classify.base.Base):
                         header = self.get_header(postdict, postinfo)
                         job_process = functools.partial(jingying.update_classify,
                                                         filename, filename,
-                                                        postdict, self.repojt, header)
+                                                        postdict, self.repojt,
+                                                        add_list, update_list,
+                                                        header, flush)
                         yield job_process
 
 repo = storage.fsinterface.FSInterface('jingying')
