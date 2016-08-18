@@ -18,6 +18,8 @@ class JobTitles(object):
             os.makedirs(self.interface_path)
 
     def get(self, classify_id):
+        if classify_id in self.table:
+            return self.table[classify_id]
         yamlname = classify_id + '.yaml'
         yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
         return yamldata
@@ -32,10 +34,7 @@ class JobTitles(object):
         if header is None:
             header = dict()
         filename = classify_id + '.yaml'
-        file_path = os.path.join(self.interface_path, filename)
-
-        self._initclassify(classify_id)
-        table = utils.builtin.load_yaml(self.interface_path, filename)
+        table = self.get(classify_id)
 
         if 'datas' not in table:
             new_table = dict()
