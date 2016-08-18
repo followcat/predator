@@ -45,7 +45,7 @@ class Yingcai(precedure.base.Base):
         content = bs.find(class_='box-myResume')
         return content.prettify()
 
-    def parse_classify(self, htmlsource):
+    def parse_classify(self, htmlsource, header):
         result = []
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         text_lists=bs.findAll(class_='searchList')
@@ -80,7 +80,6 @@ class Yingcai(precedure.base.Base):
                 query_str = utils.tools.queryString(element_a.get('href'))
                 storage_data['id']=data_lists[index].attrs['cvid']
                 storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
-                #storage_data['info'].append((data_lists[index].find(class_='sex').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
                 storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
@@ -91,6 +90,10 @@ class Yingcai(precedure.base.Base):
                 info_lists=info_text.findAll('span')
                 for info_index in range(len(info_lists)):
                     storage_data['peo'].append(info_lists[info_index].getText())
+                storage_data['tags'] = {}
+                for index in header['tags'].keys():
+                    storage_data['tags'][index] = set()
+                    storage_data['tags'][index].add(header['tags'][index])
                 result.append(storage_data)
         return result
  
@@ -99,9 +102,9 @@ class Yingcai(precedure.base.Base):
             fp.write(text)
         raise Exception
 
-    def classify(self, params_data):
+    def classify(self, params_data, header):
         htmlsource = self.urlget_classify(params_data)
-        result = self.parse_classify(htmlsource)
+        result = self.parse_classify(htmlsource,header)
         if len(result) == 0:
             if '对不起，没有找到合适条件的简历' in htmlsource:
                 result = None

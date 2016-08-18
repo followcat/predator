@@ -56,45 +56,47 @@ class Jingying(precedure.base.Base):
         tmp_post.update(self.post_data)
         tmp_post.update(data)
         searchurl = 'http://www.51jingying.com/spy/searchmanager.php?act=getSpySearch'
-        return self.ul_downloader.post(searchurl, data=tmp_post)
+        ret = self.ul_downloader.post(searchurl, data=tmp_post)
+        return ret
 
     def urlget_cv(self, url):
         download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
 
-    def parse_classify(self, htmlsource):
+    def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
-        items = bs.findAll(class_='f-information-list border mb-15')
+        #import ipdb;ipdb.set_trace()
+        items = bs.findAll('li', class_='')
         results = []
         for index in range(len(items)):
             storage_data = {'peo':[], 'info':[]}
             index_bs = items[index]
             storage_data['html'] = index_bs.prettify()
-            storage_data['id'] = str(index_bs['objectoriginalid'])
+            storage_data['id'] = index_bs.get('objectoriginalid')
             storage_data['data-name'] = ''
             storage_data['date'] = time.time()
             storage_data['data-userid'] = ''
             storage_data['recommend'] = ''
-            _elite = index_bs.find(class_='yu pos-l-22')
-            storage_data['elite'] = _elite is not None
-            blank = index_bs.find(target='_blank')
-            storage_data['href'] = blank['href']
+            storage_data['elite'] = ''
             storage_data['name'] = ''
             storage_data['title'] = ''
             storage_data['data-id'] = ''
-            for td in index_bs.findAll('span', class_="mr-20"):
-                info = None
-                parent = td.findParent()
-                if parent.name == 'a':
-                    info = utils.tools.replace_tnr(td.text)
-                if td.has_attr('title'):
-                    info = utils.tools.replace_tnr(td['title'])
-                if info is not None:
-                    storage_data['peo'].append(info)
-            date_span = index_bs.find('span', class_='f-12 f-day')
-            storage_data['peo'].append(date_span.text)
-            text_info = index_bs.find(class_="f-information-box")
-            storage_data['info'].append(text_info.text)
+            label_list = index_bs.findAll('label')
+            for index_lab in range(len(label_list)):
+                if index_lab == 0:
+                    storage_data['href'] = label_list[index_lab].find('a').get('href')
+                    position =label_list[index_lab].find('span').getText()
+                    storage_data['peo'].append(position)
+                else:
+                    content = label_list[index_lab].getText()
+                    storage_data['peo'].append(content)
+            date_text=index_bs.find(class_='yy_listButtom fl')
+            date = date_text.find('p').getText()
+            storage_data['peo'].append(date)
+            storage_data['tags'] = {}
+            for index in header['tags'].keys():
+                storage_data['tags'][index] = set()
+                storage_data['tags'][index].add(header['tags'][index])
             results.append(storage_data)
         return results
 
@@ -111,11 +113,11 @@ class Jingying(precedure.base.Base):
             meta.decompose()
         return content.prettify()
 
-    def classify(self, postdata):
+    def classify(self, postdata, header):
         json_res = self.urlget_classify(postdata)
         try:
             htmlsource = json.loads(json_res)['html']
         except KeyError:
             pass
-        result = self.parse_classify(htmlsource)
+        result = self.parse_classify(htmlsource, header)
         return result

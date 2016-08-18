@@ -46,10 +46,11 @@ class Base(object):
 
     def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
+        update_list = []
         for cur_page in range(self.CLASSIFY_MAXPAGE):
             postdict[self.PAGE_VAR] = cur_page + 1
             try:
-                results = self.classify(postdict)
+                results = self.classify(postdict, header)
             except Exception:
                 break
             if not results:
@@ -58,11 +59,15 @@ class Base(object):
             for result in results:
                 if not repojt.exists(id_str, result['id']):
                     parts_results.append(result)
+                else:
+                    update_list.append(result)
             print 'current page:' + str(cur_page + 1)
             if len(parts_results) < len(results)*0.2:
                 break
             else:
                 add_list.extend(parts_results)
             time.sleep(self.CLASSIFY_SLEEP)
-        repojt.add_datas(filename, add_list, header)
+        head = {}
+        head['postdict'] = header['postdict']
+        repojt.add_datas(filename, add_list, update_list, head)
         return True

@@ -11,7 +11,7 @@ class Base(object):
 
     def __init__(self, interface):
         if self.cookies_file is not None:
-            self.cookies_str = utils.builtin.loadfile('cookies.data')
+            self.cookies_str = utils.builtin.loadfile('cookies.data').strip()
             self.downloader = downloader._urllib.Urllib()
             self.downloader.set_cookies(self.cookies_str)
         elif self.ff_profile is not None:
@@ -25,6 +25,9 @@ class Base(object):
         pass
 
     def get_header(self, postdict, postinfo):
+        for _k, _v in postinfo.items():
+            if not isinstance(_v, unicode):
+                postinfo[_k] = _v.decode('utf-8')
         header = {
             'tags' :  postinfo,
             'postdict': postdict

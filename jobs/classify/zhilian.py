@@ -91,11 +91,11 @@ class Zhilian(jobs.classify.base.Base):
             industryid = industryID[industry]
             zhilian_industry = industry_dict[industry]['zhilian']
             if len(zhilian_industry) == 0:
-                raise AttributeError('input industry is empty!')
+                continue
             for index in zhilian_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                filename = industryid + '_' +industry_id
+                filename = industryid
                 print '抓取的行业：' + industry_value
                 postinfo = {
                     'industrys': industry_value

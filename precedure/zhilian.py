@@ -68,7 +68,7 @@ class Zhilian(precedure.base.Base):
         print 'download url: ' + download_url
         return self.url_downloader.get(download_url)
 
-    def parse_classify(self, htmlsource):
+    def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         data_lists = bs.findAll(class_='bor-bottom')
         result = []
@@ -98,6 +98,10 @@ class Zhilian(precedure.base.Base):
             info_list = abstract.find_all("p")
             for info_item in info_list:
                 storage_data['info'].append(info_item.text)
+            storage_data['tags'] = {}
+            for index in header['tags'].keys():
+                storage_data['tags'][index] = set()
+                storage_data['tags'][index].add(header['tags'][index])
             result.append(storage_data)
         return result
 
@@ -118,9 +122,9 @@ class Zhilian(precedure.base.Base):
         resume_content = bs.find(class_='detail-tabs-new')
         return detail_content.prettify() + resume_content.prettify()
 
-    def classify(self, params_data):
+    def classify(self, params_data, header):
         htmlsource = self.urlget_classify(params_data)
-        result = self.parse_classify(htmlsource)
+        result = self.parse_classify(htmlsource, header)
         if len(result) == 0:
             if '抱歉没有找到当前搜索条件的相关结果' in htmlsource:
                 result = None

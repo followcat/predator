@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 import jieba
 
 from sources.yingcai_industry import industry_list as yingcai_industry
@@ -92,7 +93,7 @@ def Match(tags,industrylist, input_industry):
     partialmatchdict = {}
     nonmatch = {}
 
-    renfencidict ={}
+    refencidict ={}
     rematchdict = {}
     final_nonmatch = {}
     industry = input_industry
@@ -170,9 +171,9 @@ sources=open(filepath,'w')
 sources.write('#encoding: utf-8\n')
 sources.write('industry_dict = {\n')
 for key1 in final_dict.keys():
-    sources.write('\t\'{0}\':{1}\n'.format(key1,'{'))
+    sources.write('    \'{0}\':{1}\n'.format(key1,'{'))
     for key2 in final_dict[key1].keys():
-        sources.write('\t\t\'{}\': ['.format(key2))
+        sources.write('        \'{}\': ['.format(key2))
         for index in range(len(final_dict[key1][key2])):
             if index != (len(final_dict[key1][key2])-1):
                 sources.write('[\'{0}\',\'{1}\'],'.format(final_dict[key1][key2][index][0], 
@@ -181,7 +182,7 @@ for key1 in final_dict.keys():
                 sources.write('[\'{0}\',\'{1}\']'.format(final_dict[key1][key2][index][0], 
                                                         final_dict[key1][key2][index][1]))
         sources.write('],\n')
-    sources.write('\t\t},\n')
-sources.write('\t}\n')
+    sources.write('        },\n')
+sources.write('    }\n')
 
 sources.close()

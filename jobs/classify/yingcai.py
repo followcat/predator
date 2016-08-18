@@ -35,18 +35,18 @@ class Yingcai(jobs.classify.base.Base):
             industryid = industryID[industry]
             yingcai_industry = industry_dict[industry]['yingcai']
             if len(yingcai_industry) == 0:
-                raise AttributeError('input industry is empty!')
+                continue
             for index in yingcai_industry:
                 industry_id = index[0]
                 industry_value = index[1]
                 id1 = industry_id.split(',')[0]
                 id2 = industry_id.split(',')[1].encode('utf-8')
-                filename = industryid + '_' +industry_id
+                filename = industryid
                 for index1 in industry_list[id1][id2].keys():
                     job_item = id1+','+id2 +','+ index1
                     postinfo = {
                                 'industrys': industry_value,
-                                'industry_id':[id1,id2]
+                                'jobtitles': industry_list[id1][id2][index1]['cn']
                                 }
                     print '爬取行业：{0}:{1}'.format(industry_id,industry_value)
                     getdict = {
@@ -83,6 +83,6 @@ repo = storage.fsinterface.FSInterface('yingcai')
 instance = Yingcai(repo)
 PROCESS_GEN = instance.jobgenerator()
 
-PLAN = [dict(second='*/30', hour='8-17'),
-        dict(second='*/30', hour='18-23'),
-        dict(second='*/60', hour='0-7')]
+PLAN = [dict(second='*/5', hour='8-17'),
+        dict(second='*/5', hour='18-23'),
+        dict(second='*/5', hour='0-7')]

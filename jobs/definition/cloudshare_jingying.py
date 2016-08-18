@@ -9,49 +9,12 @@ import utils.builtin
 import precedure.jingying
 import jobs.definition.cloudshare
 
-
-industry_yamls = ['47', #医疗设备/器械
-                  '01', #计算机软件
-                  '37', #计算机硬件
-                  '38', #计算机服务(系统、数据服务、维修)
-                  '31', #通信/电信/网络设备
-                  '35', #仪器仪表/工业自动化
-                  '14', #机械/设备/重工
-                  '52', #检测，认证
-                  '07', #专业服务(咨询、人力资源、财会)
-                  '24', #学术/科研
-                  '21', #交通/运输/物流
-                  '55', #航天/航空
-                  '36', #电气/电力/水利
-                  '61'  #新能源
-                ]
-
-company_area_list = [
-    'GuangDong',        #广东
-    'ShangHai',         #上海
-    'JiangSu',          #江苏
-    'BeiJing',          #北京
-    'ZheJiang',         #浙江
-    'HuNan',            #湖南
-    'AnHui',            #安徽
-    'JiangXi',          #江西
-    'GuangXi',          #广西
-    'SiChuan',          #四川
-    'NorthEast',        #东北
-    'ShanDong',         #山东
-    'TianJin',          #天津
-    'ShanXi(Shan)',     #陕西（陕）
-    'ShanXi(Jin)',      #山西（晋）
-    'HeBei',            #河北
-    'HuBei',            #湖北
-    'FuJian',           #福建
-    'Others',           #其他
-    ]
+from sources.industry_id import *
 
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/jingying'
-    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
+    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
@@ -60,10 +23,11 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def jobgenerator(self):
-        for _classify_id in industry_yamls + company_area_list:
+        for _classify_id in industryID.values():
             _file = _classify_id + '.yaml'
             try:
-                yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+                yamlfile = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+                yamldata = yamlfile['datas']
             except IOError:
                 continue
             sorted_id = sorted(yamldata,

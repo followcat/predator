@@ -52,7 +52,7 @@ class Liepin(precedure.base.Base):
         download_url = BASE_URL + url
         return self.ul_downloader.get(download_url)
 
-    def parse_classify(self, htmlsource):
+    def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
         up_data = bs.findAll(class_='table-list-peo')
         down_data = bs.findAll(class_='table-list-info')
@@ -82,6 +82,10 @@ class Liepin(precedure.base.Base):
             for td in down_data[index].findAll('td'):
                 if info:
                     storage_data['info'].append(td.text)
+            storage_data['tags'] = {}
+            for index in header['tags'].keys():
+                storage_data['tags'][index] = set()
+                storage_data['tags'][index].add(header['tags'][index])
             results.append(storage_data)
         return results
 
@@ -100,9 +104,9 @@ class Liepin(precedure.base.Base):
         content = bs.find(class_='resume')
         return content.prettify()
 
-    def classify(self, postdata):
+    def classify(self, postdata, header):
         htmlsource = self.urlget_classify(postdata)
-        result = self.parse_classify(htmlsource)
+        result = self.parse_classify(htmlsource, header)
         if len(result) == 0:
             if '没有找到符合' in result:
                 result = None
@@ -111,7 +115,7 @@ class Liepin(precedure.base.Base):
         return result
 
     def cv(self, url):
-        download_url = BASE_URL + url
+        download_url = self.BASE_URL + url
         htmlsource = self.wb_downloader.getsource(download_url)
         if u'处于猎聘网系统审核中' in htmlsource:
             raise NocontentCVException

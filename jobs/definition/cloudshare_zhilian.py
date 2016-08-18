@@ -8,11 +8,13 @@ import utils.builtin
 import precedure.zhilian
 import jobs.definition.cloudshare
 
+from sources.industry_id import *
+
 
 class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/zhilian'
-    FF_PROFILE_PATH = '/home/kabess/.mozilla/firefox/g648khbx.default'
+    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
     def cloudshare_yaml_template(self):
@@ -20,10 +22,14 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'智联卓聘爬取'
         return template
 
-    def jobgenerator(self, industry_yamls):
-        for _file in industry_yamls:
-            #_file = _classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)['datas']
+    def jobgenerator(self):
+        for _classify_id in industryID.values():
+            _file = _classify_id + '.yaml'
+            try:
+                yamlfile = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)
+                yamldata = yamlfile['datas']
+            except IOError:
+                continue
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)
