@@ -18,6 +18,8 @@ class JobTitles(object):
             os.makedirs(self.interface_path)
 
     def get(self, classify_id):
+        if classify_id in self.table:
+            return self.table[classify_id]
         yamlname = classify_id + '.yaml'
         if not os.path.exists(os.path.join(self.interface_path, yamlname)):
             return None
@@ -30,14 +32,11 @@ class JobTitles(object):
         self.modify_data(classify_id, yamldata)
         return removed
 
-    def add_datas(self, classify_id, datas, header, committer=None):
+    def add_datas(self, classify_id, datas, update_datas, header, committer=None):
         if header is None:
             header = dict()
         filename = classify_id + '.yaml'
-        file_path = os.path.join(self.interface_path, filename)
-
-        self._initclassify(classify_id)
-        table = utils.builtin.load_yaml(self.interface_path, filename)
+        table = self.get(classify_id)
 
         if 'datas' not in table:
             new_table = dict()
@@ -47,6 +46,17 @@ class JobTitles(object):
         table.update(header)
         for data in datas:
             table['datas'][data['id']] = data
+
+        if update_datas is not None:
+            for data in update_datas:
+                if data['id'] not in table['datas']:
+                    table['datas'][data['id']] = data
+                    continue
+                current = table['datas'][data['id']]
+                for key in data['tags'].keys():
+                    if key not in current['tags']:
+                        current['tags'][key] = set()
+                    current['tags'][key] = current['tags'][key].union(data['tags'][key])
 
         dump_data = yaml.safe_dump(table, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
