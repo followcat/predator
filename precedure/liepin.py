@@ -115,7 +115,7 @@ class Liepin(precedure.base.Base):
         return result
 
     def cv(self, url):
-        download_url = BASE_URL + url
+        download_url = self.BASE_URL + url
         htmlsource = self.wb_downloader.getsource(download_url)
         if u'处于猎聘网系统审核中' in htmlsource:
             raise NocontentCVException

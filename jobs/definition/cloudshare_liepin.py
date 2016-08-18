@@ -8,12 +8,13 @@ import precedure.liepin
 import jobs.definition.cloudshare
 
 from utils.utils_parsing import *
+from sources.industry_id import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
     JTDB_PATH = 'liepin'
     CVDB_PATH = 'output/liepin'
-    FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
+    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
     PRECEDURE_CLASS = precedure.liepin.Liepin
 
     def cloudshare_yaml_template(self):
@@ -21,17 +22,22 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'猎聘爬取'
         return template
 
-    def jobgenerator(self, classify_id):
-        self.urlsdata = self.jtstorage.get(classify_id)
-        sorted_id = sorted(self.urlsdata,
+    def jobgenerator(self):
+        for classify_id in industryID.values():
+            try:
+                self.urlsfile = self.jtstorage.get(classify_id)
+                self.urlsdata = self.urlsfile['datas']
+            except Exception:
+                continue
+            sorted_id = sorted(self.urlsdata,
                            key = lambda cvid: self.urlsdata[cvid]['peo'][-1],
                            reverse=True)
-        for cv_id in sorted_id:
-            if not self.cvstorage.existscv(cv_id):
-                if 'Nocontent' not in self.urlsdata[cv_id] or not self.urlsdata[cv_id]['Nocontent']:
-                    cv_info = self.urlsdata[cv_id]
-                    job_process = functools.partial(self.downloadjob, cv_info, classify_id)
-                    yield job_process
+            for cv_id in sorted_id:
+                if not self.cvstorage.existscv(cv_id):
+                    if 'Nocontent' not in self.urlsdata[cv_id] or not self.urlsdata[cv_id]['Nocontent']:
+                        cv_info = self.urlsdata[cv_id]
+                        job_process = functools.partial(self.downloadjob, cv_info, classify_id)
+                        yield job_process
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
