@@ -30,7 +30,7 @@ class JobTitles(object):
         self.modify_data(classify_id, yamldata)
         return removed
 
-    def add_datas(self, classify_id, datas, header, committer=None):
+    def add_datas(self, classify_id, datas, update_datas, header, committer=None):
         if header is None:
             header = dict()
         filename = classify_id + '.yaml'
@@ -44,6 +44,17 @@ class JobTitles(object):
         table.update(header)
         for data in datas:
             table['datas'][data['id']] = data
+
+        if update_datas is not None:
+            for data in update_datas:
+                if data['id'] not in table['datas']:
+                    table['datas'][data['id']] = data
+                    continue
+                current = table['datas'][data['id']]
+                for key in data['tags'].keys():
+                    if key not in current['tags']:
+                        current['tags'][key] = set()
+                    current['tags'][key] = current['tags'][key].union(data['tags'][key])
 
         dump_data = yaml.safe_dump(table, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
