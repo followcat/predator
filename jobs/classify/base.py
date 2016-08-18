@@ -25,6 +25,9 @@ class Base(object):
         pass
 
     def get_header(self, postdict, postinfo):
+        for _k, _v in postinfo.items():
+            if not isinstance(_v, unicode):
+                postinfo[_k] = _v.decode('utf-8')
         header = {
             'tags' :  postinfo,
             'postdict': postdict
