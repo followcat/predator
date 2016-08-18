@@ -13,7 +13,7 @@ class Jingying(precedure.base.Base):
 
     BASE_URL='http://www.51jingying.com'
     PAGE_VAR = 'curr_page'
-    CLASSIFY_SLEEP = 10
+    CLASSIFY_SLEEP = 0
     CLASSIFY_MAXPAGE = 20
 
     post_data = {
@@ -65,7 +65,6 @@ class Jingying(precedure.base.Base):
 
     def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
-        #import ipdb;ipdb.set_trace()
         items = bs.findAll('li', class_='')
         results = []
         for index in range(len(items)):
