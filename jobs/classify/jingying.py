@@ -62,18 +62,24 @@ class Jingying(jobs.classify.base.Base):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             filename = industryid
-            for _area in company_area_list:
-                for c_name in localdatajobs['company_name'][_area]:
-                    print c_name
-                    postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
-                    postinfo = {'cotext': c_name}
-                    header = self.get_header(postdict, postinfo)
-                    job_process = functools.partial(jingying.update_classify,
-                                                    filename, filename,
-                                                    postdict, self.repojt, header)
-                    yield job_process
+            jingying_industry = industry_dict[industry]['jingying']
+            for index in jingying_industry:
+                industry_id = index[0]
+                industry_value = index[1]
+                for _area in company_area_list:
+                    for c_name in localdatajobs['company_name'][_area]:
+                        print c_name
+                        postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
+                                    'indtype': industry_id}
+                        postinfo = {'company': c_name,
+                                    'industry': industry_value}
+                        header = self.get_header(postdict, postinfo)
+                        job_process = functools.partial(jingying.update_classify,
+                                                        filename, filename,
+                                                        postdict, self.repojt, header)
+                        yield job_process
 
 repo = storage.fsinterface.FSInterface('jingying')
 instance = Jingying(repo)
 PROCESS_GEN = instance.jobgenerator()
-PLAN = [dict(minute='*/5')]
+PLAN = [dict(second='*/5')]
