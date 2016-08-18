@@ -31,6 +31,8 @@ class JobTitles(object):
         return removed
 
     def add_datas(self, classify_id, datas, update_datas, header, committer=None):
+        if len(datas) == 0:
+            return True
         if header is None:
             header = dict()
         filename = classify_id + '.yaml'
