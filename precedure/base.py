@@ -1,4 +1,6 @@
 import time
+import precedure.exception
+
 class NotImplementedInterface(Exception):
     pass
 
@@ -40,19 +42,16 @@ class Base(object):
         return result
 
     def logException(self, text):
+        timestr = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         with open('/tmp/classification.log', 'a+') as fp:
-            fp.write(text)
-        raise Exception(text)
+            fp.write(' '.join([timestr, text])+'\n')
 
     def update_classify(self, filename, id_str, postdict, repojt, header=None):
         add_list = []
         update_list = []
         for cur_page in range(self.CLASSIFY_MAXPAGE):
             postdict[self.PAGE_VAR] = cur_page + 1
-            try:
-                results = self.classify(postdict, header)
-            except Exception:
-                break
+            results = self.classify(postdict, header)
             if not results:
                 break
             parts_results = []
