@@ -67,7 +67,7 @@ class Jingying(jobs.classify.base.Base):
                     print c_name
                     postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
                     postinfo = {'cotext': c_name}
-                    header = self.get_header(postdict, postinfo)
+                    header = self.gen_header(postdict, postinfo)
                     job_process = functools.partial(jingying.update_classify,
                                                     filename, filename,
                                                     postdict, self.repojt, header)

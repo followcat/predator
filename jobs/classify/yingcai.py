@@ -61,7 +61,7 @@ class Yingcai(jobs.classify.base.Base):
                             'industrys': [id1,id2],
                             'job' : [id1,id2,index1] 
                             }
-                    header = self.get_header(postdict, postinfo)
+                    header = self.gen_header(postdict, postinfo)
                     print "header:",header
                     job_process = functools.partial(yingcai.update_classify,
                                                     filename, filename,

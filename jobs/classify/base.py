@@ -24,7 +24,14 @@ class Base(object):
     def jobgenerator(self):
         pass
 
-    def get_header(self, postdict, postinfo):
+    def get_header(self, classifyid):
+        result = dict()
+        data = self.repojt.get(classifyid)
+        if 'header' in data:
+            result = data['header']
+        return result
+
+    def gen_header(self, postdict, postinfo):
         for _k, _v in postinfo.items():
             if not isinstance(_v, unicode):
                 postinfo[_k] = _v.decode('utf-8')

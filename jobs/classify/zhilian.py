@@ -106,7 +106,7 @@ class Zhilian(jobs.classify.base.Base):
                             'CompanyIndustry':industry_id,
                             'JobType':jobtype_item[0]
                         }
-                    header = self.get_header(paramsdict, postinfo)
+                    header = self.gen_header(paramsdict, postinfo)
                     print header
                     job_process = functools.partial(zhilian.update_classify,
                                                 filename, filename,
