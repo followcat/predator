@@ -46,4 +46,4 @@ class Liepin(jobs.classify.base.Base):
 repo = storage.gitinterface.GitInterface('liepin')
 instance = Liepin(repo)
 PROCESS_GEN = instance.jobgenerator()
-PLAN = [dict(second='*/10')]
+PLAN = [dict(second='*/20')]

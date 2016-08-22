@@ -4,8 +4,6 @@ import time
 import random
 import logging
 
-import tools.mail
-
 import apscheduler.events
 import apscheduler.schedulers.blocking
 
@@ -29,7 +27,6 @@ def err_listener(ev):
         err_logger.error('%s error.', str(ev.job_id))
     else:
         err_logger.info('%s miss', str(ev.job_id))
-    tools.mail.send_mail(['chenjunkai@willendare.com'], ev.job_id, "Wrong and stop!")
     global scheduler
     scheduler.shutdown()
 
