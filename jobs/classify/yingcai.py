@@ -34,15 +34,14 @@ class Yingcai(jobs.classify.base.Base):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             yingcai_industry = industry_dict[industry]['yingcai']
-            if len(yingcai_industry) == 0:
-                continue
+            filename = industryid
+            temp_resume = resume
             for index in yingcai_industry:
                 industry_id = index[0]
                 industry_value = index[1]
                 id1 = industry_id.split(',')[0]
                 id2 = industry_id.split(',')[1].encode('utf-8')
-                filename = industryid
-                for index1 in industry_list[id1][id2].keys():
+                for index1 in sorted(industry_list[id1][id2].keys()):
                     job_item = id1+','+id2 +','+ index1
                     postinfo = {
                                 'industrys': industry_value,
@@ -58,11 +57,15 @@ class Yingcai(jobs.classify.base.Base):
                             'page':'0'
                             }
                     postdict = {
-                            'industrys': [id1,id2],
-                            'job' : [id1,id2,index1] 
+                            'industrys': [id1, id2],
+                            'job' : [id1, id2, index1] 
                             }
                     header = self.gen_header(postdict, postinfo)
                     print "header:",header
+                    if temp_resume and not self.eq_postdict(industryid, postdict):
+                        continue
+                    else:
+                        temp_resume = False
                     job_process = functools.partial(yingcai.update_classify,
                                                     filename, filename,
                                                     getdict, self.repojt, header)
