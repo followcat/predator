@@ -18,8 +18,15 @@ class Yingcai(precedure.base.Base):
 
     BASE_URL=''
     PAGE_VAR = 'page'
-    CLASSIFY_SLEEP = 60
+    CLASSIFY_SLEEP = 180
     CLASSIFY_MAXPAGE = 150
+
+    get_url = {
+                'jobType':1,
+                'live':'1',
+                'minDegree':'4',
+                'minWorkYear':'5'
+                }
 
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
@@ -27,6 +34,7 @@ class Yingcai(precedure.base.Base):
 
     def urlget_classify(self, data):
         tmp_data = dict()
+        tmp_data.update(self.get_url)
         tmp_data.update(data)
         searchurl = 'http://qy.chinahr.com/cv/sou?'
         params_str = urllib.urlencode(tmp_data)
