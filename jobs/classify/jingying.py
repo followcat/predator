@@ -22,16 +22,19 @@ class Jingying(jobs.classify.base.Base):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             jingying_industry = industry_dict[industry]['jingying']
-            if len(jingying_industry) == 0:
-                continue
+            filename = industryid
+            temp_resume = resume
             for index in jingying_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                filename = industryid
                 print industry_value
                 postdict = {'indtype': industry_id}
                 postinfo = {'industry': industry_value}
                 header = self.get_header(postdict, postinfo)
+                if temp_resume and not self.eq_postdict(industryid, postdict):
+                    continue
+                else:
+                    temp_resume = False
                 job_process = functools.partial(jingying.update_classify,
                                                 filename, filename,
                                                 postdict, self.repojt, header)
@@ -62,12 +65,17 @@ class Jingying(jobs.classify.base.Base):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             filename = industryid
+            temp_resume = resume
             for _area in company_area_list:
                 for c_name in localdatajobs['company_name'][_area]:
                     print c_name
                     postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
                     postinfo = {'cotext': c_name}
                     header = self.gen_header(postdict, postinfo)
+                    if temp_resume and not self.eq_postdict(industryid, postdict):
+                        continue
+                    else:
+                        temp_resume = False
                     job_process = functools.partial(jingying.update_classify,
                                                     filename, filename,
                                                     postdict, self.repojt, header)
