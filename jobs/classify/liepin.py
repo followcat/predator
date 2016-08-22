@@ -38,7 +38,7 @@ class Liepin(jobs.classify.base.Base):
                         'industrys': industry_id,
                         'jobtitles': id_str}
                     header = self.gen_header(postdict, postinfo)
-                    if temp_resume and not self.eq_header(industryid, postdict):
+                    if temp_resume and not self.eq_postdict(industryid, postdict):
                         continue
                     else:
                         temp_resume = False

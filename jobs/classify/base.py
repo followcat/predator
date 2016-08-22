@@ -24,17 +24,17 @@ class Base(object):
     def jobgenerator(self):
         pass
 
-    def get_header(self, classifyid):
+    def get_postdict(self, classifyid):
         result = dict()
         data = self.repojt.get(classifyid)
-        if 'header' in data:
-            result = data['header']
+        if 'postdict' in data:
+            result = data['postdict']
         return result
 
-    def eq_header(self, classifyid, head):
-        last_head = self.get_header(classifyid)
-        for h in head:
-            if h in last_head and head[h] == last_head[h]:
+    def eq_postdict(self, classifyid, postdict):
+        last_head = self.get_postdict(classifyid)
+        for p in postdict:
+            if p in last_head and postdict[p] == last_head[p]:
                 continue
             else:
                 return False
