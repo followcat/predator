@@ -1,8 +1,8 @@
 import os
-import sys
 import time
 import random
 import logging
+import argparse
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -40,10 +40,15 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
         scheduler.add_job(job, 'cron', args=arguments, kwargs=kwarguments, **each)
 
 
+
+parser = argparse.ArgumentParser(description='Plan tool.')
+parser.add_argument('job', type=str, help='Process job generateor module.')
+
 if __name__ == '__main__':
     import importlib
-    jobmodule_name = sys.argv[1]
-    jobmodule = importlib.import_module(jobmodule_name)
+
+    args = parser.parse_args()
+    jobmodule = importlib.import_module(args.job)
 
     PLAN = jobmodule.PLAN
     PROCESS_GEN = jobmodule.PROCESS_GEN
