@@ -21,8 +21,6 @@ class Liepin(jobs.classify.base.Base):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             liepin_industry = industry_dict[industry]['liepin']
-            if len(liepin_industry) == 0:
-                continue
             filename = industryid
             temp_resume = resume
             for index in liepin_industry:
