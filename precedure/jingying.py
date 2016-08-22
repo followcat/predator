@@ -103,7 +103,7 @@ class Jingying(precedure.base.Base):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         content = bs.find(id='51jobcv')
         if content is None:
-            content = bs.find(id='profile')
+            content = bs.find(id='resume')
         style = content.find('style')
         if style is not None:
             style.decompose()
