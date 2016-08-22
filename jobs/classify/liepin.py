@@ -15,7 +15,7 @@ class Liepin(jobs.classify.base.Base):
 
     cookies_file = 'cookies.data'
 
-    def jobgenerator(self):
+    def jobgenerator(self, resume=False):
         liepin = precedure.liepin.Liepin(uldownloader=self.downloader)
         for industry in industry_needed:
             industry = industry.encode('utf-8')
@@ -45,5 +45,6 @@ class Liepin(jobs.classify.base.Base):
 
 repo = storage.gitinterface.GitInterface('liepin')
 instance = Liepin(repo)
-PROCESS_GEN = instance.jobgenerator()
+
+PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/20')]

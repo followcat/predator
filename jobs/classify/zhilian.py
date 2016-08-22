@@ -13,7 +13,7 @@ class Zhilian(jobs.classify.base.Base):
 
     ff_profile = '/home/winky/.mozilla/firefox/rikqqhcg.default'
 
-    def jobgenerator(self):
+    def jobgenerator(self, resume=False):
         
         zhilian = precedure.zhilian.Zhilian(wbdownloader = self.downloader)
         '''
@@ -115,8 +115,8 @@ class Zhilian(jobs.classify.base.Base):
 
 repo = storage.gitinterface.GitInterface('zhilian')
 instance = Zhilian(repo)
-PROCESS_GEN = instance.jobgenerator()
 
+PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/6', hour='8-20'),
         dict(second='*/30', hour='21-23'),
         dict(minute='*/2', hour='0-6')]

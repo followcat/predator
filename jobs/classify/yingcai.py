@@ -26,7 +26,7 @@ class Yingcai(jobs.classify.base.Base):
     cookies_file = None
     ff_profile = FF_PROFILE_PATH
 
-    def jobgenerator(self):
+    def jobgenerator(self, resume=False):
         start_time=datetime.datetime.now()
         print start_time
         yingcai=precedure.yingcai.Yingcai(wbdownloader=self.downloader)
@@ -81,8 +81,8 @@ class Yingcai(jobs.classify.base.Base):
 
 repo = storage.fsinterface.FSInterface('yingcai')
 instance = Yingcai(repo)
-PROCESS_GEN = instance.jobgenerator()
 
+PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/5', hour='8-17'),
         dict(second='*/5', hour='18-23'),
         dict(second='*/5', hour='0-7')]

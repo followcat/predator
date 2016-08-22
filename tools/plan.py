@@ -2,6 +2,7 @@ import os
 import time
 import random
 import logging
+import inspect
 import argparse
 
 import apscheduler.events
@@ -43,6 +44,7 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
 
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('job', type=str, help='Process job generateor module.')
+parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
 if __name__ == '__main__':
     import importlib
@@ -51,7 +53,11 @@ if __name__ == '__main__':
     jobmodule = importlib.import_module(args.job)
 
     PLAN = jobmodule.PLAN
-    PROCESS_GEN = jobmodule.PROCESS_GEN
+    PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+    if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
+        PROCESS_GEN = PROCESS_GEN_FUNC(resume=args.resume)
+    else:
+        PROCESS_GEN = PROCESS_GEN_FUNC()
 
     jobadder(scheduler, schedulerjob, PLAN,
              arguments=[PROCESS_GEN],

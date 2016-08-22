@@ -15,7 +15,7 @@ class Jingying(jobs.classify.base.Base):
 
     cookies_file = 'cookies.data'
 
-    def jobgenerator(self):
+    def jobgenerator(self, resume=False):
         jingying = precedure.jingying.Jingying(uldownloader=self.downloader)
 
         for industry in industry_needed:
@@ -75,5 +75,6 @@ class Jingying(jobs.classify.base.Base):
 
 repo = storage.fsinterface.FSInterface('jingying')
 instance = Jingying(repo)
-PROCESS_GEN = instance.jobgenerator()
+
+PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(minute='*/5')]
