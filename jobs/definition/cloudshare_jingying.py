@@ -14,7 +14,7 @@ from sources.industry_id import *
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/jingying'
-    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
+    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
