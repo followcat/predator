@@ -23,20 +23,25 @@ class Liepin(jobs.classify.base.Base):
             liepin_industry = industry_dict[industry]['liepin']
             if len(liepin_industry) == 0:
                 continue
+            filename = industryid
+            temp_resume = resume
             for index in liepin_industry:
                 industry_id = index[0]
                 industry_value = index[1]
-                filename = industryid
                 postinfo = {
                     'industrys': industry_value
                             }
-                for id_str in liepin_job.keys():
+                for id_str in sorted(liepin_job.keys()):
                     print postinfo['industrys'], id_str, liepin_job[id_str]['cn']
                     postinfo['jobtitles'] = liepin_job[id_str]['cn']
                     postdict = {
                         'industrys': industry_id,
                         'jobtitles': id_str}
                     header = self.gen_header(postdict, postinfo)
+                    if temp_resume and not self.eq_header(industryid, postdict):
+                        continue
+                    else:
+                        temp_resume = False
                     job_process = functools.partial(liepin.update_classify,
                                                     filename, filename,
                                                     postdict, self.repojt, header)

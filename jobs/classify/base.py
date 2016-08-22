@@ -31,12 +31,21 @@ class Base(object):
             result = data['header']
         return result
 
+    def eq_header(self, classifyid, head):
+        last_head = self.get_header(classifyid)
+        for h in head:
+            if h in last_head and head[h] == last_head[h]:
+                continue
+            else:
+                return False
+        return True
+
     def gen_header(self, postdict, postinfo):
         for _k, _v in postinfo.items():
             if not isinstance(_v, unicode):
                 postinfo[_k] = _v.decode('utf-8')
         header = {
             'tags' :  postinfo,
-            'postdict': postdict
+            'postdict': postdict.copy(),
         }
         return header
