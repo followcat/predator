@@ -38,6 +38,17 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                         cv_info = self.urlsdata[cv_id]
                         job_process = functools.partial(self.downloadjob, cv_info, classify_id)
                         yield job_process
+                else:
+                    try:
+                        yamlload = utils.builtin.load_yaml('output/liepin/RAW', cv_id+'.yaml')
+                    except IOError:
+                        continue
+                    try:
+                        yamlload.pop('tag')
+                    except KeyError:
+                        pass
+                    yamlload['tags'] = yamldata[cv_id]['tags']
+                    resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
@@ -93,4 +104,8 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                     xp = details['experience'][0]
                     if RE.match(no_braket(xp[2])):
                         details['company'] = xp[2].split('|')[0]
+
+        if not details['tags']:
+            details['tags'] = uploaded_details['tags']
+
         return details

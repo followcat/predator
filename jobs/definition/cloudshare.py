@@ -35,7 +35,7 @@ class Cloudshare(jobs.definition.base.Base):
             'phone': "",
             'position': "",
             'school': "",
-            'tag': [],
+            'tags': {},
             'tracking': [],
             }
         return template

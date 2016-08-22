@@ -1,12 +1,22 @@
 # encoding: utf-8
 
 import jieba
+import jieba.posseg
 
 from sources.yingcai_industry import industry_list as yingcai_industry
 from sources.liepin_industry import industry_list as liepin_industry
 from sources.jingying_industry import industry_list as jingying_industry
 from sources.zhilian_industry import industry_list as zhilian_industry
 
+FLAGS = ['x', # spaces
+         'm', # number and date
+         'i', 'j',
+         'u', # unclassified (eg. etc)
+         'f', # time and place
+         'q', # quantifier
+         'p', # preposition
+         'v', # vernicular expression
+        ]
 def InitIndustry(industry_dict = None):
     industry_list=[]
     for index in industry_dict.keys():
@@ -38,9 +48,9 @@ def FenciMatch(industry_list, industry_dict):
         fenci_match[key][industry_dict[key]]={}
         for value in industry_list:
             tmp_dict={value:0}
-            for word in jieba.cut_for_search(industry_dict[key]):
-                word = word.strip().encode('utf-8')
-                if word !='/' and value.find(word)!=-1:
+            for word in jieba.posseg.cut(industry_dict[key]):
+                word.word = word.word.strip().encode('utf-8')
+                if (word.flag not in FLAGS) and (value.find(word.word)!=-1):
                     #import ipdb;ipdb.set_trace()
                     tmp_dict[value]+=1
                     fenci_match[key][industry_dict[key]][value]=tmp_dict[value]
