@@ -41,7 +41,8 @@ class Zhilian(jobs.classify.base.Base):
                         }
                     header = self.gen_header(paramsdict, postinfo)
                     print header
-                    if temp_resume and not self.eq_postdict(industryid, paramsdict):
+                    if temp_resume and not self.eq_postdict(industryid, paramsdict,
+                                                            exclude=[zhilian.PAGE_VAR]):
                         continue
                     else:
                         temp_resume = False

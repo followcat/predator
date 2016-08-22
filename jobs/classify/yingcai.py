@@ -62,7 +62,8 @@ class Yingcai(jobs.classify.base.Base):
                             }
                     header = self.gen_header(postdict, postinfo)
                     print "header:",header
-                    if temp_resume and not self.eq_postdict(industryid, postdict):
+                    if temp_resume and not self.eq_postdict(industryid, postdict,
+                                                            exclude=[yingcai.PAGE_VAR]):
                         continue
                     else:
                         temp_resume = False

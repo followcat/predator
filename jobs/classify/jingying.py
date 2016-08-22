@@ -72,7 +72,8 @@ class Jingying(jobs.classify.base.Base):
                     postdict = {'cotext': c_name.decode('utf-8').encode('gb2312')}
                     postinfo = {'cotext': c_name}
                     header = self.gen_header(postdict, postinfo)
-                    if temp_resume and not self.eq_postdict(industryid, postdict):
+                    if temp_resume and not self.eq_postdict(industryid, postdict,
+                                                            exclude=[jingying.PAGE_VAR]):
                         continue
                     else:
                         temp_resume = False

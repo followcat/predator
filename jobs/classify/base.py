@@ -31,10 +31,22 @@ class Base(object):
             result = data['postdict']
         return result
 
-    def eq_postdict(self, classifyid, postdict):
+    def eq_postdict(self, classifyid, postdict, exclude=None):
+        if exclude is None:
+            exclude = []
+
         last_head = self.get_postdict(classifyid)
         for p in postdict:
+            if p in exclude:
+                continue
             if p in last_head and postdict[p] == last_head[p]:
+                continue
+            else:
+                return False
+        for p in last_head:
+            if p in exclude:
+                continue
+            if p in postdict and postdict[p] == last_head[p]:
                 continue
             else:
                 return False
