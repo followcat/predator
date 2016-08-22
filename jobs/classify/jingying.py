@@ -23,11 +23,11 @@ class Jingying(jobs.classify.base.Base):
             industryid = industryID[industry]
             filename = industryid
             jingying_industry = industry_dict[industry]['jingying']
-            add_list = []
-            update_list = []
             if len(jingying_industry) == 0:
                 continue
             for index in jingying_industry:
+                add_list = []
+                update_list = []
                 industry_id = index[0]
                 industry_value = index[1]
                 print industry_value
@@ -67,9 +67,9 @@ class Jingying(jobs.classify.base.Base):
             industryid = industryID[industry]
             filename = industryid
             jingying_industry = industry_dict[industry]['jingying']
-            add_list = []
-            update_list = []
             for index in jingying_industry:
+                add_list = []
+                update_list = []
                 industry_id = index[0]
                 industry_value = index[1]
                 flush = False
