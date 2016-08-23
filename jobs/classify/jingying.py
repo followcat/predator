@@ -73,7 +73,9 @@ class Jingying(jobs.classify.base.Base):
                 industry_id = index[0]
                 industry_value = index[1]
                 flush = False
+                print industry_value
                 for _index, _area in enumerate(company_area_list):
+                    print _area
                     if _index == len(company_area_list) - 1:
                         flush = True
                     for c_name in localdatajobs['company_name'][_area]:
