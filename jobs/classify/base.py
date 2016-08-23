@@ -55,6 +55,7 @@ class Base(object):
             jobs = self.industryjob(industryid, filename, precedure_industry, resume)
             for job in jobs:
                 yield job
+            self.repojt.unload(industryid)
 
     def get_postdict(self, classifyid):
         result = dict()
