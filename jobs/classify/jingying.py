@@ -14,36 +14,33 @@ from sources.industry_id import *
 class Jingying(jobs.classify.base.Base):
 
     cookies_file = 'cookies.data'
+    jobname = 'jingying'
+    precedure_type = precedure.jingying.Jingying
+    uldownloader = True
 
-    def jobgenerator(self, resume=False):
-        jingying = precedure.jingying.Jingying(uldownloader=self.downloader)
 
-        for _index, industry in enumerate(industry_needed):
-            industry = industry.encode('utf-8')
-            industryid = industryID[industry]
-            filename = industryid
-            jingying_industry = industry_dict[industry]['jingying']
-            temp_resume = resume
-            for index in jingying_industry:
-                add_list = []
-                update_list = []
-                industry_id = index[0]
-                industry_value = index[1]
-                print industry, industry_value
-                postdict = {'indtype': industry_id}
-                postinfo = {'industry': industry_value}
-                header = self.gen_header(postdict, postinfo)
-                if temp_resume and not self.eq_postdict(industryid, postdict,
-                                                exclude=[jingying.PAGE_VAR]):
-                    continue
-                else:
-                    temp_resume = False
-                job_process = functools.partial(jingying.update_classify,
-                                                filename, filename,
-                                                postdict, self.repojt,
-                                                add_list, update_list,
-                                                header)
-                yield job_process
+    def industryjob(self, industryid, filename, industry, resume=False):
+
+        for index in industry:
+            add_list = []
+            update_list = []
+            industry_id = index[0]
+            industry_value = index[1]
+            print industry_value
+            postdict = {'indtype': industry_id}
+            postinfo = {'industry': industry_value}
+            header = self.gen_header(postdict, postinfo)
+            if resume and not self.eq_postdict(industryid, postdict,
+                                               exclude=[self.precedure.PAGE_VAR]):
+                continue
+            else:
+                resume = False
+            job_process = functools.partial(self.precedure.update_classify,
+                                            filename, filename,
+                                            postdict, self.repojt,
+                                            add_list, update_list,
+                                            header)
+            yield job_process
 
         company_area_list = [
             'GuangDong',        #广东
@@ -66,40 +63,35 @@ class Jingying(jobs.classify.base.Base):
             'FuJian',           #福建
             'Others',           #其他
             ]
-        for industry in industry_needed:
-            industry = industry.encode('utf-8')
-            industryid = industryID[industry]
-            filename = industryid
-            jingying_industry = industry_dict[industry]['jingying']
-            for index in jingying_industry:
-                add_list = []
-                update_list = []
-                industry_id = index[0]
-                industry_value = index[1]
-                flush = False
-                print industry, industry_value
-                for _index, _area in enumerate(company_area_list):
-                    print _area
-                    if _index == len(company_area_list) - 1:
-                        flush = True
-                    for c_name in localdatajobs['company_name'][_area]:
-                        print c_name
-                        postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                                    'indtype': industry_id}
-                        postinfo = {'company': c_name,
-                                    'industry': industry_value}
-                        header = self.gen_header(postdict, postinfo)
-                        if temp_resume and not self.eq_postdict(industryid, postdict,
-                                                                exclude=[jingying.PAGE_VAR]):
-                            continue
-                        else:
-                            temp_resume = False
-                        job_process = functools.partial(jingying.update_classify,
-                                                        filename, filename,
-                                                        postdict, self.repojt,
-                                                        add_list, update_list,
-                                                        header, flush)
-                        yield job_process
+        for index in industry:
+            add_list = []
+            update_list = []
+            industry_id = index[0]
+            industry_value = index[1]
+            flush = False
+            print industry_value
+            for _index, _area in enumerate(company_area_list):
+                print _area
+                if _index == len(company_area_list) - 1:
+                    flush = True
+                for c_name in localdatajobs['company_name'][_area]:
+                    print c_name
+                    postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
+                                'indtype': industry_id}
+                    postinfo = {'company': c_name,
+                                'industry': industry_value}
+                    header = self.gen_header(postdict, postinfo)
+                    if resume and not self.eq_postdict(industryid, postdict,
+                                                            exclude=[self.precedure.PAGE_VAR]):
+                        continue
+                    else:
+                        resume = False
+                    job_process = functools.partial(self.precedure.update_classify,
+                                                    filename, filename,
+                                                    postdict, self.repojt,
+                                                    add_list, update_list,
+                                                    header, flush)
+                    yield job_process
 
 repo = storage.fsinterface.FSInterface('jingying')
 instance = Jingying(repo)
