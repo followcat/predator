@@ -8,6 +8,7 @@ import storage.fsinterface
 import jobs.classify.base
 
 from sources.yingcai import *
+from sources.yingcai_job import *
 from sources.industry_sources import *
 from sources.industry_needed import *
 from sources.industry_id import *
@@ -36,30 +37,22 @@ class Yingcai(jobs.classify.base.Base):
         for index in industry:
             industry_id = index[0]
             industry_value = index[1]
-            id1 = industry_id.split(',')[0]
-            id2 = industry_id.split(',')[1].encode('utf-8')
-            for index1 in sorted(industry_list[id1][id2].keys()):
-                job_item = id1+','+id2 +','+ index1
+            for index1 in sorted(job_list.keys()):
+                job_item = index1
                 postinfo = {
                             'industrys': industry_value,
-                            'jobtitles': industry_list[id1][id2][index1]['cn']
+                            'jobtitles': job_list[index1]
                             }
                 print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
                 getdict = {
-                        'jobType':1,
-                        'live':'1',
-                        'minDegree':'4',
-                        'minWorkYear':'5',
                         'jobs':job_item,
+                        'wishIndustry':industry_id,
                         'page':'0'
                         }
-                postdict = {
-                        'industrys': [id1, id2],
-                        'job' : [id1, id2, index1]
-                        }
-                header = self.gen_header(postdict, postinfo)
+                header = self.gen_header(getdict, postinfo)
+                #import ipdb;ipdb.set_trace()
                 print "header:",header
-                if resume and not self.eq_postdict(industryid, postdict,
+                if resume and not self.eq_postdict(industryid, getdict,
                                                    exclude=[self.precedure.PAGE_VAR]):
                     continue
                 else:
