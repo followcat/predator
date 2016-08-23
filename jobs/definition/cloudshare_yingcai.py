@@ -49,6 +49,18 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
                     yield job_process
+                else:
+                    try:
+                        yamlload = utils.builtin.load_yaml('output/yingcai/RAW', cv_id+'.yaml')
+                    except IOError:
+                        continue
+                    try:
+                        yamlload.pop('tag')
+                    except KeyError:
+                        pass
+                    yamlload['tags'] = yamldata[cv_id]['tags']
+                    resultpath = self.cvstorage.addyaml(cv_id, yamlload)
+
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
                 if duration > 1800:
@@ -85,11 +97,14 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 details['name'] = uploaded_details['name']
 
         if not details['age']:
-            age = uploaded_details['info'][1]
+            age = uploaded_details['info'][0]
             age_pattern = re.compile(r'(\d+)')
             details['age'] = int(re.findall(age_pattern, age)[0])
 
         if not details['education']:
-            details['education'] = uploaded_details['info'][3].strip()
+            details['education'] = uploaded_details['info'][2].strip()
+
+        if not details['tags']:
+            details['tags'] = uploaded_details['tags']
         
         return details

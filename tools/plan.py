@@ -1,10 +1,9 @@
 import os
-import sys
 import time
 import random
 import logging
-
-import tools.mail
+import inspect
+import argparse
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -29,7 +28,6 @@ def err_listener(ev):
         err_logger.error('%s error.', str(ev.job_id))
     else:
         err_logger.info('%s miss', str(ev.job_id))
-    tools.mail.send_mail(['chenjunkai@willendare.com'], ev.job_id, "Wrong and stop!")
     global scheduler
     scheduler.shutdown()
 
@@ -43,13 +41,23 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
         scheduler.add_job(job, 'cron', args=arguments, kwargs=kwarguments, **each)
 
 
+
+parser = argparse.ArgumentParser(description='Plan tool.')
+parser.add_argument('job', type=str, help='Process job generateor module.')
+parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
+
 if __name__ == '__main__':
     import importlib
-    jobmodule_name = sys.argv[1]
-    jobmodule = importlib.import_module(jobmodule_name)
+
+    args = parser.parse_args()
+    jobmodule = importlib.import_module(args.job)
 
     PLAN = jobmodule.PLAN
-    PROCESS_GEN = jobmodule.PROCESS_GEN
+    PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+    if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
+        PROCESS_GEN = PROCESS_GEN_FUNC(resume=args.resume)
+    else:
+        PROCESS_GEN = PROCESS_GEN_FUNC()
 
     jobadder(scheduler, schedulerjob, PLAN,
              arguments=[PROCESS_GEN],

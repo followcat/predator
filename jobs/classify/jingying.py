@@ -15,25 +15,29 @@ class Jingying(jobs.classify.base.Base):
 
     cookies_file = 'cookies.data'
 
-    def jobgenerator(self):
+    def jobgenerator(self, resume=False):
         jingying = precedure.jingying.Jingying(uldownloader=self.downloader)
 
-        for industry in industry_needed:
+        for _index, industry in enumerate(industry_needed):
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
             filename = industryid
             jingying_industry = industry_dict[industry]['jingying']
-            if len(jingying_industry) == 0:
-                continue
+            temp_resume = resume
             for index in jingying_industry:
                 add_list = []
                 update_list = []
                 industry_id = index[0]
                 industry_value = index[1]
-                print industry_value
+                print industry, industry_value
                 postdict = {'indtype': industry_id}
                 postinfo = {'industry': industry_value}
-                header = self.get_header(postdict, postinfo)
+                header = self.gen_header(postdict, postinfo)
+                if temp_resume and not self.eq_postdict(industryid, postdict,
+                                                exclude=[jingying.PAGE_VAR]):
+                    continue
+                else:
+                    temp_resume = False
                 job_process = functools.partial(jingying.update_classify,
                                                 filename, filename,
                                                 postdict, self.repojt,
@@ -73,7 +77,7 @@ class Jingying(jobs.classify.base.Base):
                 industry_id = index[0]
                 industry_value = index[1]
                 flush = False
-                print industry_value
+                print industry, industry_value
                 for _index, _area in enumerate(company_area_list):
                     print _area
                     if _index == len(company_area_list) - 1:
@@ -84,7 +88,12 @@ class Jingying(jobs.classify.base.Base):
                                     'indtype': industry_id}
                         postinfo = {'company': c_name,
                                     'industry': industry_value}
-                        header = self.get_header(postdict, postinfo)
+                        header = self.gen_header(postdict, postinfo)
+                        if temp_resume and not self.eq_postdict(industryid, postdict,
+                                                                exclude=[jingying.PAGE_VAR]):
+                            continue
+                        else:
+                            temp_resume = False
                         job_process = functools.partial(jingying.update_classify,
                                                         filename, filename,
                                                         postdict, self.repojt,
@@ -94,5 +103,5 @@ class Jingying(jobs.classify.base.Base):
 
 repo = storage.fsinterface.FSInterface('jingying')
 instance = Jingying(repo)
-PROCESS_GEN = instance.jobgenerator()
+PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/5')]

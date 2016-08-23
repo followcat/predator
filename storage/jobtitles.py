@@ -18,11 +18,13 @@ class JobTitles(object):
             os.makedirs(self.interface_path)
 
     def get(self, classify_id):
-        if classify_id in self.table:
-            return self.table[classify_id]
-        yamlname = classify_id + '.yaml'
-        yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
-        return yamldata
+        if classify_id not in self.table:
+            yamlname = classify_id + '.yaml'
+            if not os.path.exists(os.path.join(self.interface_path, yamlname)):
+                return None
+            yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
+            self.table[classify_id] = yamldata
+        return self.table[classify_id]
 
     def remove(self, classify_id, cv_id):
         yamldata = self.get(classify_id)
@@ -77,6 +79,7 @@ class JobTitles(object):
         dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.modify_file(os.path.join(self.path, filename), dump_data,
                                    message=message, committer=committer)
+        self.table[classify_id] = data
         return True
 
     def exists(self, classify_id, data_id):
@@ -99,3 +102,9 @@ class JobTitles(object):
                                     yaml.dump(table, Dumper=yaml.CSafeDumper, allow_unicode=True),
                                     "Add classify file: " + filename)
 
+    def lenght(self, classify_id):
+        result = None
+        info = self.get(classify_id)
+        if info is not None:
+            result = len(info['datas'])
+        return result

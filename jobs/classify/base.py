@@ -24,12 +24,40 @@ class Base(object):
     def jobgenerator(self):
         pass
 
-    def get_header(self, postdict, postinfo):
+    def get_postdict(self, classifyid):
+        result = dict()
+        data = self.repojt.get(classifyid)
+        if 'postdict' in data:
+            result = data['postdict']
+        return result
+
+    def eq_postdict(self, classifyid, postdict, exclude=None):
+        if exclude is None:
+            exclude = []
+
+        last_head = self.get_postdict(classifyid)
+        for p in postdict:
+            if p in exclude:
+                continue
+            if p in last_head and postdict[p] == last_head[p]:
+                continue
+            else:
+                return False
+        for p in last_head:
+            if p in exclude:
+                continue
+            if p in postdict and postdict[p] == last_head[p]:
+                continue
+            else:
+                return False
+        return True
+
+    def gen_header(self, postdict, postinfo):
         for _k, _v in postinfo.items():
             if not isinstance(_v, unicode):
                 postinfo[_k] = _v.decode('utf-8')
         header = {
             'tags' :  postinfo,
-            'postdict': postdict
+            'postdict': postdict.copy(),
         }
         return header

@@ -6,6 +6,7 @@ import bs4
 
 import utils.tools
 import precedure.base
+import precedure.exception
 
 
 class NocontentCVException(Exception):
@@ -15,7 +16,7 @@ class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
     PAGE_VAR = 'curPage'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 10
     CLASSIFY_MAXPAGE = 100
 
     urls_post = {
@@ -106,12 +107,17 @@ class Liepin(precedure.base.Base):
 
     def classify(self, postdata, header):
         htmlsource = self.urlget_classify(postdata)
+        if '异常浏览行为' in htmlsource:
+            self.logException("Exception type Alarm.")
+            self.logException(htmlsource)
+            raise precedure.exception.AlarmException
+        elif '输入登录邮箱' in htmlsource:
+            self.logException("Exception type Logout")
+            self.logException(htmlsource)
+            raise precedure.exception.LogoutException
+        if '没有找到符合' in htmlsource:
+            return None
         result = self.parse_classify(htmlsource, header)
-        if len(result) == 0:
-            if '没有找到符合' in result:
-                result = None
-            else:
-                self.logException(htmlsource)
         return result
 
     def cv(self, url):
