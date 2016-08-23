@@ -14,7 +14,7 @@ from sources.industry_id import *
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/jingying'
-    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
+    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
@@ -56,10 +56,13 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         print('Download: '+cv_id)
-        cv_content =  self.precedure.cv(cv_info['href'])
-        yamldata = self.extract_details(cv_info, cv_content)
-        result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
-        job_logger.info('Download: '+cv_id)
+        try:
+            cv_content =  self.precedure.cv(cv_info['href'])
+            yamldata = self.extract_details(cv_info, cv_content)
+            result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
+            job_logger.info('Download: '+cv_id)
+        except AttributeError:
+            job_logger.error('Fails Downloading: '+cv_id)
         result = True
 
     def calculate_age(born):

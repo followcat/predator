@@ -26,6 +26,13 @@ class JobTitles(object):
             self.table[classify_id] = yamldata
         return self.table[classify_id]
 
+    def unload(self, classify_id):
+        result = False
+        if classify_id in self.table:
+            self.table.pop(classify_id)
+            result = True
+        return result
+
     def remove(self, classify_id, cv_id):
         yamldata = self.get(classify_id)
         removed = yamldata.pop(cv_id)

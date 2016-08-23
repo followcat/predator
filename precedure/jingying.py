@@ -13,7 +13,7 @@ class Jingying(precedure.base.Base):
 
     BASE_URL='http://www.51jingying.com'
     PAGE_VAR = 'curr_page'
-    CLASSIFY_SLEEP = 10
+    CLASSIFY_SLEEP = 0
     CLASSIFY_MAXPAGE = 20
 
     post_data = {
@@ -65,7 +65,6 @@ class Jingying(precedure.base.Base):
 
     def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
-        #import ipdb;ipdb.set_trace()
         items = bs.findAll('li', class_='')
         results = []
         for index in range(len(items)):
@@ -104,7 +103,7 @@ class Jingying(precedure.base.Base):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         content = bs.find(id='51jobcv')
         if content is None:
-            content = bs.find(id='profile')
+            content = bs.find(id='resume')
         style = content.find('style')
         if style is not None:
             style.decompose()
@@ -121,3 +120,31 @@ class Jingying(precedure.base.Base):
             pass
         result = self.parse_classify(htmlsource, header)
         return result
+
+    def update_classify(self, filename, id_str, postdict, repojt, add_list,
+                        update_list, header=None, flush=True):
+        for cur_page in range(self.CLASSIFY_MAXPAGE):
+            postdict[self.PAGE_VAR] = cur_page + 1
+            try:
+                results = self.classify(postdict, header)
+            except Exception:
+                break
+            if not results:
+                break
+            parts_results = []
+            for result in results:
+                if not repojt.exists(id_str, result['id']):
+                    parts_results.append(result)
+                else:
+                    update_list.append(result)
+            print 'current page:' + str(cur_page + 1)
+            if len(parts_results) < len(results)*0.2:
+                break
+            else:
+                add_list.extend(parts_results)
+            time.sleep(self.CLASSIFY_SLEEP)
+        head = {}
+        head['postdict'] = header['postdict']
+        if flush:
+            repojt.add_datas(filename, add_list, update_list, head)
+        return True
