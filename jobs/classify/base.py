@@ -2,7 +2,11 @@ import utils.builtin
 import storage.jobtitles
 import downloader._urllib
 import downloader.webdriver
-import sources.mapping.tags
+
+from sources.industry_id import *
+from sources.industry_needed import *
+from sources.industry_sources import *
+
 
 class Base(object):
 
@@ -12,7 +16,6 @@ class Base(object):
     precedure_type = None
     wbdownloader = False
     uldownloader = False
-
 
     def __init__(self, interface):
         if self.cookies_file is not None:
@@ -41,8 +44,15 @@ class Base(object):
     def industryjob(self, industryid, filename, industry, resume=False):
         pass
 
-    def jobgenerator(self):
-        pass
+    def jobgenerator(self, resume=False):
+        for industry in industry_needed:
+            industry = industry.encode('utf-8')
+            industryid = industryID[industry]
+            precedure_industry = industry_dict[industry][self.jobname]
+            filename = industryid
+            jobs = self.industryjob(industryid, filename, precedure_industry, resume)
+            for job in jobs:
+                yield job
 
     def get_postdict(self, classifyid):
         result = dict()
