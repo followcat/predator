@@ -50,6 +50,8 @@ class Base(object):
             industryid = industryID[industry]
             precedure_industry = industry_dict[industry][self.jobname]
             filename = industryid
+            if not self.get_postdict(industryid):
+                resume = False
             jobs = self.industryjob(industryid, filename, precedure_industry, resume)
             for job in jobs:
                 yield job
@@ -57,15 +59,14 @@ class Base(object):
     def get_postdict(self, classifyid):
         result = dict()
         data = self.repojt.get(classifyid)
-        if 'postdict' in data:
+        if isinstance(data, dict) and 'postdict' in data:
             result = data['postdict']
         return result
 
     def eq_postdict(self, classifyid, postdict, exclude=None):
+        last_head = self.get_postdict(classifyid)
         if exclude is None:
             exclude = []
-
-        last_head = self.get_postdict(classifyid)
         for p in postdict:
             if p in exclude:
                 continue
