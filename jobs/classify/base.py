@@ -45,6 +45,16 @@ class Base(object):
         pass
 
     def jobgenerator(self, resume=False):
+        if resume is False:
+            for industry in industry_needed:
+                industry = industry.encode('utf-8')
+                industryid = industryID[industry]
+                data = self.repojt.get(industryid)
+                if data is not None:
+                    data['postdict'] = dict()
+                    self.repojt.modify_data(industryid, data)
+                    self.repojt.unload(industryid)
+
         for industry in industry_needed:
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
