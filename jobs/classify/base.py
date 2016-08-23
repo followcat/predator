@@ -2,12 +2,20 @@ import utils.builtin
 import storage.jobtitles
 import downloader._urllib
 import downloader.webdriver
-import sources.mapping.tags
+
+from sources.industry_id import *
+from sources.industry_needed import *
+from sources.industry_sources import *
+
 
 class Base(object):
 
     ff_profile = None
     cookies_file = None
+    precedure = None
+    precedure_type = None
+    wbdownloader = False
+    uldownloader = False
 
     def __init__(self, interface):
         if self.cookies_file is not None:
@@ -17,12 +25,34 @@ class Base(object):
         elif self.ff_profile is not None:
             self.downloader = self.get_wb_downloader(self.ff_profile)
         self.repojt = storage.jobtitles.JobTitles(interface)
+        self.precedure = self.get_precedure()
+
+    def get_precedure(self):
+        precedure = None
+        if self.precedure is None and self.precedure_type is not None:
+            if self.uldownloader is True:
+                precedure = self.precedure_type(uldownloader=self.downloader)
+            elif self.wbdownloader is True:
+                precedure = self.precedure_type(wbdownloader=self.downloader)
+        else:
+            precedure = self.precedure
+        return precedure
 
     def get_wb_downloader(self,profile_path):
         return downloader.webdriver.Webdriver(profile_path)
 
-    def jobgenerator(self):
+    def industryjob(self, industryid, filename, industry, resume=False):
         pass
+
+    def jobgenerator(self, resume=False):
+        for industry in industry_needed:
+            industry = industry.encode('utf-8')
+            industryid = industryID[industry]
+            precedure_industry = industry_dict[industry][self.jobname]
+            filename = industryid
+            jobs = self.industryjob(industryid, filename, precedure_industry, resume)
+            for job in jobs:
+                yield job
 
     def get_postdict(self, classifyid):
         result = dict()
