@@ -7,11 +7,7 @@ import precedure.yingcai
 import storage.fsinterface
 import jobs.classify.base
 
-from sources.yingcai import *
 from sources.yingcai_job import *
-from sources.industry_sources import *
-from sources.industry_needed import *
-from sources.industry_id import *
 
 
 FF_PROFILE_PATH_LIST=['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
