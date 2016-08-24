@@ -4,7 +4,6 @@ import downloader._urllib
 import downloader.webdriver
 
 from sources.industry_id import *
-from sources.industry_needed import *
 from sources.industry_sources import *
 
 
@@ -44,17 +43,7 @@ class Base(object):
     def industryjob(self, industryid, filename, industry, resume=False):
         pass
 
-    def jobgenerator(self, resume=False):
-        if resume is False:
-            for industry in industry_needed:
-                industry = industry.encode('utf-8')
-                industryid = industryID[industry]
-                data = self.repojt.get(industryid)
-                if data is not None:
-                    data['postdict'] = dict()
-                    self.repojt.modify_data(industryid, data)
-                    self.repojt.unload(industryid)
-
+    def jobgenerator(self, industry_needed, resume=False):
         for industry in industry_needed:
             industry = industry.encode('utf-8')
             industryid = industryID[industry]
