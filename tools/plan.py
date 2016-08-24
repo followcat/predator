@@ -44,6 +44,7 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
 
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('job', type=str, help='Process job generateor module.')
+parser.add_argument('industry', type=str, help='Input industry needed.')
 parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
 if __name__ == '__main__':
@@ -52,12 +53,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
     jobmodule = importlib.import_module(args.job)
 
+    industrymodule = importlib.import_module(args.industry)
+    industry = industrymodule.industry_needed
+
     PLAN = jobmodule.PLAN
     PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
     if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
-        PROCESS_GEN = PROCESS_GEN_FUNC(resume=args.resume)
+        PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry, resume=args.resume)
     else:
-        PROCESS_GEN = PROCESS_GEN_FUNC()
+        PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry)
 
     jobadder(scheduler, schedulerjob, PLAN,
              arguments=[PROCESS_GEN],
