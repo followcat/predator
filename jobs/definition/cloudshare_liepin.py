@@ -22,8 +22,9 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'猎聘爬取'
         return template
 
-    def jobgenerator(self):
-        for classify_id in industryID.values():
+    def jobgenerator(self, industry_needed):
+        for classify_value in industry_needed:
+            classify_id = industryID[classify_value.encode('utf-8')]
             try:
                 self.urlsfile = self.jtstorage.get(classify_id)
                 self.urlsdata = self.urlsfile['datas']
