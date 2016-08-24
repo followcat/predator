@@ -7,10 +7,6 @@ import storage.fsinterface
 
 from sources.jingying import *
 
-from sources.industry_sources import *
-from sources.industry_needed import *
-from sources.industry_id import *
-
 class Jingying(jobs.classify.base.Base):
 
     cookies_file = 'cookies.data'
