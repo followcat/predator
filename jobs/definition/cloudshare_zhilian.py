@@ -22,8 +22,9 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'智联卓聘爬取'
         return template
 
-    def jobgenerator(self):
-        for _classify_id in industryID.values():
+    def jobgenerator(self, industry_needed):
+        for _classify_value in industry_needed:
+            _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             try:
                 yamlfile = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)
