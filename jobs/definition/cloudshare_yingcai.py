@@ -31,14 +31,15 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'中华英才爬取'
         return template
 
-    def jobgenerator(self):
-        for _classify_id in industryID.values():
+    def jobgenerator(self, industry_needed):
+        for _classify_value in industry_needed:
+            _classify_id = industryID[_classify_value.encode('utf-8')]
             print _classify_id
             _file = _classify_id + '.yaml'
             try:
               yamlfile = utils.builtin.load_yaml('yingcai/JOBTITLES', _file)
               yamldata = yamlfile['datas']
-            except IOError:
+            except Exception:
                 continue
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['info'][-1],
