@@ -18,7 +18,7 @@ class Yingcai(precedure.base.Base):
 
     BASE_URL=''
     PAGE_VAR = 'page'
-    CLASSIFY_SLEEP = 180
+    CLASSIFY_SLEEP = 5
     CLASSIFY_MAXPAGE = 150
 
     get_url = {
@@ -114,7 +114,7 @@ class Yingcai(precedure.base.Base):
         htmlsource = self.urlget_classify(params_data)
         result = self.parse_classify(htmlsource,header)
         if len(result) == 0:
-            if '对不起，没有找到合适条件的简历' in htmlsource:
+            if '暂无严格符合您要求的简历' in htmlsource:
                 result = None
             else:
                 self.logException(htmlsource)
