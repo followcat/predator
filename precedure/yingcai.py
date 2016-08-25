@@ -18,7 +18,7 @@ class Yingcai(precedure.base.Base):
 
     BASE_URL=''
     PAGE_VAR = 'page'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 120
     CLASSIFY_MAXPAGE = 150
 
     get_url = {
