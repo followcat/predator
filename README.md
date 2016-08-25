@@ -38,12 +38,16 @@ Need to install cyaml to support CSafeDumper/CSafeLoader.
 
     Download CV:
 
-        python tools/plan.py jobs.cv.youprojectname
+        python tools/plan.py jobs.cv.youprojectname sources.industry_needed
 
     Download Classify:
 
-        python tools/plan.py jobs.classify.youprojectname
+        python tools/plan.py jobs.classify.youprojectname sources.industry_needed
+
+    You can add several files you need ,but this files should be split by ',' , such as:
+
+        python tools/plan.py jobs.classify.youprojectname sources.industry1,sources.industry2,sources.industry3
 
     You can resume download by add '-r' or '--resume' like this:
 
-        python tools/plan.py jobs.classify.youprojectname -r
+        python tools/plan.py jobs.classify.youprojectname sources.industry_needed -r
