@@ -40,6 +40,7 @@ class Yingcai(jobs.classify.base.Base):
                             'jobtitles': job_list[index1]
                             }
                 print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
+                print '爬取职位: {0}:{1}'.format(index1, job_list[index1])
                 getdict = {
                         'jobs':job_item,
                         'wishIndustry':industry_id,
