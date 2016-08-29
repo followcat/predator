@@ -14,7 +14,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
 
     JTDB_PATH = 'liepin'
     CVDB_PATH = 'output/liepin'
-    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
+    FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin
 
     def cloudshare_yaml_template(self):
@@ -48,7 +48,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                         yamlload.pop('tag')
                     except KeyError:
                         pass
-                    yamlload['tags'] = yamldata[cv_id]['tags']
+                    yamlload['tags'] = self.urlsdata[cv_id]['tags']
                     resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
     def downloadjob(self, cv_info, classify_id):
