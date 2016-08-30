@@ -7,25 +7,26 @@ import precedure.yingcai
 import storage.fsinterface
 import jobs.classify.base
 
+import jobs.config.yingcai
 from sources.yingcai_job import *
 
 
-FF_PROFILE_PATH_LIST=['/home/winky/.mozilla/firefox/jvqqz5ch.winky',
-                      '/home/winky/.mozilla/firefox/bs9yw52t.winky2',
-                      '/home/winky/.mozilla/firefox/4idae7tm.winky3'
-                     ]
+
+FF_PROFILE_PATH_LIST = jobs.config.yingcai.ff_profiles
 
 class Yingcai(jobs.classify.base.Base):
 
-    profilepath_index=0
-    FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
-    
-    cookies_file = None
+    profilepath_index = 0
+    FF_PROFILE_PATH = FF_PROFILE_PATH_LIST[profilepath_index]
     ff_profile = FF_PROFILE_PATH
+
+    ACCOUNT_LIST=jobs.config.yingcai.accounts
+    username, password = ACCOUNT_LIST[0]
 
     jobname = 'yingcai'
     precedure_type = precedure.yingcai.Yingcai
     wbdownloader = True
+    cookies_file = None
 
     def industryjob(self, industryid, filename, industry, resume=False):
         start_time=datetime.datetime.now()
@@ -61,17 +62,28 @@ class Yingcai(jobs.classify.base.Base):
                 current_time = datetime.datetime.now()
                 duration=(current_time-start_time).seconds
                 if duration > 1800:
-                    self.downloader.close()
-                    self.profilepath_index += 1
-                    self.F_PROFILE_PATH = FF_PROFILE_PATH_LIST[self.profilepath_index%len(FF_PROFILE_PATH_LIST)]
-                    self.downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
-                    self.precedure.wb_downloader = self.downloader
+                    if hasattr(self, 'login') and self.login is True:
+                        accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
+                        accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
+                        self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
+                        self.autologin()
+                    else:
+                        self.downloader.close()
+                        self.profilepath_index += 1
+                        self.F_PROFILE_PATH = FF_PROFILE_PATH_LIST[
+                                                self.profilepath_index%len(FF_PROFILE_PATH_LIST)]
+                        self.downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
+                        self.precedure.wb_downloader = self.downloader
                     start_time = current_time
-                else:
-                    continue
+
+    def autologin(self):
+        self.precedure.login(self.username, self.password)
+
 
 repo = storage.fsinterface.FSInterface('yingcai')
 instance = Yingcai(repo)
+instance.login = True
+instance.autologin()
 
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/5', hour='8-17'),

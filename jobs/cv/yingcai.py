@@ -2,6 +2,8 @@ import jobs.definition.cloudshare_yingcai
 
 
 instance = jobs.definition.cloudshare_yingcai.Yingcai()
+instance.login = True
+instance.autologin()
 
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/60', hour='8-17'),

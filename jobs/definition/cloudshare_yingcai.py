@@ -11,18 +11,19 @@ import utils.builtin
 import precedure.yingcai
 import jobs.definition.cloudshare
 
+import jobs.config.yingcai
 from sources.industry_id import *
 
 class Yingcai(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/yingcai'
-    FF_PROFILE_PATH_LIST = [
-                           '/home/winky/.mozilla/firefox/4idae7tm.winky3',
-                           '/home/winky/.mozilla/firefox/jvqqz5ch.winky',
-                           '/home/winky/.mozilla/firefox/bs9yw52t.winky2'
-                            ]
-    profilepath_index=0
-    FF_PROFILE_PATH=FF_PROFILE_PATH_LIST[profilepath_index]
+    FF_PROFILE_PATH_LIST = jobs.config.yingcai.ff_profiles
+    profilepath_index = 0
+    FF_PROFILE_PATH = FF_PROFILE_PATH_LIST[profilepath_index]
+
+    ACCOUNT_LIST=jobs.config.yingcai.accounts
+    username, password = ACCOUNT_LIST[0]
+
     PRECEDURE_CLASS = precedure.yingcai.Yingcai
     START_TIME=datetime.datetime.now()
 
@@ -65,15 +66,22 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
                 if duration > 1800:
-                    self.wb_downloader.close()
                     time.sleep(1)
-                    self.profilepath_index+=1
-                    self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index%len(self.FF_PROFILE_PATH_LIST)]
-                    self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
-                    self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
-                    self.START_TIME=current_time
-                else:
-                    continue
+                    if hasattr(self, 'login') and self.login is True:
+                        accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
+                        accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
+                        self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
+                        self.autologin()
+                    else:
+                        self.wb_downloader.close()
+                        self.profilepath_index+=1
+                        self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index%len(self.FF_PROFILE_PATH_LIST)]
+                        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
+                        self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
+                    self.START_TIME = current_time
+
+    def autologin(self):
+        self.precedure.login(self.username, self.password)
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
