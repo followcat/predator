@@ -21,7 +21,7 @@ class Base(object):
             self.cookies_str = utils.builtin.loadfile('cookies.data').strip()
             self.downloader = downloader._urllib.Urllib()
             self.downloader.set_cookies(self.cookies_str)
-        elif self.ff_profile is not None:
+        else:
             self.downloader = self.get_wb_downloader(self.ff_profile)
         self.repojt = storage.jobtitles.JobTitles(interface)
         self.precedure = self.get_precedure()
