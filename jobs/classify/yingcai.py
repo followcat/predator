@@ -82,8 +82,6 @@ class Yingcai(jobs.classify.base.Base):
 
 repo = storage.fsinterface.FSInterface('yingcai')
 instance = Yingcai(repo)
-instance.login = True
-instance.autologin()
 
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/5', hour='8-17'),
