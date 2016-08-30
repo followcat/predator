@@ -151,12 +151,11 @@ def Merge(tags,industrylist,final_dict,process_industry):
                 final_dict[value][tags].append(tmp_item3)
     for key in final_nonmatch.keys():
         tmp_item4 = [final_nonmatch[key],key]
-        final_dict['其他'][tags].append(tmp_item4)
+        final_dict['其他行业'][tags].append(tmp_item4)
 
     return final_dict
 
 industrylist = []
-final_dict = {}
 init_dict = {}
 for key in yingcai_industry.keys():
     init_dict[key] = yingcai_industry[key].encode('utf-8')
