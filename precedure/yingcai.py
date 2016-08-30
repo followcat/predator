@@ -122,6 +122,7 @@ class Yingcai(precedure.base.Base):
 
     def login(self, username, password):
         self.wb_downloader.driver.get('http://qy.chinahr.com/buser/logout')
+        self.wb_downloader.driver.delete_all_cookies()
         self.wb_downloader.driver.get('http://qy.chinahr.com/buser/login')
         login_form = self.wb_downloader.driver.find_element_by_id('normal-login')
         ele_ac = login_form.find_element_by_id('username')
