@@ -9,7 +9,7 @@ import downloader.webdriver
 
 class Base(object):
 
-    JTDB_PATH = 'sourcename'
+    JTDB_PATH = 'output/sourcename'
     CVDB_PATH = 'output/sourcename'
 
     FF_PROFILE_PATH = None

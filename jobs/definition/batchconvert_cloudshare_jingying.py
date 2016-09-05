@@ -15,7 +15,7 @@ class Batchconvert(BatchconvertCloudshare,
     def jobgenerator(self, idlist):
         for classify_id in idlist:
             yamlname = classify_id + '.yaml'
-            yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', yamlname)
+            yamldata = utils.builtin.load_yaml('output/jingying/JOBTITLES', yamlname)
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)

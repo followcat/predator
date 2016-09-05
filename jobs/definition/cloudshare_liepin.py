@@ -12,7 +12,7 @@ from sources.industry_id import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
-    JTDB_PATH = 'liepin'
+    JTDB_PATH = 'output/liepin'
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin

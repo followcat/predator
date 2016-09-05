@@ -18,7 +18,7 @@ class Batchconvert(BatchconvertCloudshare,
 
 if __name__ == '__main__':
     instance = Batchconvert()
-    PROCESS_GEN = instance.jobgenerator('liepin/JOBTITLES')
+    PROCESS_GEN = instance.jobgenerator('output/liepin/JOBTITLES')
 
     queue_saver = Queue.Queue(0)
     t1 = ThreadConverter('1', queue_saver, PROCESS_GEN)
