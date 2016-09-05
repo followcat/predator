@@ -40,7 +40,7 @@ class Liepin(jobs.classify.base.Base):
                 yield job_process
 
 
-repo = storage.gitinterface.GitInterface('liepin')
+repo = storage.gitinterface.GitInterface('output/liepin')
 instance = Liepin(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator

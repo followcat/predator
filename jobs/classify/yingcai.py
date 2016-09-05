@@ -80,7 +80,7 @@ class Yingcai(jobs.classify.base.Base):
         self.precedure.login(self.username, self.password)
 
 
-repo = storage.fsinterface.FSInterface('yingcai')
+repo = storage.fsinterface.FSInterface('output/yingcai')
 instance = Yingcai(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
