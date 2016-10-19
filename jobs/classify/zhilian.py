@@ -3,7 +3,7 @@ import functools
 
 import precedure.zhilian
 import jobs.classify.base
-import storage.gitinterface
+import storage.fsinterface
 
 from sources.zhilian_job import *
 
@@ -43,7 +43,7 @@ class Zhilian(jobs.classify.base.Base):
                 yield job_process
 
 
-repo = storage.gitinterface.GitInterface('output/zhilian')
+repo = storage.fsinterface.FSInterface('output/zhilian')
 instance = Zhilian(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
