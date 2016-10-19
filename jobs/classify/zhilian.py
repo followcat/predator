@@ -10,7 +10,7 @@ from sources.zhilian_job import *
 
 class Zhilian(jobs.classify.base.Base):
 
-    ff_profile = '/home/winky/.mozilla/firefox/rikqqhcg.default'
+    ff_profile = '/home/kabess/.mozilla/firefox/g648khbx.default'
     jobname = 'zhilian'
     precedure_type = precedure.zhilian.Zhilian
     wbdownloader = True
