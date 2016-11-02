@@ -83,8 +83,11 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
         if not details['age']:
             age = uploaded_details['peo'][3]
-            age_pattern = re.compile(r'(\d+)')
-            details['age'] = int(re.findall(age_pattern, age)[0])
+            if age:
+                age_pattern = re.compile(r'(\d+)')
+                details['age'] = int(re.findall(age_pattern, age)[0])
+            else:
+                details['age'] = ''
 
         if not details['education']:
             details['education'] = uploaded_details['peo'][4].replace('\n', '')\
