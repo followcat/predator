@@ -113,6 +113,9 @@ class Zhilian(precedure.base.Base):
 
     def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        no_public = bs.findAll(class_='no_public')
+        if len(no_public) > 0:
+            return None
         recommand = bs.find(id='recommand-btn-area')
         recommand.decompose()
         send_contact = bs.find(id='haveSeenContact')

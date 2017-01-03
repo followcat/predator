@@ -59,7 +59,10 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         print('Download: '+cv_id)
         try:
             cv_content =  self.precedure.cv(cv_info['href'])
-            cvresult = True
+            if cv_content is not None:
+                cvresult = True
+            else:
+                cvresult = False
         except precedure.zhilian.NocontentCVException:
             print('Failed! Download: '+cv_id)
             cvresult = False
