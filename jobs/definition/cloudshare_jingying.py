@@ -27,7 +27,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             try:
-                yamlfile = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+                yamlfile = utils.builtin.load_yaml('output/jingying/JOBTITLES', _file)
                 yamldata = yamlfile['datas']
             except Exception:
                 continue

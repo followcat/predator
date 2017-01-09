@@ -12,7 +12,7 @@ from sources.industry_id import *
 
 class Liepin(jobs.definition.cloudshare.Cloudshare):
 
-    JTDB_PATH = 'liepin'
+    JTDB_PATH = 'output/liepin'
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
     PRECEDURE_CLASS = precedure.liepin.Liepin
@@ -29,7 +29,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                 self.urlsfile = self.jtstorage.get(classify_id)
                 self.urlsdata = self.urlsfile['datas']
             except Exception:
-                continue
+                self.urlsdata = self.urlsfile
             sorted_id = sorted(self.urlsdata,
                            key = lambda cvid: self.urlsdata[cvid]['peo'][-1],
                            reverse=True)

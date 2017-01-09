@@ -89,7 +89,7 @@ class Jingying(jobs.classify.base.Base):
                                                     header, flush)
                     yield job_process
 
-repo = storage.fsinterface.FSInterface('jingying')
+repo = storage.fsinterface.FSInterface('output/jingying')
 instance = Jingying(repo)
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/5')]

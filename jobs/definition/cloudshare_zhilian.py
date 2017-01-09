@@ -27,7 +27,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             try:
-                yamlfile = utils.builtin.load_yaml('zhilian/JOBTITLES', _file)
+                yamlfile = utils.builtin.load_yaml('output/zhilian/JOBTITLES', _file)
                 yamldata = yamlfile['datas']
             except IOError:
                 continue
