@@ -120,3 +120,14 @@ class Yingcai(precedure.base.Base):
                 self.logException(htmlsource)
         return result
 
+    def login(self, username, password):
+        self.wb_downloader.driver.get('http://qy.chinahr.com/buser/logout')
+        self.wb_downloader.driver.delete_all_cookies()
+        self.wb_downloader.driver.get('http://qy.chinahr.com/buser/login')
+        login_form = self.wb_downloader.driver.find_element_by_id('normal-login')
+        ele_ac = login_form.find_element_by_id('username')
+        ele_pw = login_form.find_element_by_name('pw')
+        ele_submit = login_form.find_element_by_class_name('btn-submit')
+        ele_ac.send_keys(username)
+        ele_pw.send_keys(password)
+        ele_submit.click()

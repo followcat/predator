@@ -9,10 +9,10 @@ import downloader.webdriver
 
 class Base(object):
 
-    JTDB_PATH = 'sourcename'
+    JTDB_PATH = 'output/sourcename'
     CVDB_PATH = 'output/sourcename'
 
-    FF_PROFILE_PATH = '/home/user/.mozilla/firefox/mtj6ft0d.default'
+    FF_PROFILE_PATH = None
     PRECEDURE_CLASS = precedure.base.Base
 
     def __init__(self):
