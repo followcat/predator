@@ -26,7 +26,7 @@ class Base(object):
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
-        cv_content =  self.precedure.cv(cv_info['href'])
+        cv_content = self.precedure.cv(cv_info['href'])
         result = self.cvstorage.add(cv_id, cv_content.encode('utf-8'), 'kabess')
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
