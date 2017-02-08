@@ -4,8 +4,8 @@ import os
 import utils.builtin
 
 from sources.industry_id import*
-cvpath = 'output/yingcai/RAW/'
-cvlistpath = 'yingcai/JOBTITLES'
+cvpath = 'output/jingying/RAW/'
+cvlistpath = 'jingying/JOBTITLES'
 
 def add_file(path, filename, filedate):
     file_path = os.path.join(path, filename)
@@ -30,7 +30,7 @@ for _classify_id in industryID.values():
     except IOError:
         continue
     sorted_id = sorted(yamldata,
-                       key = lambda cvid: yamldata[cvid]['info'][-1],
+                       key = lambda cvid: yamldata[cvid]['peo'][-1],
                        reverse=True)
     for cv_id in sorted_id:
         if not existscv(cvpath, cv_id):
