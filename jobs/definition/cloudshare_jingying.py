@@ -98,17 +98,21 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             res = re.findall(regex, cv_content)
             if len(res) > 0 and len(res[0]) == 3:
                 age_res = res[0]
-                born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
-                today = datetime.date.today()
                 try:
-                    birthday = born.replace(year=today.year)
+                    born = datetime.date(int(age_res[0]), int(age_res[1]), int(age_res[2]))
+                    today = datetime.date.today()
+                    try:
+                        birthday = born.replace(year=today.year)
+                    except ValueError:
+                        birthday = born.replace(year=today.year, day=born.day-1)
+                    if birthday > today:
+                        age = today.year - born.year - 1
+                    else:
+                        age = today.year - born.year
+                    if age >= 18:
+                        details['age'] = age
                 except ValueError:
-                    birthday = born.replace(year=today.year, day=born.day-1)
-                if birthday > today:
-                    age = today.year - born.year - 1
-                else:
-                    age = today.year - born.year
-                details['age'] = age
+                    pass
 
         if not details['tags']:
             details['tags'] = uploaded_details['tags']
