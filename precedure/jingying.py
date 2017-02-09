@@ -145,6 +145,6 @@ class Jingying(precedure.base.Base):
             time.sleep(self.CLASSIFY_SLEEP)
         head = {}
         head['postdict'] = header['postdict']
-        if flush:
+        if flush and (len(add_list) > 0 or len(update_list) > 0):
             repojt.add_datas(filename, add_list, update_list, head)
         return True
