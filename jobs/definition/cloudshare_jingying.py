@@ -14,7 +14,12 @@ from sources.industry_id import *
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/jingying'
-    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
+    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/16xuwjcx.51jingying_2'
+    FF_PROFILE_PATH_BACKUPS = [
+        '/home/jeff/.mozilla/firefox/u2ip99rl.flj_jingying',
+        '/home/jeff/.mozilla/firefox/2mkrz29h.jingying_chunjing',
+        '/home/jeff/.mozilla/firefox/8xjhortl.jingying_jingwen',
+        ]
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
@@ -56,14 +61,19 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
-        print('Download: '+cv_id)
         try:
             cv_content =  self.precedure.cv(cv_info['href'])
             yamldata = self.extract_details(cv_info, cv_content)
             result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
             job_logger.info('Download: '+cv_id)
-        except AttributeError:
-            job_logger.error('Fails Downloading: '+cv_id)
+            print('Download: '+cv_id)
+        except AttributeError as e:
+            job_logger.error('Downloading: '+cv_id+ ' ' + e.message)
+            print('Fails Download: '+cv_id)
+            self.wb_downloader.close()
+            self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH_BACKUPS.pop(0))
+            self.precedure.wb_downloader = self.wb_downloader
+            print('Switch Firefox profile!')
         result = True
 
     def calculate_age(born):
