@@ -14,7 +14,7 @@ import downloader.webdriver
 class Jingying(jobs.definition.base.Base):
 
     CVDB_PATH = 'jingying_webdrivercv'
-    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/ozyc3tvj.jeff'
+    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/16xuwjcx.51jingying_2'
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     industry_yamls = ['47.yaml', #医疗设备/器械
