@@ -59,7 +59,7 @@ class JobTitles(object):
         rawhtml = dict()
         for data in datas+update_datas:
             htmlraw = data.pop('html')
-            self.interface.add_file(os.path.join(self.interface_rawpath, data['id']+'.html'),
+            self.interface.add_file(os.path.join(self.path, self.yaml_raw_path, data['id']+'.html'),
                                     htmlraw, message="Add to raw html id :" + filename,
                                     committer=committer)
 
