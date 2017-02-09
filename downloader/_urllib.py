@@ -28,7 +28,7 @@ class Urllib(object):
         req = urllib2.Request(url, headers = headers)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
         try:
-            res = opener.open(req, urllib_data)
+            res = opener.open(req, urllib_data, timeout=30)
             text = res.read()
         except urllib2.URLError:
             text = ''
@@ -41,6 +41,9 @@ class Urllib(object):
         headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'})
         req = urllib2.Request(url, headers = headers)
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
-        res = opener.open(req, timeout=30)
-        text = res.read()
+        try:
+            res = opener.open(req, timeout=30)
+            text = res.read()
+        except urllib2.URLError:
+            text = ''
         return text
