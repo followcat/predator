@@ -49,7 +49,7 @@ class Jingying(jobs.classify.base.Base):
                 update_list = []
                 print _area
                 for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
-                    if _index == len(self.company_area_list) - 1:
+                    if _index == len(localdatajobs['company_name'][_area]) - 1:
                         flush = True
                     print c_name
                     postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
