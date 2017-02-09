@@ -49,7 +49,7 @@ class JobTitles(object):
         return removed
 
     def add_datas(self, classify_id, datas, update_datas, header, committer=None):
-        if len(datas) == 0:
+        if len(datas) == 0 and len(update_datas) == 0:
             return True
         if header is None:
             header = dict()
