@@ -29,7 +29,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                 self.urlsfile = self.jtstorage.get(classify_id)
                 self.urlsdata = self.urlsfile['datas']
             except Exception:
-                continue
+                self.urlsdata = self.urlsfile
             sorted_id = sorted(self.urlsdata,
                            key = lambda cvid: self.urlsdata[cvid]['peo'][-1],
                            reverse=True)

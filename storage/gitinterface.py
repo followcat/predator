@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import glob
 import os.path
 import subprocess
 
@@ -27,6 +28,10 @@ class GitInterface(object):
         except OSError:
             self.repo = dulwich.repo.Repo(path)
         self.path = path
+
+    def lsfiles(self, prefix, filterfile):
+        return [os.path.split(f)[1] for f in glob.glob(
+                os.path.join(self.path, prefix, filterfile))]
 
     def add_file(self, filename, filedata, message=None, committer=None):
         """

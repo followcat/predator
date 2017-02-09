@@ -1,21 +1,25 @@
 import glob
 import yaml
-import utils._yaml
 import os.path
+import utils._yaml
 
 import utils.builtin
 
 
 class JobTitles(object):
     path = 'JOBTITLES'
+    yaml_raw_path = 'HTMLRAW'
 
     def __init__(self, interface):
         self.interface = interface
-        self.interface_path = self.interface.path + "/" + self.path
+        self.interface_path = os.path.join(self.interface.path, self.path)
+        self.interface_rawpath = os.path.join(self.interface.path, self.path, self.yaml_raw_path)
         self.info = ""
         self.table = {}
         if not os.path.exists(self.interface_path):
             os.makedirs(self.interface_path)
+        if not os.path.exists(self.interface_rawpath):
+            os.makedirs(self.interface_rawpath)
 
     def get(self, classify_id):
         if classify_id not in self.table:
@@ -25,6 +29,11 @@ class JobTitles(object):
             yamldata = utils.builtin.load_yaml(self.interface_path, yamlname)
             self.table[classify_id] = yamldata
         return self.table[classify_id]
+
+    def getraw(self, id):
+        with open(os.path.join(self.interface_rawpath, id+'.html')) as fp:
+            stream = fp.read()
+        return stream
 
     def unload(self, classify_id):
         result = False
@@ -47,6 +56,13 @@ class JobTitles(object):
         filename = classify_id + '.yaml'
         table = self.get(classify_id)
 
+        rawhtml = dict()
+        for data in datas+update_datas:
+            htmlraw = data.pop('html')
+            self.interface.add_file(os.path.join(self.interface_rawpath, data['id']+'.html'),
+                                    htmlraw, message="Add to raw html id :" + filename,
+                                    committer=committer)
+
         if 'datas' not in table:
             new_table = dict()
             new_table['datas'] = dict()
@@ -68,14 +84,6 @@ class JobTitles(object):
                     current['tags'][key] = current['tags'][key].union(data['tags'][key])
 
         dump_data = yaml.dump(table, Dumper=yaml.CSafeDumper, allow_unicode=True)
-        self.interface.add_file(os.path.join(self.path, filename), dump_data,
-                                message="Add to classify id :" + filename,
-                                committer=committer)
-        return True
-
-    def add_data(self, classify_id, data, committer=None):
-        filename = classify_id + '.yaml'
-        dump_data = yaml.dump(data, Dumper=yaml.CSafeDumper, allow_unicode=True)
         self.interface.add_file(os.path.join(self.path, filename), dump_data,
                                 message="Add to classify id :" + filename,
                                 committer=committer)
