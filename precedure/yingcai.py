@@ -99,9 +99,12 @@ class Yingcai(precedure.base.Base):
                 query_str = utils.tools.queryString(element_a.get('href'))
                 storage_data['id']=data_lists[index].attrs['cvid']
                 storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
-                storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
-                storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
-                storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
+                try:
+                    storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
+                    storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
+                    storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
+                except AttributeError:
+                    pass
                 update_text=data_lists[index].find(class_='source')
                 update_time=update_text.find('em').getText()
                 storage_data['info'].append(update_time)
