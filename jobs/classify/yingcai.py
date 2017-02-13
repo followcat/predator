@@ -34,16 +34,17 @@ class Yingcai(jobs.classify.base.Base):
         for index in industry:
             industry_id = index[0]
             industry_value = index[1]
-            for index1 in sorted(job_list.keys()):
-                job_item = index1
+            for key, value in job_list.items():
+                if not key.startswith(industry_id):
+                    continue
                 postinfo = {
                             'industrys': industry_value,
-                            'jobtitles': job_list[index1]
+                            'jobtitles': value,
                             }
                 print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
-                print '爬取职位: {0}:{1}'.format(index1, job_list[index1])
+                print '爬取职位：{0}:{1}'.format(key, value)
                 getdict = {
-                        'jobs':job_item,
+                        'jobs':key,
                         'wishIndustry':industry_id,
                         'page':'0'
                         }
@@ -63,11 +64,13 @@ class Yingcai(jobs.classify.base.Base):
                 duration=(current_time-start_time).seconds
                 if duration > 1800:
                     if hasattr(self, 'login') and self.login is True:
+                        print 'login again'
                         accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
                         accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
                         self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
                         self.autologin()
                     else:
+                        print 'switch profile'
                         self.downloader.close()
                         self.profilepath_index += 1
                         self.F_PROFILE_PATH = FF_PROFILE_PATH_LIST[
