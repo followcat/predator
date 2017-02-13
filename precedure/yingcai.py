@@ -31,6 +31,17 @@ class Yingcai(precedure.base.Base):
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
         self.wb_downloader = wbdownloader
+        self.setup()
+
+    def setup(self):
+        if self.wb_downloader:
+            try:
+                self.wb_downloader.driver.get('http://qy.chinahr.com/cv/sou?page=1')
+                k = self.wb_downloader.driver.find_elements_by_class_name('utipclose')
+                k[1].click()
+            except Exception:
+                pass
+
 
     def urlget_classify(self, data):
         tmp_data = dict()
