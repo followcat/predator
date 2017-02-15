@@ -25,7 +25,6 @@ class Yingcai(precedure.base.Base):
                 'jobType':1,
                 'live':'1',
                 'minDegree':'4',
-                'minWorkYear':'5'
                 }
 
     def __init__(self, url_downloader=None, wbdownloader=None):
