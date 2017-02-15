@@ -31,6 +31,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         for _classify_value in industry_needed:
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
+            print('%s - %s'%(_classify_id, _classify_value))
             try:
                 yamlfile = utils.builtin.load_yaml('output/jingying/JOBTITLES', _file)
                 yamldata = yamlfile['datas']
