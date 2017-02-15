@@ -50,7 +50,7 @@ class Yingcai(jobs.classify.base.Base):
                         }
                 header = self.gen_header(getdict, postinfo)
                 #import ipdb;ipdb.set_trace()
-                print "header:",header
+                #print "header:",header
                 if resume and not self.eq_postdict(industryid, getdict,
                                                    exclude=[self.precedure.PAGE_VAR]):
                     continue
