@@ -97,10 +97,19 @@ class Yingcai(precedure.base.Base):
                     storage_data['href'] = element_a.get('href')
                 query_str = utils.tools.queryString(element_a.get('href'))
                 storage_data['id']=data_lists[index].attrs['cvid']
-                storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
+                try:
+                    storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
+                except AttributeError:
+                    pass
                 try:
                     storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
+                except AttributeError:
+                    pass
+                try:
                     storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
+                except AttributeError:
+                    pass
+                try:
                     storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
                 except AttributeError:
                     pass
