@@ -81,7 +81,8 @@ class Yingcai(precedure.base.Base):
                     age=int(agematch.group(1))
                 except Exception:
                     continue
-                if age < 25:
+                # Set the age limit to 16, which is defined in law
+                if age < 16:
                     continue
                 storage_data['date'] = time.time()
                 storage_data['recommend'] = ''
