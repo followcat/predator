@@ -42,12 +42,12 @@ class Zhilian(jobs.classify.base.Base):
                                                 postdict, self.repojt, header)
                 yield job_process
 
-repo = storage.gitinterface.GitInterface('output/zhilian')
+repo = storage.fsinterface.FSInterface('output/zhilian')
 
 instance = Zhilian(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/6', hour='8-20'),
-        dict(second='*/30', hour='21-23'),
-        dict(minute='*/2', hour='0-6')]
+PLAN = [dict(minute='*/5', hour='8-20'),
+        dict(minute='*/8', hour='21-23'),
+        dict(minute='*/10', hour='0-6')]
 
