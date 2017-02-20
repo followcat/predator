@@ -54,7 +54,7 @@ parser.add_argument('-r', '--resume', action='store_true', help='Let resume be T
 
 if __name__ == '__main__':
     import importlib
-
+    
     args = parser.parse_args()
     jobmodule = importlib.import_module(args.job)
 

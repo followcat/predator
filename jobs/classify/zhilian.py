@@ -42,8 +42,8 @@ class Zhilian(jobs.classify.base.Base):
                                                 postdict, self.repojt, header)
                 yield job_process
 
+repo = storage.gitinterface.GitInterface('output/zhilian')
 
-repo = storage.fsinterface.FSInterface('output/zhilian')
 instance = Zhilian(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator

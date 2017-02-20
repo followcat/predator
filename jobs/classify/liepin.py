@@ -44,4 +44,4 @@ repo = storage.gitinterface.GitInterface('output/liepin')
 instance = Liepin(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/20')]
+PLAN = [dict(second='*/60')]

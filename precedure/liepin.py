@@ -16,8 +16,8 @@ class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
     PAGE_VAR = 'curPage'
-    CLASSIFY_SLEEP = 10
-    CLASSIFY_MAXPAGE = 100
+    CLASSIFY_SLEEP = 60
+    CLASSIFY_MAXPAGE = 10
 
     urls_post = {
         'form_submit':1,
@@ -124,6 +124,8 @@ class Liepin(precedure.base.Base):
         download_url = self.BASE_URL + url
         htmlsource = self.wb_downloader.getsource(download_url)
         if u'处于猎聘网系统审核中' in htmlsource:
+            raise NocontentCVException
+        elif u'简历信息不存在或已被删除' in htmlsource:
             raise NocontentCVException
         else:
             result = self.parse_cv(htmlsource)
