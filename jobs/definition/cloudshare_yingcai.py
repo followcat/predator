@@ -50,7 +50,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
-                    #yield job_process
+                    yield job_process
                 else:
                     try:
                         yamlload = utils.builtin.load_yaml('output/yingcai/RAW', cv_id+'.yaml')
