@@ -40,9 +40,26 @@ class Jingying(jobs.classify.base.Base):
     def industryjob(self, industryid, filename, industry, resume=False):
 
         for index in industry:
+            add_list = []
+            update_list = []
             industry_id = index[0]
             industry_value = index[1]
             print industry_value
+            postdict = {'indtype': industry_id}
+            postinfo = {'industry': industry_value}
+            header = self.gen_header(postdict, postinfo)
+            if resume and not self.eq_postdict(industryid, postdict,
+                                               exclude=[self.precedure.PAGE_VAR]):
+                continue
+            else:
+                resume = False
+            job_process = functools.partial(self.precedure.update_classify,
+                                            filename, filename,
+                                            postdict, self.repojt,
+                                            add_list, update_list,
+                                            header)
+            yield job_process
+
             for _area in self.company_area_list:
                 flush = False
                 add_list = []
