@@ -69,13 +69,16 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
                 if duration > 1800:
-                    time.sleep(1)
+                    #Wait for job done, then login again or switch user
+                    time.sleep(10)
                     if hasattr(self, 'login') and self.login is True:
+                        print('login again')
                         accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
                         accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
                         self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
                         self.autologin()
                     else:
+                        print('switch user')
                         self.wb_downloader.close()
                         self.profilepath_index+=1
                         self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index%len(self.FF_PROFILE_PATH_LIST)]

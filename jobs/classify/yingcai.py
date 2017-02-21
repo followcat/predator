@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+import time
 import datetime
 import functools
 
@@ -63,6 +64,7 @@ class Yingcai(jobs.classify.base.Base):
                 current_time = datetime.datetime.now()
                 duration=(current_time-start_time).seconds
                 if duration > 1800:
+                    time.sleep(10)
                     if hasattr(self, 'login') and self.login is True:
                         print 'login again'
                         accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
