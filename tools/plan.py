@@ -40,12 +40,14 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
     for each in plan:
         scheduler.add_job(job, 'cron', args=arguments, kwargs=kwarguments, **each)
 
-def indgenerator(industrystr):
-    industrys = industrystr.split(',')
-    for ind in industrys:
+def get_industries(industrystr):
+    _industries = industrystr.split(',')
+    ret_industries = []
+    for ind in _industries:
         industrymodule = importlib.import_module(ind)
-        industry = industrymodule.industry_needed
-        yield industry
+        industries = industrymodule.industry_needed
+        ret_industries.extend(industries)
+    return ret_industries
 
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('--jobs', type=str, help='Process job generateor module.')
@@ -60,21 +62,20 @@ if __name__ == '__main__':
     print jobs
     for job in jobs:
         jobmodule = importlib.import_module(job)
-        industrys = indgenerator
-        for industry in industrys(args.industry):
-            PLAN = jobmodule.PLAN
-            PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
-            if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
-                PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry, resume=args.resume)
-            else:
-                PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry)
+        industries = get_industries(args.industry)
+        PLAN = jobmodule.PLAN
+        PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+        if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
+            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industries, resume=args.resume)
+        else:
+            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industries)
 
-            jobadder(scheduler, schedulerjob, PLAN,
-                     arguments=[PROCESS_GEN],
-                     kwarguments=dict(sleep=False))
-            scheduler.add_listener(err_listener,
-                apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED)
-            print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+        jobadder(scheduler, schedulerjob, PLAN,
+                 arguments=[PROCESS_GEN],
+                 kwarguments=dict(sleep=False))
+        scheduler.add_listener(err_listener,
+            apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED)
+        print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
     try:
         if not scheduler.running:
             scheduler.start()
