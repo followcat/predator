@@ -44,7 +44,7 @@ class Jingying(jobs.classify.base.Base):
             update_list = []
             industry_id = index[0]
             industry_value = index[1]
-            print industry_value
+            print('[jingying url list]: %s' %industry_value)
             postdict = {'indtype': industry_id}
             postinfo = {'industry': industry_value}
             header = self.gen_header(postdict, postinfo)
@@ -64,11 +64,11 @@ class Jingying(jobs.classify.base.Base):
                 flush = False
                 add_list = []
                 update_list = []
-                print _area
+                print('[jingying url list]: %s' %_area)
                 for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
                     if _index == len(localdatajobs['company_name'][_area]) - 1:
                         flush = True
-                    print c_name
+                    print('[jingying url list]: %s' %c_name)
                     postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
                                 'indtype': industry_id}
                     postinfo = {'company': c_name,

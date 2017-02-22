@@ -49,12 +49,12 @@ class Yingcai(precedure.base.Base):
         searchurl = 'http://qy.chinahr.com/cv/sou?'
         params_str = urllib.urlencode(tmp_data)
         download_url = searchurl + params_str
-        print 'download url: ' + download_url
+        print '[yingcai url list]: download url: ' + download_url
         return self.wb_downloader.getsource(download_url)
         
     def webdriverget_cv(self, url):
         download_url = 'http://qy.chinahr.com/cv/sou?' + url
-        print 'download url: ' + download_url
+        print '[yingcai cv]: download url: ' + download_url
         htmlsource = self.wb_downloader.getsource(download_url)
         return htmlsource
 

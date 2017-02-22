@@ -31,7 +31,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         for _classify_value in industry_needed:
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
-            print('%s - %s'%(_classify_id, _classify_value))
+            print('[jingying cv]: %s - %s'%(_classify_id, _classify_value))
             try:
                 yamlfile = utils.builtin.load_yaml('output/jingying/JOBTITLES', _file)
                 yamldata = yamlfile['datas']
@@ -67,14 +67,14 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             yamldata = self.extract_details(cv_info, cv_content)
             result = self.cvstorage.addcv(cv_id, cv_content.encode('utf-8'), yamldata)
             job_logger.info('Download: '+cv_id)
-            print('Download: '+cv_id)
+            print('[jingying cv]: Download: '+cv_id)
         except AttributeError as e:
             job_logger.error('Downloading: '+cv_id+ ' ' + e.message)
-            print('Fails Download: '+cv_id)
+            print('[jingying cv]: Fails Download: '+cv_id)
             self.wb_downloader.close()
             self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH_BACKUPS.pop(0))
             self.precedure.wb_downloader = self.wb_downloader
-            print('Switch Firefox profile!')
+            print('[jingying cv]: Switch Firefox profile!')
         result = True
 
     def calculate_age(born):
