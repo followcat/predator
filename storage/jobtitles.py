@@ -104,6 +104,8 @@ class JobTitles(object):
             self._initclassify(classify_id)
             self.table[classify_id] = utils.builtin.load_yaml(self.interface_path, classify_id+'.yaml')
         exists = False
+        if self.table[classify_id] is None:
+            self.table[classify_id] = {}
         if 'datas' in self.table[classify_id]:
             datas = self.table[classify_id]['datas']
         else:
