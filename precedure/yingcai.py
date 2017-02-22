@@ -25,12 +25,22 @@ class Yingcai(precedure.base.Base):
                 'jobType':1,
                 'live':'1',
                 'minDegree':'4',
-                'minWorkYear':'5'
                 }
 
     def __init__(self, url_downloader=None, wbdownloader=None):
         self.url_downloader = url_downloader
         self.wb_downloader = wbdownloader
+        self.setup()
+
+    def setup(self):
+        if self.wb_downloader:
+            try:
+                self.wb_downloader.driver.get('http://qy.chinahr.com/cv/sou?page=1')
+                k = self.wb_downloader.driver.find_elements_by_class_name('utipclose')
+                k[1].click()
+            except Exception:
+                pass
+
 
     def urlget_classify(self, data):
         tmp_data = dict()
@@ -71,7 +81,8 @@ class Yingcai(precedure.base.Base):
                     age=int(agematch.group(1))
                 except Exception:
                     continue
-                if age < 25:
+                # Set the age limit to 16, which is defined in law
+                if age < 16:
                     continue
                 storage_data['date'] = time.time()
                 storage_data['recommend'] = ''
@@ -87,10 +98,22 @@ class Yingcai(precedure.base.Base):
                     storage_data['href'] = element_a.get('href')
                 query_str = utils.tools.queryString(element_a.get('href'))
                 storage_data['id']=data_lists[index].attrs['cvid']
-                storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
-                storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
-                storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
-                storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
+                try:
+                    storage_data['name']=(data_lists[index].find(class_='name').string).decode('utf-8')
+                except AttributeError:
+                    pass
+                try:
+                    storage_data['info'].append((data_lists[index].find(class_='age').string).decode('utf-8'))
+                except AttributeError:
+                    pass
+                try:
+                    storage_data['info'].append((data_lists[index].find(class_='workYear').string).decode('utf-8'))
+                except AttributeError:
+                    pass
+                try:
+                    storage_data['info'].append((data_lists[index].find(class_='edu').string).decode('utf-8'))
+                except AttributeError:
+                    pass
                 update_text=data_lists[index].find(class_='source')
                 update_time=update_text.find('em').getText()
                 storage_data['info'].append(update_time)
