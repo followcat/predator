@@ -48,7 +48,7 @@ def indgenerator(industrystr):
         yield industry
 
 parser = argparse.ArgumentParser(description='Plan tool.')
-parser.add_argument('job', type=str, help='Process job generateor module.')
+parser.add_argument('--jobs', type=str, help='Process job generateor module.')
 parser.add_argument('industry', type=str, help='Input industry needed.')
 parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
@@ -56,24 +56,28 @@ if __name__ == '__main__':
     import importlib
 
     args = parser.parse_args()
-    jobmodule = importlib.import_module(args.job)
+    jobs = args.jobs.split(',')
+    print jobs
+    for job in jobs:
+        jobmodule = importlib.import_module(job)
+        industrys = indgenerator
+        for industry in industrys(args.industry):
+            PLAN = jobmodule.PLAN
+            PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+            if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
+                PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry, resume=args.resume)
+            else:
+                PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry)
 
-    industrys = indgenerator
-    for industry in industrys(args.industry):
-        PLAN = jobmodule.PLAN
-        PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
-        if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry, resume=args.resume)
-        else:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industry)
-
-        jobadder(scheduler, schedulerjob, PLAN,
-                 arguments=[PROCESS_GEN],
-                 kwarguments=dict(sleep=False))
-        scheduler.add_listener(err_listener,
-            apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED)
-        print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
-        try:
+            jobadder(scheduler, schedulerjob, PLAN,
+                     arguments=[PROCESS_GEN],
+                     kwarguments=dict(sleep=False))
+            scheduler.add_listener(err_listener,
+                apscheduler.events.EVENT_JOB_ERROR | apscheduler.events.EVENT_JOB_MISSED)
+            print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+    try:
+        if not scheduler.running:
             scheduler.start()
-        except (KeyboardInterrupt, SystemExit):
-            scheduler.shutdown()
+    except (KeyboardInterrupt, SystemExit) as e:
+        raise e
+        scheduler.shutdown()
