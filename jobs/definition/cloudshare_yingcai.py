@@ -51,20 +51,6 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
                     yield job_process
-                else:
-                    try:
-                        yamlload = utils.builtin.load_yaml('output/yingcai/RAW', cv_id+'.yaml')
-                    except IOError:
-                        continue
-                    if yamlload is None:
-                        print cv_id
-                    try:
-                        yamlload.pop('tag')
-                    except KeyError:
-                        pass
-                    if yamlload['tags'] != yamldata[cv_id]['tags']:
-                        yamlload['tags'] = yamldata[cv_id]['tags']
-                        resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
