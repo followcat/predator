@@ -10,16 +10,12 @@ import precedure.jingying
 import jobs.definition.cloudshare
 
 from sources.industry_id import *
+from jobs.config.jingying import *
 
 class Jingying(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/jingying'
-    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/16xuwjcx.51jingying_2'
-    FF_PROFILE_PATH_BACKUPS = [
-        '/home/jeff/.mozilla/firefox/u2ip99rl.flj_jingying',
-        '/home/jeff/.mozilla/firefox/2mkrz29h.jingying_chunjing',
-        '/home/jeff/.mozilla/firefox/8xjhortl.jingying_jingwen',
-        ]
+    FF_PROFILE_PATH = ff_profiles[0]
     PRECEDURE_CLASS = precedure.jingying.Jingying
 
     def cloudshare_yaml_template(self):
@@ -60,7 +56,9 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             job_logger.error('Downloading: '+cv_id+ ' ' + e.message)
             print('[jingying cv]: Fails Download: '+cv_id)
             self.wb_downloader.close()
-            self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH_BACKUPS.pop(0))
+            next_profile_index = (ff_profiles.index(self.wb_downloader.profilepath)+1)%len(ff_profiles)
+            profile_path = ff_profiles[next_profile_index]
+            self.wb_downloader = self.get_wb_downloader(profile_path)
             self.precedure.wb_downloader = self.wb_downloader
             print('[jingying cv]: Switch Firefox profile!')
         result = True
