@@ -125,10 +125,7 @@ class Jingying(precedure.base.Base):
                         update_list, header=None, flush=True):
         for cur_page in range(self.CLASSIFY_MAXPAGE):
             postdict[self.PAGE_VAR] = cur_page + 1
-            try:
-                results = self.classify(postdict, header)
-            except Exception:
-                break
+            results = self.classify(postdict, header)
             if not results:
                 break
             parts_results = []
