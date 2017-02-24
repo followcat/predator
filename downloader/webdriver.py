@@ -17,6 +17,16 @@ class Webdriver(object):
         self.profilepath = profilepath
         self.driver =  create_firefox_driver(self.profilepath)
 
+    def switch_profile(self, profile_paths):
+        self.close()
+        if self.profilepath in profile_paths:
+            index = profile_paths.index(self.profilepath)
+            next_index = (index + 1)%len(profile_paths)
+            self.profilepath = profile_paths[next_index]
+        else:
+            self.profilepath = profile_paths[0]
+        self.driver =  create_firefox_driver(self.profilepath)
+
     def getsource(self, url):
         try:
             self.driver.get(url)
