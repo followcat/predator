@@ -46,18 +46,6 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
                     t1 = time.time()
                     yield job_process
-                    print(time.time() - t1)
-                else:
-                    try:
-                        yamlload = utils.builtin.load_yaml('output/jingying/RAW', cv_id+'.yaml')
-                    except IOError:
-                        continue
-                    try:
-                        yamlload.pop('tag')
-                    except KeyError:
-                        pass
-                    yamlload['tags'] = yamldata[cv_id]['tags']
-                    resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
