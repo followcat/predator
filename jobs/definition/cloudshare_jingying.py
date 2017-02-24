@@ -55,13 +55,8 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         except AttributeError as e:
             job_logger.error('Downloading: '+cv_id+ ' ' + e.message)
             print('[jingying cv]: Fails Download: '+cv_id)
-            self.wb_downloader.close()
-            next_profile_index = (ff_profiles.index(self.wb_downloader.profilepath)+1)%len(ff_profiles)
-            profile_path = ff_profiles[next_profile_index]
-            self.wb_downloader = self.get_wb_downloader(profile_path)
-            self.precedure.wb_downloader = self.wb_downloader
+            self.wb_downloader.switch_profile(ff_profiles)
             print('[jingying cv]: Switch Firefox profile!')
-        result = True
 
     def calculate_age(born):
         today = datetime.date.today()
