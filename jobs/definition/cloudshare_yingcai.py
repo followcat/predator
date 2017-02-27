@@ -67,11 +67,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                                 self.autologin()
                             else:
                                 print('[yingcai cv]: switch user')
-                                self.wb_downloader.close()
-                                self.profilepath_index+=1
-                                self.FF_PROFILE_PATH=self.FF_PROFILE_PATH_LIST[self.profilepath_index%len(self.FF_PROFILE_PATH_LIST)]
-                                self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
-                                self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
+                                self.wb_downloader.switch_profile(self.FF_PROFILE_PATH_LIST)
                             self.START_TIME = current_time
         except:
             return
