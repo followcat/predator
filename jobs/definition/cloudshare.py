@@ -47,3 +47,14 @@ class Cloudshare(jobs.definition.base.Base):
         details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']
         return details
+
+    def jobgenerator(self, industry_needed):
+        try:
+            while True:
+                for job in self.simple_jobgenerator(industry_needed):
+                    yield job
+        except:
+            return
+
+    def simple_jobgenerator(self, industry_needed):
+        pass

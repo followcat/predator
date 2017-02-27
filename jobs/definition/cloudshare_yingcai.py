@@ -32,45 +32,41 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'中华英才爬取'
         return template
 
-    def jobgenerator(self, industry_needed):
-        try:
-            while True:
-                for _classify_value in industry_needed:
-                    _classify_id = industryID[_classify_value.encode('utf-8')]
-                    print('[yingcai cv]: %s'%_classify_id)
-                    _file = _classify_id + '.yaml'
-                    try:
-                      yamlfile = utils.builtin.load_yaml('output/yingcai/JOBTITLES', _file)
-                      yamldata = yamlfile['datas']
-                    except Exception:
-                        continue
-                    sorted_id = sorted(yamldata,
-                                       key = lambda cvid: yamldata[cvid]['info'][-1],
-                                       reverse=True)
-                    for cv_id in sorted_id:
-                        if not self.cvstorage.existscv(cv_id):
-                            cv_info = yamldata[cv_id]
-                            job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
-                            t1 = time.time()
-                            yield job_process
+    def simple_jobgenerator(self, industry_needed):
+        for _classify_value in industry_needed:
+            _classify_id = industryID[_classify_value.encode('utf-8')]
+            print('[yingcai cv]: %s'%_classify_id)
+            _file = _classify_id + '.yaml'
+            try:
+              yamlfile = utils.builtin.load_yaml('output/yingcai/JOBTITLES', _file)
+              yamldata = yamlfile['datas']
+            except Exception:
+                continue
+            sorted_id = sorted(yamldata,
+                               key = lambda cvid: yamldata[cvid]['info'][-1],
+                               reverse=True)
+            for cv_id in sorted_id:
+                if not self.cvstorage.existscv(cv_id):
+                    cv_info = yamldata[cv_id]
+                    job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
+                    t1 = time.time()
+                    yield job_process
 
-                        current_time=datetime.datetime.now()
-                        duration=(current_time-self.START_TIME).seconds
-                        if duration > 1800:
-                            #Wait for job done, then login again or switch user
-                            time.sleep(10)
-                            if hasattr(self, 'login') and self.login is True:
-                                print('[yingcai cv]: login again')
-                                accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
-                                accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
-                                self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
-                                self.autologin()
-                            else:
-                                print('[yingcai cv]: switch user')
-                                self.wb_downloader.switch_profile(self.FF_PROFILE_PATH_LIST)
-                            self.START_TIME = current_time
-        except:
-            return
+                current_time=datetime.datetime.now()
+                duration=(current_time-self.START_TIME).seconds
+                if duration > 1800:
+                    #Wait for job done, then login again or switch user
+                    time.sleep(10)
+                    if hasattr(self, 'login') and self.login is True:
+                        print('[yingcai cv]: login again')
+                        accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
+                        accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
+                        self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
+                        self.autologin()
+                    else:
+                        print('[yingcai cv]: switch user')
+                        self.wb_downloader.switch_profile(self.FF_PROFILE_PATH_LIST)
+                    self.START_TIME = current_time
 
     def autologin(self):
         self.precedure.login(self.username, self.password)
