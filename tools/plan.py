@@ -29,7 +29,6 @@ def err_listener(ev):
     else:
         err_logger.info('%s miss', str(ev.job_id))
     global scheduler
-    scheduler.shutdown()
 
 
 def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
