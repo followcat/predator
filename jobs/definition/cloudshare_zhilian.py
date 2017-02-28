@@ -14,7 +14,7 @@ from sources.industry_id import *
 class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/zhilian'
-    FF_PROFILE_PATH = '/home/kabess/.mozilla/firefox/g648khbx.default'
+    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/02hi1j5r.zhilian1'
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
     def cloudshare_yaml_template(self):
