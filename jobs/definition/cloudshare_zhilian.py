@@ -14,7 +14,7 @@ from sources.industry_id import *
 class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/zhilian'
-    FF_PROFILE_PATH = '/home/winky/.mozilla/firefox/jvqqz5ch.winky'
+    FF_PROFILE_PATH = '/home/kabess/.mozilla/firefox/g648khbx.default'
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
     def cloudshare_yaml_template(self):
@@ -59,7 +59,10 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         print('Download: '+cv_id)
         try:
             cv_content =  self.precedure.cv(cv_info['href'])
-            cvresult = True
+            if cv_content is not None:
+                cvresult = True
+            else:
+                cvresult = False
         except precedure.zhilian.NocontentCVException:
             print('Failed! Download: '+cv_id)
             cvresult = False
@@ -83,8 +86,11 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
         if not details['age']:
             age = uploaded_details['peo'][3]
-            age_pattern = re.compile(r'(\d+)')
-            details['age'] = int(re.findall(age_pattern, age)[0])
+            if age:
+                age_pattern = re.compile(r'(\d+)')
+                details['age'] = int(re.findall(age_pattern, age)[0])
+            else:
+                details['age'] = ''
 
         if not details['education']:
             details['education'] = uploaded_details['peo'][4].replace('\n', '')\

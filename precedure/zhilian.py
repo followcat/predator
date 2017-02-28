@@ -71,6 +71,12 @@ class Zhilian(precedure.base.Base):
     def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         data_lists = bs.findAll(class_='bor-bottom')
+
+        no_search_box = bs.findAll(class_='h-no-search-box')
+        error_box = bs.findAll(class_='box-404')
+        if len(no_search_box) > 0 or len(error_box) > 0:
+            return None
+
         result = []
         for index in range(1, len(data_lists), 2):
             storage_data = { 'peo': [], 'info': [] }
@@ -107,6 +113,9 @@ class Zhilian(precedure.base.Base):
 
     def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        no_public = bs.findAll(class_='no_public')
+        if len(no_public) > 0:
+            return None
         recommand = bs.find(id='recommand-btn-area')
         recommand.decompose()
         send_contact = bs.find(id='haveSeenContact')
@@ -125,9 +134,9 @@ class Zhilian(precedure.base.Base):
     def classify(self, params_data, header):
         htmlsource = self.urlget_classify(params_data)
         result = self.parse_classify(htmlsource, header)
-        if len(result) == 0:
-            if '抱歉没有找到当前搜索条件的相关结果' in htmlsource:
-                result = None
-            else:
-                self.logException(htmlsource)
+        # if len(result) == 0:
+        #     if u'抱歉没有找到当前搜索条件的相关结果' in htmlsource:
+        #         result = None
+        #     else:
+        #         self.logException(htmlsource)
         return result

@@ -3,14 +3,14 @@ import functools
 
 import precedure.zhilian
 import jobs.classify.base
-import storage.gitinterface
+import storage.fsinterface
 
 from sources.zhilian_job import *
 
 
 class Zhilian(jobs.classify.base.Base):
 
-    ff_profile = '/home/winky/.mozilla/firefox/rikqqhcg.default'
+    ff_profile = '/home/kabess/.mozilla/firefox/g648khbx.default'
     jobname = 'zhilian'
     precedure_type = precedure.zhilian.Zhilian
     wbdownloader = True
@@ -42,12 +42,12 @@ class Zhilian(jobs.classify.base.Base):
                                                 postdict, self.repojt, header)
                 yield job_process
 
+repo = storage.fsinterface.FSInterface('output/zhilian')
 
-repo = storage.gitinterface.GitInterface('output/zhilian')
 instance = Zhilian(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/6', hour='8-20'),
-        dict(second='*/30', hour='21-23'),
-        dict(minute='*/2', hour='0-6')]
+PLAN = [dict(minute='*/8', hour='8-20'),
+        dict(minute='*/12', hour='21-23'),
+        dict(minute='*/15', hour='0-6')]
 
