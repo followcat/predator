@@ -73,12 +73,7 @@ class Yingcai(jobs.classify.base.Base):
                         self.autologin()
                     else:
                         print 'switch profile'
-                        self.downloader.close()
-                        self.profilepath_index += 1
-                        self.F_PROFILE_PATH = FF_PROFILE_PATH_LIST[
-                                                self.profilepath_index%len(FF_PROFILE_PATH_LIST)]
-                        self.downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
-                        self.precedure.wb_downloader = self.downloader
+                        self.wb_downloader.switch_profile(self.FF_PROFILE_PATH_LIST)
                     start_time = current_time
 
     def autologin(self):
