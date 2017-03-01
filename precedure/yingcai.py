@@ -137,7 +137,7 @@ class Yingcai(precedure.base.Base):
         htmlsource = self.urlget_classify(params_data)
         result = self.parse_classify(htmlsource,header)
         if len(result) == 0:
-            if '暂无严格符合您要求的简历' in htmlsource:
+            if u'暂无严格符合您要求的简历' in htmlsource:
                 result = None
             else:
                 self.logException(htmlsource)
