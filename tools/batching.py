@@ -15,10 +15,13 @@ def convert_rawhtml_from_repojt(instance):
             info = info['datas']
         for key in info:
             value = info[key]
-            htmlraw = value.pop('html')
-            with open(os.path.join(repojt.interface_path, repojt.yaml_raw_path,
-                                   value['id']+'.html'), 'w') as f:
-                f.write(htmlraw.encode('utf-8'))
+            try:
+                htmlraw = value.pop('html')
+                with open(os.path.join(repojt.interface_path, repojt.yaml_raw_path,
+                                       value['id']+'.html'), 'w') as f:
+                    f.write(htmlraw.encode('utf-8'))
+            except KeyError:
+                continue
         repojt.modify_data(id, info, 'BATCHING', 'Convert %s raw html from yaml to files.' % id)
 
 
