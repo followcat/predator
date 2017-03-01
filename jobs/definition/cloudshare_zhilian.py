@@ -41,17 +41,6 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
                     t1 = time.time()
                     yield job_process
                     print(time.time() - t1)
-                else:
-                    try:
-                        yamlload = utils.builtin.load_yaml('output/zhilian/RAW', cv_id+'.yaml')
-                    except IOError:
-                        continue
-                    try:
-                        yamlload.pop('tag')
-                    except KeyError:
-                        pass
-                    yamlload['tags'] = yamldata[cv_id]['tags']
-                    resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
