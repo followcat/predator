@@ -19,19 +19,18 @@ class Zhilian(jobs.classify.base.Base):
         for index in industry:
             industry_id = index[0]
             industry_value = index[1]
-            print '抓取的行业：' + industry_value
+            print '[zhilian url list]: 抓取的行业：' + industry_value
             postinfo = {
                 'industrys': industry_value
                         }
             for job_key in sorted(jobtype_list.keys()):
                 job_type = jobtype_list[job_key].encode('utf-8')
-                print "正在抓取的职位: " + job_type
+                print "[zhilian url list]: 正在抓取的职位: " + job_type
                 postinfo['jobtitles'] = job_type
                 postdict = {
                     'CompanyIndustry':industry_id,
                     'JobType':job_key}
                 header = self.gen_header(postdict, postinfo)
-                print header
                 if resume and not self.eq_postdict(industryid, postdict,
                                                    exclude=[self.precedure.PAGE_VAR]):
                     continue

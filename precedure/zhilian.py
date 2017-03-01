@@ -60,12 +60,12 @@ class Zhilian(precedure.base.Base):
         searchurl = 'http://h.highpin.cn/SearchResume/SearchResumeList?'
         params_str = urllib.urlencode(tmp_data)
         download_url = searchurl + params_str
-        print 'download url: ' + download_url
+        print '[zhilian url list]: download url: ' + download_url
         return self.wb_downloader.getsource(download_url)
 
     def urlget_cv(self, url):
         download_url = 'http://h.highpin.cn' + url
-        print 'download url: ' + download_url
+        print '[zhilian cv]: download url: ' + download_url
         return self.url_downloader.get(download_url)
 
     def parse_classify(self, htmlsource, header):

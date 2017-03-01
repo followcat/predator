@@ -24,6 +24,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
     def simple_jobgenerator(self, industry_needed):
         for _classify_value in industry_needed:
+            print(u'[zhilian cv]: 行业-%s'%_classify_value)
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             try:
@@ -45,7 +46,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
-        print('Download: '+cv_id)
+        print('[zhilian cv]: Download: '+cv_id)
         try:
             cv_content =  self.precedure.cv(cv_info['href'])
             if cv_content is not None:
@@ -53,7 +54,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
             else:
                 cvresult = False
         except precedure.zhilian.NocontentCVException:
-            print('Failed! Download: '+cv_id)
+            print('[zhilian cv]: Failed! Download: '+cv_id)
             cvresult = False
         if cvresult is True:
             yamldata = self.extract_details(cv_info, cv_content)
