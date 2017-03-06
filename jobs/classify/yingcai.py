@@ -84,6 +84,6 @@ repo = storage.fsinterface.FSInterface('output/yingcai')
 instance = Yingcai(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/5', hour='8-17'),
-        dict(second='*/5', hour='18-23'),
-        dict(second='*/5', hour='0-7')]
+PLAN = [dict(second='*/60', hour='8-17'),
+        dict(second='*/60', hour='18-23'),
+        dict(second='*/60', hour='0-7')]
