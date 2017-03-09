@@ -17,11 +17,11 @@ class Base(object):
     uldownloader = False
 
     def __init__(self, interface):
-        if self.cookies_file is not None:
+        if self.cookies_file is not None and self.uldownloader:
             self.cookies_str = utils.builtin.loadfile(self.cookies_file).strip()
             self.downloader = downloader._urllib.Urllib()
             self.downloader.set_cookies(self.cookies_str)
-        else:
+        elif self.wbdownloader:
             self.downloader = self.get_wb_downloader(self.ff_profile)
         self.repojt = storage.jobtitles.JobTitles(interface)
         self.precedure = self.get_precedure()
@@ -29,9 +29,9 @@ class Base(object):
     def get_precedure(self):
         precedure = None
         if self.precedure is None and self.precedure_type is not None:
-            if self.uldownloader is True:
+            if self.uldownloader:
                 precedure = self.precedure_type(uldownloader=self.downloader)
-            elif self.wbdownloader is True:
+            elif self.wbdownloader:
                 precedure = self.precedure_type(wbdownloader=self.downloader)
         else:
             precedure = self.precedure
