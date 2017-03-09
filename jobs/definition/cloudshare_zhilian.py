@@ -6,6 +6,7 @@ import functools
 
 import utils.builtin
 import precedure.zhilian
+import jobs.config.zhilian
 import jobs.definition.cloudshare
 
 from sources.industry_id import *
@@ -14,7 +15,7 @@ from sources.industry_id import *
 class Zhilian(jobs.definition.cloudshare.Cloudshare):
 
     CVDB_PATH = 'output/zhilian'
-    FF_PROFILE_PATH = '/home/jeff/.mozilla/firefox/02hi1j5r.zhilian1'
+    FF_PROFILE_PATH = jobs.config.zhilian.ff_profiles[0]
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
 
     def cloudshare_yaml_template(self):

@@ -3,6 +3,7 @@ import functools
 
 import precedure.zhilian
 import jobs.classify.base
+import jobs.config.zhilian
 import storage.fsinterface
 
 from sources.zhilian_job import *
@@ -10,7 +11,7 @@ from sources.zhilian_job import *
 
 class Zhilian(jobs.classify.base.Base):
 
-    ff_profile = '/home/jeff/.mozilla/firefox/02hi1j5r.zhilian1'
+    ff_profile = jobs.config.zhilian.ff_profiles[0]
     jobname = 'zhilian'
     precedure_type = precedure.zhilian.Zhilian
     wbdownloader = True
