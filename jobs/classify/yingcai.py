@@ -73,7 +73,7 @@ class Yingcai(jobs.classify.base.Base):
                         self.autologin()
                     else:
                         print 'switch profile'
-                        self.wb_downloader.switch_profile(self.FF_PROFILE_PATH_LIST)
+                        self.downloader.switch_profile(FF_PROFILE_PATH_LIST)
                     start_time = current_time
 
     def autologin(self):
@@ -85,5 +85,5 @@ instance = Yingcai(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/60', hour='8-17'),
-        dict(second='*/60', hour='18-23'),
-        dict(second='*/60', hour='0-7')]
+        dict(munite='*/5', hour='18-23'),
+        dict(munite='*/10', hour='0-7')]
