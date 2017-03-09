@@ -85,5 +85,5 @@ instance = Yingcai(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(second='*/60', hour='8-17'),
-        dict(munite='*/5', hour='18-23'),
-        dict(munite='*/10', hour='0-7')]
+        dict(minute='*/5', hour='18-23'),
+        dict(minute='*/10', hour='0-7')]
