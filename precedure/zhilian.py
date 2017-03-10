@@ -8,6 +8,7 @@ import bs4
 import utils.tools
 import precedure.base
 
+
 class NocontentCVException(Exception):
     pass
 
@@ -15,7 +16,7 @@ class Zhilian(precedure.base.Base):
 
     BASE_URL='http://h.highpin.cn'
     PAGE_VAR = 'PageIndex'
-    CLASSIFY_SLEEP = 5
+    CLASSIFY_SLEEP = 120
     CLASSIFY_MAXPAGE = 100
 
     urls_data = {
@@ -70,6 +71,9 @@ class Zhilian(precedure.base.Base):
 
     def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        login_form = bs.find(id='logonform')
+        if login_form is not None:
+            raise Exception('NoLoginError')
         data_lists = bs.findAll(class_='bor-bottom')
 
         no_search_box = bs.findAll(class_='h-no-search-box')
@@ -113,6 +117,9 @@ class Zhilian(precedure.base.Base):
 
     def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        login_form = bs.find(id='logonform')
+        if login_form is not None:
+            raise Exception('NoLoginError')
         no_public = bs.findAll(class_='no_public')
         if len(no_public) > 0:
             return None
