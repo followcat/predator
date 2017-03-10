@@ -10,6 +10,8 @@ import apscheduler.schedulers.blocking
 
 scheduler = apscheduler.schedulers.blocking.BlockingScheduler()
 
+NOLOGINRETRYWAIT = 1200
+
 
 def schedulerjob(process_gen, sleep=True):
     result = False
@@ -24,12 +26,21 @@ def schedulerjob(process_gen, sleep=True):
 
 def err_listener(ev):
     err_logger = logging.getLogger('schedErrJob')
+    global scheduler
     if ev.exception:
         err_logger.error('%s error.', str(ev.job_id))
+        if ev.exception.message == 'NoLoginError':
+            err_job = scheduler.get_job(ev.job_id)
+            jobs = [j for j in scheduler.get_jobs() if j.name==err_job.name]
+            for job in jobs:
+                scheduler.pause_job(job.id)
+                print('pause job %s'%str(job))
+            time.sleep(NOLOGINRETRYWAIT)
+            for job in jobs:
+                scheduler.resume_job(job.id)
+                print('resume job %s'%str(job))
     else:
         err_logger.info('%s miss', str(ev.job_id))
-    global scheduler
-
 
 def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
     if arguments is None:
