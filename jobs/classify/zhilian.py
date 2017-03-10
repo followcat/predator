@@ -47,7 +47,7 @@ repo = storage.fsinterface.FSInterface('output/zhilian')
 instance = Zhilian(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(minute='*/8', hour='8-20'),
-        dict(minute='*/12', hour='21-23'),
-        dict(minute='*/15', hour='0-6')]
+PLAN = [dict(name='zhilian_classify', minute='*/2', hour='8-20'),
+        dict(name='zhilian_classify', minute='*/12', hour='21-23'),
+        dict(name='zhilian_classify', minute='*/15', hour='0-6')]
 
