@@ -60,12 +60,18 @@ class Yingcai(precedure.base.Base):
 
     def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        login_form = bs.find(id='tag-login')
+        if login_form is not None:
+            raise Exception('NoLoginError')
         content = bs.find(class_='box-myResume')
         return content.prettify()
 
     def parse_classify(self, htmlsource, header):
         result = []
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        login_form = bs.find(id='tag-login')
+        if login_form is not None:
+            raise Exception('NoLoginError')
         text_lists=bs.findAll(class_='searchList')
         if len(text_lists)==0:
             return result
