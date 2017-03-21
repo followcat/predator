@@ -88,4 +88,4 @@ class Jingying(jobs.classify.base.Base):
 repo = storage.fsinterface.FSInterface('output/jingying')
 instance = Jingying(repo)
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/1')]
+PLAN = [dict(second='*/1', name='jingying_classify')]
