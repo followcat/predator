@@ -13,7 +13,7 @@ class Jingying(precedure.base.Base):
 
     BASE_URL='http://www.51jingying.com'
     PAGE_VAR = 'curr_page'
-    CLASSIFY_SLEEP = 0
+    CLASSIFY_SLEEP = 5
     CLASSIFY_MAXPAGE = 20
 
     post_data = {
