@@ -1,5 +1,6 @@
 import logging
 
+import jobs.base
 import tools.log
 import precedure.base
 import storage.cv
@@ -7,7 +8,7 @@ import storage.gitinterface
 import downloader.webdriver
 
 
-class Base(object):
+class Base(jobs.base.Base):
 
     JTDB_PATH = 'output/sourcename'
     CVDB_PATH = 'output/sourcename'
@@ -15,8 +16,8 @@ class Base(object):
     FF_PROFILE_PATH = None
     PRECEDURE_CLASS = precedure.base.Base
 
-    def __init__(self):
-        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH)
+    def __init__(self, wbdownloaders=None):
+        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH, wbdownloaders)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.cvrepo = storage.gitinterface.GitInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.cvrepo)
@@ -31,9 +32,6 @@ class Base(object):
         print('Download: '+cv_id)
         job_logger.info('Download: '+cv_id)
         result = True
-
-    def get_wb_downloader(self, profile_path):
-        return downloader.webdriver.Webdriver(profile_path)
 
     def jobgenerator(self):
         pass

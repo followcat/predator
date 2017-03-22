@@ -9,8 +9,8 @@ import jobs.definition.base
 
 class Cloudshare(jobs.definition.base.Base):
 
-    def __init__(self):
-        self.wb_downloader = downloader.webdriver.Webdriver(self.FF_PROFILE_PATH)
+    def __init__(self, wbdownloaders=None):
+        self.wb_downloader = self.get_wb_downloader(self.FF_PROFILE_PATH, wbdownloaders)
         self.precedure = self.PRECEDURE_CLASS(wbdownloader=self.wb_downloader)
         self.fsinterface = storage.fsinterface.FSInterface(self.CVDB_PATH)
         self.cvstorage = storage.cv.CurriculumVitae(self.fsinterface)

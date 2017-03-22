@@ -1,3 +1,4 @@
+import jobs.base
 import utils.builtin
 import storage.jobtitles
 import downloader._urllib
@@ -7,7 +8,7 @@ from sources.industry_id import *
 from sources.industry_sources import *
 
 
-class Base(object):
+class Base(jobs.base.Base):
 
     ff_profile = None
     cookies_file = None
@@ -16,13 +17,13 @@ class Base(object):
     wbdownloader = False
     uldownloader = False
 
-    def __init__(self, interface):
+    def __init__(self, interface, wbdownloaders=None):
         if self.cookies_file is not None and self.uldownloader:
             self.cookies_str = utils.builtin.loadfile(self.cookies_file).strip()
             self.downloader = downloader._urllib.Urllib()
             self.downloader.set_cookies(self.cookies_str)
         elif self.wbdownloader:
-            self.downloader = self.get_wb_downloader(self.ff_profile)
+            self.downloader = self.get_wb_downloader(self.ff_profile, wbdownloaders)
         self.repojt = storage.jobtitles.JobTitles(interface)
         self.precedure = self.get_precedure()
 
@@ -36,9 +37,6 @@ class Base(object):
         else:
             precedure = self.precedure
         return precedure
-
-    def get_wb_downloader(self,profile_path):
-        return downloader.webdriver.Webdriver(profile_path)
 
     def industryjob(self, industryid, filename, industry, resume=False):
         pass
