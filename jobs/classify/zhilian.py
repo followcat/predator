@@ -13,6 +13,7 @@ class Zhilian(jobs.classify.base.Base):
 
     ff_profile = jobs.config.zhilian.ff_profiles[0]
     jobname = 'zhilian'
+    source = 'zhilian'
     precedure_type = precedure.zhilian.Zhilian
     wbdownloader = True
 
@@ -44,10 +45,13 @@ class Zhilian(jobs.classify.base.Base):
 
 repo = storage.fsinterface.FSInterface('output/zhilian')
 
-instance = Zhilian(repo)
-
-PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(name='zhilian_classify', minute='*/2', hour='8-20'),
         dict(name='zhilian_classify', minute='*/12', hour='21-23'),
         dict(name='zhilian_classify', minute='*/15', hour='0-6')]
 
+def get_PROCESS_GEN_FUNC(downloaders=None):
+    instance = Zhilian(repo, downloaders)
+    if instance.source not in downloaders:
+        downloaders[instance.source] = instance.precedure.wb_downloader
+    PROCESS_GEN_FUNC = instance.jobgenerator
+    return PROCESS_GEN_FUNC
