@@ -17,6 +17,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
     CVDB_PATH = 'output/zhilian'
     FF_PROFILE_PATH = jobs.config.zhilian.ff_profiles[0]
     PRECEDURE_CLASS = precedure.zhilian.Zhilian
+    source = 'zhilian'
 
     def cloudshare_yaml_template(self):
         template = super(Zhilian, self).cloudshare_yaml_template()
