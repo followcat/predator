@@ -26,6 +26,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
 
     PRECEDURE_CLASS = precedure.yingcai.Yingcai
     START_TIME=datetime.datetime.now()
+    source = 'yingcai'
 
     def cloudshare_yaml_template(self):
         template = super(Yingcai, self).cloudshare_yaml_template()
