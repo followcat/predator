@@ -1,39 +1,68 @@
 import socket
+import threading
 import selenium.webdriver
 import selenium.common.exceptions
 
 from selenium.webdriver.common.keys import Keys
 
 
-def create_firefox_driver(profile_path):
+class Driver(selenium.webdriver.Firefox):
+    def __init__(self, *args, **kwargs):
+        super(Driver, self).__init__(*args, **kwargs)
+        self.handlers = {}
+
+
+def create_driver(profile_path):
     if profile_path is None:
         profile = None
     else:
         profile = selenium.webdriver.FirefoxProfile(profile_path)
-    driver =  selenium.webdriver.Firefox(firefox_profile=profile, timeout=600)
+    driver = Driver(firefox_profile=profile, timeout=600)
     current_handler = driver.window_handles[-1]
     return driver, current_handler
 
-def create_new_window(downloader):
-    driver = downloader.driver
+def create_new_window(driver):
     body = driver.find_element_by_tag_name("body")
     body.send_keys(Keys.CONTROL + 'n')
     current_handler = driver.window_handles[-1]
-    driver.switch_to.window(current_handler)
     return current_handler
 
 
 class Webdriver(object):
 
     def __init__(self, profilepath=None, downloader=None):
-        self.handler = None
+        self.id = id(self)
         self.profilepath = None
+        self.driver_regs = {}
         if downloader is not None:
-            self.handler = create_new_window(downloader)
-            self.driver = downloader.driver
+            self.lock = downloader.lock
+            self.driver_regs[self.id] = downloader.driver_regs[downloader.id]
+            driver = downloader.driver_regs[downloader.id]['driver']
+            handler = create_new_window(driver)
         else:
+            self.lock = threading.Lock()
             self.profilepath = profilepath
-            self.driver, self.handler =  create_firefox_driver(self.profilepath)
+            driver, handler = create_driver(self.profilepath)
+            self.driver_regs[self.id] = {'driver': driver}
+        driver.handlers[self.id] = handler
+
+    @property
+    def driver(self):
+        return self.driver_regs[self.id]['driver']
+
+    def reset_driver(self):
+        if self.profilepath is None:
+            return
+        ids = list(self.driver.handlers.keys())
+        self.driver.quit()
+        driver, handler = create_driver(self.profilepath)
+        self.driver_regs[self.id]['driver'] = driver
+        for _id in ids:
+            if _id == self.id:
+                _handler = handler
+            else:
+                _handler = create_new_window(self.driver)
+            self.driver.handlers[_id] = _handler
 
     def switch_profile(self, profile_paths):
         if self.profilepath is None:
@@ -44,25 +73,20 @@ class Webdriver(object):
             self.profilepath = profile_paths[next_index]
         else:
             self.profilepath = profile_paths[0]
-        tmp_driver, tmp_handler =  create_firefox_driver(self.profilepath)
-        tmp_driver.get(self.driver.current_url)
-        self.driver.delete_all_cookies()
-        for cookie in tmp_driver.get_cookies():
-            try:
-                self.driver.add_cookie(cookie)
-            except selenium.common.exceptions.WebDriverException:
-                continue
-        tmp_driver.quit()
+        with self.lock:
+            self.reset_driver()
 
     def getsource(self, url):
-        try:
-            self.driver.switch_to_window(self.handler)
-            self.driver.get(url)
-        except socket.error:
-            self.driver.quit()
-            self.driver = create_firefox_driver(self.profilepath)
-            self.driver.get(url)
-        return self.driver.page_source
+        with self.lock:
+            try:
+                self.driver.switch_to_window(self.driver.handlers[self.id])
+                self.driver.get(url)
+            except socket.error:
+                self.reset_driver()
+                self.driver.switch_to_window(self.driver.handlers[self.id])
+                self.driver.get(url)
+            page = self.driver.page_source
+        return page
 
     def close(self):
         self.driver.quit()
