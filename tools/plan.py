@@ -70,11 +70,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
     jobs = args.jobs.split(',')
     print jobs
+    downloaders = {}
     for job in jobs:
         jobmodule = importlib.import_module(job)
         industries = get_industries(args.industry)
         PLAN = jobmodule.PLAN
-        PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+        if hasattr(jobmodule, 'PROCESS_GEN_FUNC'):
+            PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
+        else:
+            PROCESS_GEN_FUNC = jobmodule.get_PROCESS_GEN_FUNC(downloaders)
         if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
             PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industries, resume=args.resume)
         else:
