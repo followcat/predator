@@ -25,6 +25,7 @@ class Yingcai(jobs.classify.base.Base):
     username, password = ACCOUNT_LIST[0]
 
     jobname = 'yingcai'
+    source = 'yingcai'
     precedure_type = precedure.yingcai.Yingcai
     wbdownloader = True
     cookies_file = None
@@ -79,11 +80,15 @@ class Yingcai(jobs.classify.base.Base):
     def autologin(self):
         self.precedure.login(self.username, self.password)
 
-
 repo = storage.fsinterface.FSInterface('output/yingcai')
-instance = Yingcai(repo)
 
-PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(name='yingcai_classify', second='*/60', hour='8-17'),
-        dict(name='yingcai_classify', minute='*/5', hour='18-23'),
+PLAN = [dict(name='yingcai_classify', second='*/60', hour='8-19'),
+        dict(name='yingcai_classify', minute='*/5', hour='20-23'),
         dict(name='yingcai_classify', minute='*/10', hour='0-7')]
+
+def get_PROCESS_GEN_FUNC(downloaders=None):
+    instance = Yingcai(repo, downloaders)
+    if instance.source not in downloaders:
+        downloaders[instance.source] = instance.precedure.wb_downloader
+    PROCESS_GEN_FUNC = instance.jobgenerator
+    return PROCESS_GEN_FUNC
