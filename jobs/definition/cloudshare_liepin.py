@@ -5,6 +5,7 @@ import functools
 
 import utils.builtin
 import precedure.liepin
+import jobs.config.liepin
 import jobs.definition.cloudshare
 
 from utils.utils_parsing import *
@@ -14,7 +15,7 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
 
     JTDB_PATH = 'output/liepin'
     CVDB_PATH = 'output/liepin'
-    FF_PROFILE_PATH = '/home/followcat/.mozilla/firefox/yffp11op.followcat'
+    FF_PROFILE_PATH = jobs.config.liepin.ff_profiles[0]
     PRECEDURE_CLASS = precedure.liepin.Liepin
 
     def cloudshare_yaml_template(self):
