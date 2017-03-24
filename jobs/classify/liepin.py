@@ -3,7 +3,7 @@ import functools
 
 import precedure.liepin
 import jobs.classify.base
-import storage.gitinterface
+import storage.fsinterface
 
 from sources.liepin_industry import job_list as liepin_job
 
@@ -40,7 +40,7 @@ class Liepin(jobs.classify.base.Base):
                 yield job_process
 
 
-repo = storage.gitinterface.GitInterface('output/liepin')
+repo = storage.fsinterface.FSInterface('output/liepin')
 instance = Liepin(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
