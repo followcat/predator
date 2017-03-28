@@ -38,10 +38,10 @@ class Base(jobs.base.Base):
             precedure = self.precedure
         return precedure
 
-    def industryjob(self, industryid, filename, industry, resume=False):
+    def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
         pass
 
-    def jobgenerator(self, industry_needed, resume=False):
+    def jobgenerator(self, industry_needed, keywords=None, resume=False):
         try:
             while True:
                 for industry in industry_needed:
@@ -51,7 +51,7 @@ class Base(jobs.base.Base):
                     filename = industryid
                     if not self.get_postdict(industryid):
                         resume = False
-                    jobs = self.industryjob(industryid, filename, precedure_industry, resume)
+                    jobs = self.industryjob(industryid, filename, precedure_industry, keywords, resume)
                     for job in jobs:
                         yield job
                     self.repojt.unload(industryid)

@@ -22,7 +22,6 @@ class Jingying(precedure.base.Base):
         'indtype': '',
         'potext': '',
         'cotext': '',
-        'fulltext': '',
         'div': '',
         'niscohis': 1,
         'jobarea': '',

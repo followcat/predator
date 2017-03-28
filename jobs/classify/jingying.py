@@ -37,57 +37,62 @@ class Jingying(jobs.classify.base.Base):
         ]
 
 
-    def industryjob(self, industryid, filename, industry, resume=False):
-        for index in industry:
-            add_list = []
-            update_list = []
-            industry_id = index[0]
-            industry_value = index[1]
-            print('[jingying url list]: %s' %industry_value)
-            postdict = {'indtype': industry_id}
-            postinfo = {'industry': industry_value}
-            header = self.gen_header(postdict, postinfo)
-            if resume and not self.eq_postdict(industryid, postdict,
-                                               exclude=[self.precedure.PAGE_VAR]):
-                continue
-            else:
-                resume = False
-            job_process = functools.partial(self.precedure.update_classify,
-                                            filename, filename,
-                                            postdict, self.repojt,
-                                            add_list, update_list,
-                                            header)
-            yield job_process
-
-            for _area in self.company_area_list:
-                flush = False
+    def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
+        if keywords is None or len(keywords) == 0:
+            keywords = ['']
+        for keyword in keywords:
+            for index in industry:
                 add_list = []
                 update_list = []
-                print('[jingying url list]: %s' %_area)
-                for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
-                    if _index == len(localdatajobs['company_name'][_area]) - 1:
-                        flush = True
-                    print('[jingying url list]: %s' %c_name)
-                    postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                                'indtype': industry_id}
-                    postinfo = {'company': c_name,
-                                'industry': industry_value}
-                    header = self.gen_header(postdict, postinfo)
-                    if resume and not self.eq_postdict(industryid, postdict,
-                                                            exclude=[self.precedure.PAGE_VAR]):
-                        continue
-                    else:
-                        resume = False
-                    job_process = functools.partial(self.precedure.update_classify,
-                                                    filename, filename,
-                                                    postdict, self.repojt,
-                                                    add_list, update_list,
-                                                    header, flush)
-                    yield job_process
+                industry_id = index[0]
+                industry_value = index[1]
+                print('[jingying url list]: %s' %industry_value)
+                postdict = {'indtype': industry_id}
+                postinfo = {'industry': industry_value}
+                header = self.gen_header(postdict, postinfo)
+                postdict['fulltext'] = keyword.encode('gb2312')
+                if resume and not self.eq_postdict(industryid, postdict,
+                                                   exclude=[self.precedure.PAGE_VAR]):
+                    continue
+                else:
+                    resume = False
+                job_process = functools.partial(self.precedure.update_classify,
+                                                filename, filename,
+                                                postdict, self.repojt,
+                                                add_list, update_list,
+                                                header)
+                yield job_process
+
+                for _area in self.company_area_list:
+                    flush = False
+                    add_list = []
+                    update_list = []
+                    print('[jingying url list]: %s' %_area)
+                    for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
+                        if _index == len(localdatajobs['company_name'][_area]) - 1:
+                            flush = True
+                        print('[jingying url list]: %s' %c_name)
+                        postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
+                                    'indtype': industry_id}
+                        postinfo = {'company': c_name,
+                                    'industry': industry_value}
+                        header = self.gen_header(postdict, postinfo)
+                        postdict['fulltext'] = keyword.encode('gb2312')
+                        if resume and not self.eq_postdict(industryid, postdict,
+                                                                exclude=[self.precedure.PAGE_VAR]):
+                            continue
+                        else:
+                            resume = False
+                        job_process = functools.partial(self.precedure.update_classify,
+                                                        filename, filename,
+                                                        postdict, self.repojt,
+                                                        add_list, update_list,
+                                                        header, flush)
+                        yield job_process
 
 repo = storage.fsinterface.FSInterface('output/jingying')
 instance = Jingying(repo)
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(name='jingying_classify', second='*/10',hour='8-17'),
-        dict(name='jingying_classify', second='*/60', hour='18-23'),
+PLAN = [dict(name='jingying_classify', second='*/10',hour='8-19'),
+        dict(name='jingying_classify', second='*/60', hour='20-23'),
         dict(name='jingying_classify', second='*/60', hour='0-7')]

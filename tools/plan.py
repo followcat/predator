@@ -4,6 +4,7 @@ import random
 import logging
 import inspect
 import argparse
+import importlib
 
 import apscheduler.events
 import apscheduler.schedulers.blocking
@@ -59,18 +60,32 @@ def get_industries(industrystr):
         ret_industries.extend(industries)
     return ret_industries
 
+def get_keywords(keywords):
+    ret_words = []
+    if keywords == '':
+        return ret_words
+    _keywords = keywords.split(',')
+    for words in _keywords:
+        kwmodule = importlib.import_module(words)
+        kws = kwmodule.keywords
+        for kw in kws:
+            ws = ' '.join(kw)
+            ret_words.append(ws)
+    return ret_words
+
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('--jobs', type=str, help='Process job generateor module.')
 parser.add_argument('industry', type=str, help='Input industry needed.')
+parser.add_argument('--keywords', type=str, default='', help='Input extra keywords to search')
 parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
 if __name__ == '__main__':
-    import importlib
     
     args = parser.parse_args()
     jobs = args.jobs.split(',')
     print jobs
     downloaders = {}
+    keywords = get_keywords(args.keywords)
     for job in jobs:
         jobmodule = importlib.import_module(job)
         industries = get_industries(args.industry)
@@ -80,9 +95,9 @@ if __name__ == '__main__':
         else:
             PROCESS_GEN_FUNC = jobmodule.get_PROCESS_GEN_FUNC(downloaders)
         if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industries, resume=args.resume)
+            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed=industries, keywords=keywords, resume=args.resume)
         else:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed = industries)
+            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed=industries, keywords=keywords)
 
         jobadder(scheduler, schedulerjob, PLAN,
                  arguments=[PROCESS_GEN],
