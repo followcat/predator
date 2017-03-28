@@ -92,6 +92,9 @@ class Liepin(precedure.base.Base):
 
     def parse_cv(self, htmlsource):
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
+        login_form = bs.find(class_='user-login-reg')
+        if login_form is not None:
+            raise Exception('NoLoginError')
         side = bs.find(class_='side')
         side.decompose()
         footer = bs.find('footer')
