@@ -1,5 +1,8 @@
 import urllib
 import urllib2
+import httplib
+
+httplib._MAXHEADERS = 1000
 
 
 class Urllib(object):
