@@ -21,7 +21,6 @@ class Liepin(precedure.base.Base):
 
     urls_post = {
         'form_submit':1,
-        'keys':'',
         'titleKeys':'',
         'company':'',
         'company_type':0,

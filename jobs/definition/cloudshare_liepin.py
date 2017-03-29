@@ -17,40 +17,32 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
     CVDB_PATH = 'output/liepin'
     FF_PROFILE_PATH = jobs.config.liepin.ff_profiles[0]
     PRECEDURE_CLASS = precedure.liepin.Liepin
+    source = 'liepin'
 
     def cloudshare_yaml_template(self):
         template = super(Liepin, self).cloudshare_yaml_template()
         template['origin'] = u'猎聘爬取'
         return template
 
-    def jobgenerator(self, industry_needed):
+    def simple_jobgenerator(self, industry_needed, keywords=None):
         for classify_value in industry_needed:
+            print(u'[liepin cv]: 行业-%s'%classify_value)
             classify_id = industryID[classify_value.encode('utf-8')]
+            _file = classify_id + '.yaml'
+            import ipdb;ipdb.set_trace()
             try:
-                self.urlsfile = self.jtstorage.get(classify_id)
-                self.urlsdata = self.urlsfile['datas']
-            except Exception:
-                self.urlsdata = self.urlsfile
-            sorted_id = sorted(self.urlsdata,
-                           key = lambda cvid: self.urlsdata[cvid]['peo'][-1],
+                yamldata = self.get_cv_list(_file, keywords)
+            except IOError:
+                continue
+            sorted_id = sorted(yamldata,
+                           key = lambda cvid: yamldata[cvid]['peo'][-1],
                            reverse=True)
             for cv_id in sorted_id:
                 if not self.cvstorage.existscv(cv_id):
-                    if 'Nocontent' not in self.urlsdata[cv_id] or not self.urlsdata[cv_id]['Nocontent']:
-                        cv_info = self.urlsdata[cv_id]
+                    if 'Nocontent' not in yamldata[cv_id] or not yamldata[cv_id]['Nocontent']:
+                        cv_info = yamldata[cv_id]
                         job_process = functools.partial(self.downloadjob, cv_info, classify_id)
                         yield job_process
-                else:
-                    try:
-                        yamlload = utils.builtin.load_yaml('output/liepin/RAW', cv_id+'.yaml')
-                    except IOError:
-                        continue
-                    try:
-                        yamlload.pop('tag')
-                    except KeyError:
-                        pass
-                    yamlload['tags'] = self.urlsdata[cv_id]['tags']
-                    resultpath = self.cvstorage.addyaml(cv_id, yamlload)
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
