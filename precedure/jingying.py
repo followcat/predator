@@ -99,6 +99,8 @@ class Jingying(precedure.base.Base):
         return results
 
     def parse_cv(self, htmlsource):
+        if u'您尚未通过招聘资质认证' in htmlsource:
+            raise Exception("Account error")
         bs = bs4.BeautifulSoup(htmlsource, 'lxml')
         content = bs.find(id='51jobcv')
         if content is None:
