@@ -1,6 +1,7 @@
 import time
 
 import storage.cv
+import utils.builtin
 import storage.jobtitles
 import storage.fsinterface
 import downloader.webdriver
@@ -47,6 +48,21 @@ class Cloudshare(jobs.definition.base.Base):
         details['originid'] = uploaded_details['id']
         details['filename'] = uploaded_details['href']
         return details
+
+    def get_cv_list(self, file_name, keywords):
+        yamlfile = utils.builtin.load_yaml('output/%s/JOBTITLES'%self.source, file_name)
+        _tmpdata = yamlfile['datas']
+        if keywords is None or len(keywords) == 0:
+            yamldata = _tmpdata
+        else:
+            yamldata = {}
+            for _k, _v in _tmpdata.items():
+                if 'searchtext' in _v['tags']:
+                    for keyword in keywords:
+                        if keyword in _v['tags']['searchtext']:
+                            yamldata[_k] = _v
+                            break
+        return yamldata
 
     def jobgenerator(self, industry_needed, keywords=None):
         try:

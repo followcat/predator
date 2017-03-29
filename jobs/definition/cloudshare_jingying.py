@@ -5,7 +5,6 @@ import logging
 import datetime
 import functools
 
-import utils.builtin
 import precedure.jingying
 import jobs.definition.cloudshare
 
@@ -17,6 +16,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
     CVDB_PATH = 'output/jingying'
     FF_PROFILE_PATH = ff_profiles[0]
     PRECEDURE_CLASS = precedure.jingying.Jingying
+    source = 'jingying'
 
     def cloudshare_yaml_template(self):
         template = super(Jingying, self).cloudshare_yaml_template()
@@ -29,18 +29,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
             _file = _classify_id + '.yaml'
             print('[jingying cv]: %s - %s'%(_classify_id, _classify_value))
             try:
-                yamlfile = utils.builtin.load_yaml('output/jingying/JOBTITLES', _file)
-                _tmpdata = yamlfile['datas']
-                if keywords is None or len(keywords) == 0:
-                    yamldata = _tmpdata
-                else:
-                    yamldata = {}
-                    for _k, _v in _tmpdata.items():
-                        if 'searchtext' in _v['tags']:
-                            for keyword in keywords:
-                                if keyword in _v['tags']['searchtext']:
-                                    yamldata[_k] = _v
-                                    break
+                yamldata = self.get_cv_list(_file, keywords)
             except Exception:
                 continue
             sorted_id = sorted(yamldata,
