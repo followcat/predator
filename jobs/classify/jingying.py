@@ -47,10 +47,11 @@ class Jingying(jobs.classify.base.Base):
                 industry_id = index[0]
                 industry_value = index[1]
                 print('[jingying url list]: %s' %industry_value)
-                postdict = {'indtype': industry_id}
-                postinfo = {'industry': industry_value}
+                postdict = {'indtype': industry_id,
+                            'fulltext':keyword.encode('gb2312')}
+                postinfo = {'industry': industry_value,
+                            'searchtext':keyword}
                 header = self.gen_header(postdict, postinfo)
-                postdict['fulltext'] = keyword.encode('gb2312')
                 if resume and not self.eq_postdict(industryid, postdict,
                                                    exclude=[self.precedure.PAGE_VAR]):
                     continue
@@ -73,11 +74,12 @@ class Jingying(jobs.classify.base.Base):
                             flush = True
                         print('[jingying url list]: %s' %c_name)
                         postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                                    'indtype': industry_id}
+                                    'indtype': industry_id,
+                                    'fulltext':keyword.encode('gb2312')}
                         postinfo = {'company': c_name,
-                                    'industry': industry_value}
+                                    'industry': industry_value,
+                                    'searchtext':keyword}
                         header = self.gen_header(postdict, postinfo)
-                        postdict['fulltext'] = keyword.encode('gb2312')
                         if resume and not self.eq_postdict(industryid, postdict,
                                                                 exclude=[self.precedure.PAGE_VAR]):
                             continue
