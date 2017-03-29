@@ -51,10 +51,10 @@ class Cloudshare(jobs.definition.base.Base):
     def jobgenerator(self, industry_needed, keywords=None):
         try:
             while True:
-                for job in self.simple_jobgenerator(industry_needed):
+                for job in self.simple_jobgenerator(industry_needed, keywords):
                     yield job
         except:
             return
 
-    def simple_jobgenerator(self, industry_needed):
+    def simple_jobgenerator(self, industry_needed, keywords=None):
         pass
