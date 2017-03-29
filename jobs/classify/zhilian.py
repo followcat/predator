@@ -29,14 +29,18 @@ class Zhilian(jobs.classify.base.Base):
                     'industrys': industry_value,
                     'searchtext': keyword,
                         }
+                postdict = {
+                    'Q': keyword.encode('utf-8'),
+                    'CompanyIndustry': industry_id,
+                    }
                 for job_key in sorted(jobtype_list.keys()):
-                    job_type = jobtype_list[job_key].encode('utf-8')
-                    print "[zhilian url list]: 正在抓取的职位: " + job_type
-                    postinfo['jobtitles'] = job_type
-                    postdict = {
-                        'Q': keyword.encode('utf-8'),
-                        'CompanyIndustry': industry_id,
-                        'JobType': job_key}
+                    if keyword != '':
+                        print u"[zhilian url list]: 正在抓取的关键词: %s"%keyword
+                    else:
+                        job_type = jobtype_list[job_key].encode('utf-8')
+                        print "[zhilian url list]: 正在抓取的职位: " + job_type
+                        postinfo['jobtitles'] = job_type
+                        postdict['JobType'] = job_key
                     header = self.gen_header(postdict, postinfo)
                     if resume and not self.eq_postdict(industryid, postdict,
                                                        exclude=[self.precedure.PAGE_VAR]):
@@ -47,6 +51,8 @@ class Zhilian(jobs.classify.base.Base):
                                                     filename, filename,
                                                     postdict, self.repojt, header)
                     yield job_process
+                    if keyword != '':
+                        break
 
 repo = storage.fsinterface.FSInterface('output/zhilian')
 
