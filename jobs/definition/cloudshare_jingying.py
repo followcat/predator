@@ -23,14 +23,24 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'无忧精英爬取'
         return template
 
-    def simple_jobgenerator(self, industry_needed):
+    def simple_jobgenerator(self, industry_needed, keywords=None):
         for _classify_value in industry_needed:
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             print('[jingying cv]: %s - %s'%(_classify_id, _classify_value))
             try:
                 yamlfile = utils.builtin.load_yaml('output/jingying/JOBTITLES', _file)
-                yamldata = yamlfile['datas']
+                _tmpdata = yamlfile['datas']
+                if keywords is None or len(keywords) == 0:
+                    yamldata = _tmpdata
+                else:
+                    yamldata = {}
+                    for _k, _v in _tmpdata.items():
+                        if 'searchtext' in _v['tags']:
+                            for keyword in keywords:
+                                if keyword in _v['tags']['searchtext']:
+                                    yamldata[_k] = _v
+                                    break
             except Exception:
                 continue
             sorted_id = sorted(yamldata,
