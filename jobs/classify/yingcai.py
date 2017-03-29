@@ -30,52 +30,57 @@ class Yingcai(jobs.classify.base.Base):
     wbdownloader = True
     cookies_file = None
 
-    def industryjob(self, industryid, filename, industry, resume=False):
+    def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
         start_time=datetime.datetime.now()
+        if keywords is None or len(keywords) == 0:
+            keywords = ['']
         print start_time
-        for index in industry:
-            industry_id = index[0]
-            industry_value = index[1]
-            for key, value in job_list.items():
-                if not key.startswith(industry_id):
-                    continue
-                postinfo = {
-                            'industrys': industry_value,
-                            'jobtitles': value,
+        for keyword in keywords:
+            for index in industry:
+                industry_id = index[0]
+                industry_value = index[1]
+                for key, value in job_list.items():
+                    if not key.startswith(industry_id):
+                        continue
+                    postinfo = {
+                                'industrys': industry_value,
+                                'jobtitles': value,
+                                'searchtext': keyword,
+                                }
+                    print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
+                    print '爬取职位：{0}:{1}'.format(key, value)
+                    getdict = {
+                            'jobs':key,
+                            'wishIndustry':industry_id,
+                            'page':'0',
+                            'keyword': keyword
                             }
-                print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
-                print '爬取职位：{0}:{1}'.format(key, value)
-                getdict = {
-                        'jobs':key,
-                        'wishIndustry':industry_id,
-                        'page':'0'
-                        }
-                header = self.gen_header(getdict, postinfo)
-                #import ipdb;ipdb.set_trace()
-                #print "header:",header
-                if resume and not self.eq_postdict(industryid, getdict,
-                                                   exclude=[self.precedure.PAGE_VAR]):
-                    continue
-                else:
-                    resume = False
-                job_process = functools.partial(self.precedure.update_classify,
-                                                filename, filename,
-                                                getdict, self.repojt, header)
-                yield job_process
-                current_time = datetime.datetime.now()
-                duration=(current_time-start_time).seconds
-                if duration > 1800:
-                    time.sleep(10)
-                    if hasattr(self, 'login') and self.login is True:
-                        print 'login again'
-                        accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
-                        accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
-                        self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
-                        self.autologin()
+                    header = self.gen_header(getdict, postinfo)
+                    #import ipdb;ipdb.set_trace()
+                    #print "header:",header
+                    if resume and not self.eq_postdict(industryid, getdict,
+                                                       exclude=[self.precedure.PAGE_VAR]):
+                        continue
                     else:
-                        print 'switch profile'
-                        self.downloader.switch_profile(FF_PROFILE_PATH_LIST)
-                    start_time = current_time
+                        resume = False
+                    job_process = functools.partial(self.precedure.update_classify,
+                                                    filename, filename,
+                                                    getdict, self.repojt, header)
+                    yield job_process
+                    current_time = datetime.datetime.now()
+                    duration=(current_time-start_time).seconds
+                    if duration > 1800:
+                        time.sleep(10)
+                        if hasattr(self, 'login') and self.login is True:
+                            print 'login again'
+                            accountlist_index = self.ACCOUNT_LIST.index((self.username, self.password))
+                            accountlist_index = (accountlist_index+1)%len(self.ACCOUNT_LIST)
+                            self.username, self.password = self.ACCOUNT_LIST[accountlist_index]
+                            self.autologin()
+                        else:
+                            print 'switch profile'
+                            self.downloader.switch_profile(FF_PROFILE_PATH_LIST)
+                        start_time = current_time
 
     def autologin(self):
         self.precedure.login(self.username, self.password)
