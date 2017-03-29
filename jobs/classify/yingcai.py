@@ -39,22 +39,26 @@ class Yingcai(jobs.classify.base.Base):
             for index in industry:
                 industry_id = index[0]
                 industry_value = index[1]
+                postinfo = {
+                            'industrys': industry_value,
+                            'searchtext': keyword,
+                            }
+                getdict = {
+                        'wishIndustry':industry_id,
+                        'page':'0',
+                        'keyword': keyword
+                        }
                 for key, value in job_list.items():
                     if not key.startswith(industry_id):
                         continue
-                    postinfo = {
-                                'industrys': industry_value,
-                                'jobtitles': value,
-                                'searchtext': keyword,
-                                }
-                    print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
-                    print '爬取职位：{0}:{1}'.format(key, value)
-                    getdict = {
-                            'jobs':key,
-                            'wishIndustry':industry_id,
-                            'page':'0',
-                            'keyword': keyword
-                            }
+                    if keyword != '':
+                        print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
+                        print u'爬取关键词：{0}'.format(keyword)
+                    else:
+                        print '爬取行业：{0}:{1}'.format(industry_id, industry_value)
+                        print '爬取职位：{0}:{1}'.format(key, value)
+                        getdict['jobs'] = key
+                        postinfo['jobtitles'] = value
                     header = self.gen_header(getdict, postinfo)
                     #import ipdb;ipdb.set_trace()
                     #print "header:",header
@@ -81,6 +85,8 @@ class Yingcai(jobs.classify.base.Base):
                             print 'switch profile'
                             self.downloader.switch_profile(FF_PROFILE_PATH_LIST)
                         start_time = current_time
+                    if keyword != '':
+                        break
 
     def autologin(self):
         self.precedure.login(self.username, self.password)
