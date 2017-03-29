@@ -24,14 +24,13 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
         template['origin'] = u'智联卓聘爬取'
         return template
 
-    def simple_jobgenerator(self, industry_needed):
+    def simple_jobgenerator(self, industry_needed, keywords=None):
         for _classify_value in industry_needed:
             print(u'[zhilian cv]: 行业-%s'%_classify_value)
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
             try:
-                yamlfile = utils.builtin.load_yaml('output/zhilian/JOBTITLES', _file)
-                yamldata = yamlfile['datas']
+                yamldata = self.get_cv_list(_file, keywords)
             except IOError:
                 continue
             sorted_id = sorted(yamldata,

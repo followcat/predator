@@ -20,7 +20,6 @@ class Zhilian(precedure.base.Base):
     CLASSIFY_MAXPAGE = 100
 
     urls_data = {
-        'Q':'',
         'IsJobTitleOnly':'false',
         'IsPartialMatch':'false',
         'CompanyName':'',
