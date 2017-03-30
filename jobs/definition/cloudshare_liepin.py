@@ -29,7 +29,6 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
             print(u'[liepin cv]: 行业-%s'%classify_value)
             classify_id = industryID[classify_value.encode('utf-8')]
             _file = classify_id + '.yaml'
-            import ipdb;ipdb.set_trace()
             try:
                 yamldata = self.get_cv_list(_file, keywords)
             except IOError:
