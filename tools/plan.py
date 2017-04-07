@@ -75,29 +75,27 @@ def get_keywords(keywords):
 
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('--jobs', type=str, help='Process job generateor module.')
-parser.add_argument('industry', type=str, help='Input industry needed.')
-parser.add_argument('--keywords', type=str, default='', help='Input extra keywords to search')
+parser.add_argument('--config', type=str, help='Configure file')
 parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
 if __name__ == '__main__':
     
     args = parser.parse_args()
     jobs = args.jobs.split(',')
+    config = args.config
     print jobs
     downloaders = {}
-    keywords = get_keywords(args.keywords)
     for job in jobs:
         jobmodule = importlib.import_module(job)
-        industries = get_industries(args.industry)
         PLAN = jobmodule.PLAN
         if hasattr(jobmodule, 'PROCESS_GEN_FUNC'):
             PROCESS_GEN_FUNC = jobmodule.PROCESS_GEN_FUNC
         else:
             PROCESS_GEN_FUNC = jobmodule.get_PROCESS_GEN_FUNC(downloaders)
         if 'resume' in inspect.getargspec(PROCESS_GEN_FUNC).args:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed=industries, keywords=keywords, resume=args.resume)
+            PROCESS_GEN = PROCESS_GEN_FUNC(config, resume=args.resume)
         else:
-            PROCESS_GEN = PROCESS_GEN_FUNC(industry_needed=industries, keywords=keywords)
+            PROCESS_GEN = PROCESS_GEN_FUNC(config)
 
         jobadder(scheduler, schedulerjob, PLAN,
                  arguments=[PROCESS_GEN],
