@@ -68,7 +68,7 @@ class Cloudshare(jobs.definition.base.Base):
         try:
             settings = self.get_setting(config)
             while True:
-                for key, (industries, keywords) in settings.items():
+                for (industries, keywords) in settings:
                     for job in self.simple_jobgenerator(industries, keywords):
                         yield job
         except:

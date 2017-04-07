@@ -45,7 +45,7 @@ class Base(jobs.base.Base):
         try:
             settings = self.get_setting(config)
             while True:
-                for key, (industries, keywords) in settings.items():
+                for (industries, keywords) in settings:
                     for industry in industries:
                         industry = industry.encode('utf-8')
                         industryid = industryID[industry]
