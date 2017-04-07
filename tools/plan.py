@@ -51,28 +51,6 @@ def jobadder(scheduler, job, plan, arguments=None, kwarguments=None):
     for each in plan:
         scheduler.add_job(job, 'cron', args=arguments, kwargs=kwarguments, **each)
 
-def get_industries(industrystr):
-    _industries = industrystr.split(',')
-    ret_industries = []
-    for ind in _industries:
-        industrymodule = importlib.import_module(ind)
-        industries = industrymodule.industry_needed
-        ret_industries.extend(industries)
-    return ret_industries
-
-def get_keywords(keywords):
-    ret_words = []
-    if keywords == '':
-        return ret_words
-    _keywords = keywords.split(',')
-    for words in _keywords:
-        kwmodule = importlib.import_module(words)
-        kws = kwmodule.keywords
-        for kw in kws:
-            ws = ' '.join(kw)
-            ret_words.append(ws)
-    return ret_words
-
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('--jobs', type=str, help='Process job generateor module.')
 parser.add_argument('--config', type=str, default='', help='Configure file')
