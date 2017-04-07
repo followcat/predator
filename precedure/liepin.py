@@ -16,7 +16,7 @@ class Liepin(precedure.base.Base):
 
     BASE_URL='https://h.liepin.com'
     PAGE_VAR = 'curPage'
-    CLASSIFY_SLEEP = 60
+    CLASSIFY_SLEEP = 120
     CLASSIFY_MAXPAGE = 10
 
     urls_post = {
@@ -46,7 +46,8 @@ class Liepin(precedure.base.Base):
         tmp_post.update(self.urls_post)
         tmp_post.update(data)
         searchurl = 'https://h.liepin.com/cvsearch/soResume/'
-        return self.ul_downloader.post(searchurl, data=tmp_post)
+        tmp_post['curPage'] -= 1
+        return self.wb_downloader.getsource(searchurl, form=tmp_post)
 
     def urlget_cv(self, url):
         download_url = BASE_URL + url
@@ -109,15 +110,15 @@ class Liepin(precedure.base.Base):
 
     def classify(self, postdata, header):
         htmlsource = self.urlget_classify(postdata)
-        if '异常浏览行为' in htmlsource:
+        if u'异常浏览行为' in htmlsource:
             self.logException("Exception type Alarm.")
             self.logException(htmlsource)
             raise precedure.exception.AlarmException
-        elif '输入登录邮箱' in htmlsource:
+        elif u'输入登录邮箱' in htmlsource:
             self.logException("Exception type Logout")
             self.logException(htmlsource)
             raise precedure.exception.LogoutException
-        if '没有找到符合' in htmlsource:
+        if u'没有找到符合' in htmlsource:
             return None
         result = self.parse_classify(htmlsource, header)
         return result
