@@ -3,6 +3,7 @@ import functools
 
 import precedure.liepin
 import jobs.classify.base
+import jobs.config.liepin
 import storage.fsinterface
 
 from sources.liepin_industry import job_list as liepin_job
@@ -10,10 +11,11 @@ from sources.liepin_industry import job_list as liepin_job
 
 class Liepin(jobs.classify.base.Base):
 
-    cookies_file = 'cookies.data'
+    ff_profile = jobs.config.liepin.ff_profiles[0]
     jobname = 'liepin'
+    source = 'liepin'
     precedure_type = precedure.liepin.Liepin
-    uldownloader = True
+    wbdownloader = True
 
     def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
         if keywords is None or len(keywords) == 0:
@@ -55,4 +57,4 @@ repo = storage.fsinterface.FSInterface('output/liepin')
 instance = Liepin(repo)
 
 PROCESS_GEN_FUNC = instance.jobgenerator
-PLAN = [dict(second='*/60')]
+PLAN = [dict(second='*/120')]
