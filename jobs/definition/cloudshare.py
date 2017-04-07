@@ -64,11 +64,13 @@ class Cloudshare(jobs.definition.base.Base):
                             break
         return yamldata
 
-    def jobgenerator(self, industry_needed, keywords=None):
+    def jobgenerator(self, config):
         try:
+            settings = self.get_setting(config)
             while True:
-                for job in self.simple_jobgenerator(industry_needed, keywords):
-                    yield job
+                for key, (industries, keywords) in settings.items():
+                    for job in self.simple_jobgenerator(industries, keywords):
+                        yield job
         except:
             return
 
