@@ -41,20 +41,22 @@ class Base(jobs.base.Base):
     def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
         pass
 
-    def jobgenerator(self, industry_needed, keywords=None, resume=False):
+    def jobgenerator(self, config, resume=False):
         try:
+            settings = self.get_setting(config)
             while True:
-                for industry in industry_needed:
-                    industry = industry.encode('utf-8')
-                    industryid = industryID[industry]
-                    precedure_industry = industry_dict[industry][self.jobname]
-                    filename = industryid
-                    if not self.get_postdict(industryid):
-                        resume = False
-                    jobs = self.industryjob(industryid, filename, precedure_industry, keywords, resume)
-                    for job in jobs:
-                        yield job
-                    self.repojt.unload(industryid)
+                for key, (industries, keywords) in settings.items():
+                    for industry in industries:
+                        industry = industry
+                        industryid = industryID[industry]
+                        precedure_industry = industry_dict[industry][self.jobname]
+                        filename = industryid
+                        if not self.get_postdict(industryid):
+                            resume = False
+                        jobs = self.industryjob(industryid, filename, precedure_industry, keywords, resume)
+                        for job in jobs:
+                            yield job
+                        self.repojt.unload(industryid)
         except:
             return
 
