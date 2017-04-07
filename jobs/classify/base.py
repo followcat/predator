@@ -47,7 +47,7 @@ class Base(jobs.base.Base):
             while True:
                 for key, (industries, keywords) in settings.items():
                     for industry in industries:
-                        industry = industry
+                        industry = industry.encode('utf-8')
                         industryid = industryID[industry]
                         precedure_industry = industry_dict[industry][self.jobname]
                         filename = industryid

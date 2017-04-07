@@ -13,24 +13,14 @@ class Base(object):
 
     def get_setting(self, config):
         settings = {}
-        path = config[:config.rindex('/')]
-        cfile = config[config.rindex('/')+1:]
-        contents = utils.builtin.load_yaml(path, cfile)
+        contents = utils.builtin.load_yaml('', config)
         for k, v in contents.items():
             ind_file = v['industries']
             kw_file = v['keywords']
-            inds = []
+            inds = utils.builtin.load_yaml('', ind_file)
+            kws_dict = utils.builtin.load_yaml('', kw_file)
             kws = []
-            with open(ind_file) as ind_f:
-                for l in ind_f.readlines():
-                    l = l.strip()
-                    if l.startswith('#'):
-                        continue
-                    inds.append(l)
-            with open(kw_file) as kw_f:
-                for kw in kw_f.readlines():
-                    if l.startswith("#"):
-                        continue
-                    kws.append(l.decode('utf-8'))
+            for k, v in kws_dict.items():
+                kws.extend(v)
             settings[k] = (inds, kws)
         return settings
