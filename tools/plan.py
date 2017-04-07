@@ -75,7 +75,7 @@ def get_keywords(keywords):
 
 parser = argparse.ArgumentParser(description='Plan tool.')
 parser.add_argument('--jobs', type=str, help='Process job generateor module.')
-parser.add_argument('--config', type=str, help='Configure file')
+parser.add_argument('--config', type=str, default='', help='Configure file')
 parser.add_argument('-r', '--resume', action='store_true', help='Let resume be True.')
 
 if __name__ == '__main__':
