@@ -45,6 +45,7 @@ class Webdriver(object):
             driver, handler = create_driver(self.profilepath)
             self.driver_regs[self.id] = {'driver': driver}
         driver.handlers[self.id] = handler
+        self.driver.implicitly_wait(10)
 
     @property
     def driver(self):
@@ -76,17 +77,53 @@ class Webdriver(object):
         with self.lock:
             self.reset_driver()
 
-    def getsource(self, url):
+    def getsource(self, url, form=None):
         with self.lock:
             try:
                 self.driver.switch_to_window(self.driver.handlers[self.id])
-                self.driver.get(url)
+                if form is None:
+                    self.driver.get(url)
+                else:
+                    self.post(url, form)
             except socket.error:
                 self.reset_driver()
                 self.driver.switch_to_window(self.driver.handlers[self.id])
-                self.driver.get(url)
+                if form is None:
+                    self.driver.get(url)
+                else:
+                    self.post(url, form)
             page = self.driver.page_source
         return page
+
+    def post(self, url, form):
+        js = """function post(path, params, method) {
+                    method = method || "post"; // Set method to post by default if not specified.
+                    var form = document.createElement("form");
+                    form.setAttribute("method", method);
+                    form.setAttribute("action", path);
+
+                    for(var key in params) {
+                        if(params.hasOwnProperty(key)) {
+                            var hiddenField = document.createElement("input");
+                            hiddenField.setAttribute("type", "hidden");
+                            hiddenField.setAttribute("name", key);
+                            hiddenField.setAttribute("value", params[key]);
+
+                            form.appendChild(hiddenField);
+                         }
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
+                form = %s;
+                url = %s;
+
+                post(url, form);"""
+
+        _url = '"' + url + '"'
+        self.driver.execute_script(js%(str(form), _url))
 
     def close(self):
         self.driver.quit()
