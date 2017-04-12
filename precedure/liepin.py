@@ -40,6 +40,14 @@ class Liepin(precedure.base.Base):
     def __init__(self, uldownloader=None, wbdownloader=None):
         self.ul_downloader = uldownloader
         self.wb_downloader = wbdownloader
+        self.setup()
+
+    def setup(self):
+        if self.wb_downloader:
+            try:
+                self.wb_downloader.driver.get(self.BASE_URL)
+            except Exception:
+                pass
 
     def urlget_classify(self, data):
         tmp_post = dict()
