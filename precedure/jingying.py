@@ -17,7 +17,6 @@ class Jingying(precedure.base.Base):
     CLASSIFY_MAXPAGE = 20
 
     post_data = {
-        'url': '/spy/searchmanager.php?act=getSpySearch',
         'nisseniordb': 1, #0-高级人才库, 1-全部人才库, 2-御用精英人才库
         'indtype': '',
         'potext': '',
@@ -49,13 +48,21 @@ class Jingying(precedure.base.Base):
     def __init__(self, uldownloader=None, wbdownloader=None):
         self.ul_downloader = uldownloader
         self.wb_downloader = wbdownloader
+        self.setup()
+
+    def setup(self):
+        if self.wb_downloader:
+            try:
+                self.wb_downloader.driver.get(self.BASE_URL)
+            except Exception:
+                pass
 
     def urlget_classify(self, data):
         tmp_post = dict()
         tmp_post.update(self.post_data)
         tmp_post.update(data)
         searchurl = 'http://www.51jingying.com/spy/searchmanager.php?act=getSpySearch'
-        ret = self.ul_downloader.post(searchurl, data=tmp_post)
+        ret = self.wb_downloader.getsource(searchurl, form=tmp_post)
         return ret
 
     def urlget_cv(self, url):
@@ -114,9 +121,10 @@ class Jingying(precedure.base.Base):
         return content.prettify()
 
     def classify(self, postdata, header):
-        json_res = self.urlget_classify(postdata)
+        page = self.urlget_classify(postdata)
         try:
-            htmlsource = json.loads(json_res)['html']
+            json_res = json.loads(page)
+            htmlsource = json_res['html']
         except KeyError:
             pass
         result = self.parse_classify(htmlsource, header)

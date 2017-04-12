@@ -4,15 +4,17 @@ import functools
 import precedure.jingying
 import jobs.classify.base
 import storage.fsinterface
+import jobs.config.jingying
 
 from sources.jingying import *
 
 class Jingying(jobs.classify.base.Base):
 
-    cookies_file = 'cookies_2.data'
+    ff_profile = jobs.config.jingying.ff_profiles[0]
     jobname = 'jingying'
+    source = 'jingying'
     precedure_type = precedure.jingying.Jingying
-    uldownloader = True
+    wbdownloader = True
 
     company_area_list = [
         'GuangDong',        #广东
