@@ -78,52 +78,46 @@ class Webdriver(object):
             self.reset_driver()
 
     def getsource(self, url, form=None):
+        page = ''
         with self.lock:
             try:
                 self.driver.switch_to_window(self.driver.handlers[self.id])
-                if form is None:
-                    self.driver.get(url)
-                else:
-                    self.post(url, form)
             except socket.error:
                 self.reset_driver()
                 self.driver.switch_to_window(self.driver.handlers[self.id])
-                if form is None:
-                    self.driver.get(url)
-                else:
-                    self.post(url, form)
-            page = self.driver.page_source
+            if form is None:
+                self.driver.get(url)
+                page = self.driver.page_source
+            else:
+                page = self.post(url, form)
         return page
 
     def post(self, url, form):
-        js = """function post(path, params, method) {
-                    method = method || "post"; // Set method to post by default if not specified.
-                    var form = document.createElement("form");
-                    form.setAttribute("method", method);
-                    form.setAttribute("action", path);
-
+        js = """function post(path, params) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", path, false);
+                    var formData = new FormData();
                     for(var key in params) {
-                        if(params.hasOwnProperty(key)) {
-                            var hiddenField = document.createElement("input");
-                            hiddenField.setAttribute("type", "hidden");
-                            hiddenField.setAttribute("name", key);
-                            hiddenField.setAttribute("value", params[key]);
-
-                            form.appendChild(hiddenField);
-                         }
+                        formData.append(key, params[key]);
+                    }
+                    xhr.send(formData);
+                    var result = "";
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            result = xhr.responseText;
+                        }
                     }
 
-                    document.body.appendChild(form);
-                    form.submit();
+                    return result
                 }
-
-                form = %s;
                 url = %s;
+                form = %s;
 
-                post(url, form);"""
+                return post(url, form);"""
 
         _url = '"' + url + '"'
-        self.driver.execute_script(js%(str(form), _url))
+        page = self.driver.execute_script(js%(_url, str(form)))
+        return page
 
     def close(self):
         self.driver.quit()
