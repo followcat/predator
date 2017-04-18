@@ -51,6 +51,10 @@ class Webdriver(object):
     def driver(self):
         return self.driver_regs[self.id]['driver']
 
+    def is_setup(self):
+        self.driver.switch_to_window(self.driver.handlers[self.id])
+        return self.driver.current_url != u'about:blank'
+
     def reset_driver(self):
         if self.profilepath is None:
             return
