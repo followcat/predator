@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+import datetime
 import functools
 
 import precedure.jingying
@@ -10,9 +12,10 @@ from sources.jingying import *
 
 class Jingying(jobs.classify.base.Base):
 
-    ff_profile = jobs.config.jingying.ff_profiles[0]
-    jobname = 'jingying'
     source = 'jingying'
+    jobname = 'jingying'
+    ff_profile = jobs.config.jingying.ff_profiles[0]
+    ff_profiles = jobs.config.jingying.ff_profiles
     precedure_type = precedure.jingying.Jingying
     wbdownloader = True
 
@@ -40,6 +43,7 @@ class Jingying(jobs.classify.base.Base):
 
 
     def industryjob(self, industryid, filename, industry, keywords=None, resume=False):
+        start_time=datetime.datetime.now()
         if keywords is None or len(keywords) == 0:
             keywords = ['']
         for keyword in keywords:
@@ -93,10 +97,21 @@ class Jingying(jobs.classify.base.Base):
                                                         add_list, update_list,
                                                         header, flush)
                         yield job_process
+                        current_time = datetime.datetime.now()
+                        duration=(current_time-start_time).seconds
+                        if duration > 1800:
+                            print '[jingying url list]: switch profile'
+                            self.downloader.switch_profile(self.ff_profiles)
+                            start_time = current_time
 
 repo = storage.fsinterface.FSInterface('output/jingying')
-instance = Jingying(repo)
-PROCESS_GEN_FUNC = instance.jobgenerator
 PLAN = [dict(name='jingying_classify', second='*/10',hour='8-19'),
         dict(name='jingying_classify', second='*/60', hour='20-23'),
         dict(name='jingying_classify', second='*/60', hour='0-7')]
+
+def get_PROCESS_GEN_FUNC(downloaders=None):
+    instance = Jingying(repo, downloaders)
+    if instance.source not in downloaders:
+        downloaders[instance.source] = instance.precedure.wb_downloader
+    PROCESS_GEN_FUNC = instance.jobgenerator
+    return PROCESS_GEN_FUNC
