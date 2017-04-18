@@ -62,12 +62,10 @@ class Jingying(precedure.base.Base):
         tmp_post.update(self.post_data)
         tmp_post.update(data)
         searchurl = 'http://www.51jingying.com/spy/searchmanager.php?act=getSpySearch'
+        if not self.wb_downloader.is_setup():
+            self.setup()
         ret = self.wb_downloader.getsource(searchurl, form=tmp_post)
         return ret
-
-    def urlget_cv(self, url):
-        download_url = BASE_URL + url
-        return self.ul_downloader.get(download_url)
 
     def parse_classify(self, htmlsource, header):
         bs = bs4.BeautifulSoup(htmlsource, "lxml")
