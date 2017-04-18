@@ -24,6 +24,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
         return template
 
     def simple_jobgenerator(self, industry_needed, keywords=None):
+        start_time=datetime.datetime.now()
         for _classify_value in industry_needed:
             _classify_id = industryID[_classify_value.encode('utf-8')]
             _file = _classify_id + '.yaml'
@@ -39,8 +40,15 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
                 if not self.cvstorage.existscv(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
-                    t1 = time.time()
                     yield job_process
+                    current_time = datetime.datetime.now()
+                    duration=(current_time-start_time).seconds
+                    if duration > 60:
+                        time.sleep(10)
+                        print '[jingying cv]: switch profile'
+                        self.wb_downloader.switch_profile(ff_profiles)
+                        start_time = current_time
+
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')
