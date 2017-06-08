@@ -53,7 +53,7 @@ class Cloudshare(jobs.definition.base.Base):
         yamldata['date'] = date
         result = self.cvstorage.addyaml(cv_id, yamldata)
         job_logger.info('Update: '+cv_id)
-        return = True
+        return True
 
     def extract_details(self, uploaded_details):
         details = self.cloudshare_yaml_template()
