@@ -15,8 +15,7 @@ class Liepin(jobs.definition.base.Base):
         yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
         if 'datas' in yamldata:
             yamldata = yamldata['datas']
-        sorted_id = sorted(yamldata,
-                           key = lambda cvid: yamldata[cvid]['peo'][-1],
+        sorted_id = sorted(yamldata, key = lambda cvid: yamldata[cvid]['date'],
                            reverse=True)
         for cv_id in sorted_id:
             if not self.cvstorage.exists(cv_id):

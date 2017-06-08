@@ -42,8 +42,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 yamldata = self.get_cv_list(_file, keywords)
             except Exception:
                 continue
-            sorted_id = sorted(yamldata,
-                               key = lambda cvid: yamldata[cvid]['info'][-1],
+            sorted_id = sorted(yamldata, key = lambda cvid: yamldata[cvid]['date'],
                                reverse=True)
             for cv_id in sorted_id:
                 if not self.cvstorage.existscv(cv_id):
