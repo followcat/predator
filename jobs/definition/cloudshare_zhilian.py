@@ -39,9 +39,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
                 if not self.cvstorage.exists(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info)
-                    t1 = time.time()
                     yield job_process
-                    print(time.time() - t1)
 
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')

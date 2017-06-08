@@ -48,7 +48,6 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 if not self.cvstorage.existscv(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
-                    t1 = time.time()
                     yield job_process
 
                 current_time=datetime.datetime.now()
