@@ -37,17 +37,22 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
                                reverse=True)
             print _file, sorted_id[0], time.localtime(yamldata[sorted_id[0]]['date'])
             for cv_id in sorted_id:
-                if (time.time() - yamldata[cv_id]['date'])/60/60/24 < 14:# not self.cvstorage.existscv(cv_id):
+                if (time.time() - yamldata[cv_id]['date'])/60/60/24 < 14:
+                    if not self.cvstorage.existscv(cv_id):
+                        cv_info = yamldata[cv_id]
+                        job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
+                        yield job_process
+                        current_time = datetime.datetime.now()
+                        duration=(current_time-start_time).seconds
+                        if duration > 60:
+                            time.sleep(10)
+                            print '[jingying cv]: switch profile'
+                            self.wb_downloader.switch_profile(ff_profiles)
+                            start_time = current_time
+                else:
                     cv_info = yamldata[cv_id]
-                    job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
+                    job_process = functools.partial(self.updatejob, cv_info)
                     yield job_process
-                    current_time = datetime.datetime.now()
-                    duration=(current_time-start_time).seconds
-                    if duration > 60:
-                        time.sleep(10)
-                        print '[jingying cv]: switch profile'
-                        self.wb_downloader.switch_profile(ff_profiles)
-                        start_time = current_time
 
 
     def downloadjob(self, cv_info, classify_id):

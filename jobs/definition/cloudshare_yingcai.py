@@ -46,10 +46,15 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                                reverse=True)
             print _file, sorted_id[0], time.localtime(yamldata[sorted_id[0]]['date'])
             for cv_id in sorted_id:
-                if (time.time() - yamldata[cv_id]['date'])/60/60/24 < 14:# not self.cvstorage.existscv(cv_id):
-                    cv_info = yamldata[cv_id]
-                    job_process = functools.partial(self.downloadjob, cv_info, _classify_id)
-                    yield job_process
+                if (time.time() - yamldata[cv_id]['date'])/60/60/24 < 14:
+                    if not self.cvstorage.existscv(cv_id):
+                        cv_info = yamldata[cv_id]
+                        job_process = functools.partial(self.downloadjob, cv_info)
+                        yield job_process
+                    else:
+                        cv_info = yamldata[cv_id]
+                        job_process = functools.partial(self.updatejob, cv_info)
+                        yield job_process
 
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
@@ -70,7 +75,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
     def autologin(self):
         self.precedure.login(self.username, self.password)
 
-    def downloadjob(self, cv_info, classify_id):
+    def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         print('[yingcai cv]: Download: '+cv_id)

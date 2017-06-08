@@ -43,6 +43,10 @@ class Liepin(jobs.definition.cloudshare.Cloudshare):
                         cv_info = yamldata[cv_id]
                         job_process = functools.partial(self.downloadjob, cv_info, classify_id)
                         yield job_process
+                    else:
+                        cv_info = yamldata[cv_id]
+                        job_process = functools.partial(self.updatejob, cv_info)
+                        yield job_process
 
     def downloadjob(self, cv_info, classify_id):
         job_logger = logging.getLogger('schedJob')

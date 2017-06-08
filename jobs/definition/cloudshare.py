@@ -41,6 +41,20 @@ class Cloudshare(jobs.definition.base.Base):
             }
         return template
 
+    def updatejob(self, cv_info, classify_id):
+        job_logger = logging.getLogger('schedJob')
+        cv_id = cv_info['id']
+        date = cv_info['date']
+        yamldata = self.cvstorage.getyaml(cv_id)
+        if yamldata['date'] == date:
+            return False
+        print('[yingcai cv]: Update: '+cv_id)
+        print('[yingcai cv]: %s'%cv_info['href'])
+        yamldata['date'] = date
+        result = self.cvstorage.addyaml(cv_id, yamldata)
+        job_logger.info('Update: '+cv_id)
+        return = True
+
     def extract_details(self, uploaded_details):
         details = self.cloudshare_yaml_template()
         details['date'] = time.time()
