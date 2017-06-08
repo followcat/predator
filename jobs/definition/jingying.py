@@ -42,6 +42,8 @@ class Jingying(jobs.definition.base.Base):
     def jobgenerator(self):
         for _file in self.industry_yamls:
             yamldata = utils.builtin.load_yaml('jingying/JOBTITLES', _file)
+            if 'datas' in yamldata:
+                yamldata = yamldata['datas']
             sorted_id = sorted(yamldata,
                                key = lambda cvid: yamldata[cvid]['peo'][-1],
                                reverse=True)

@@ -38,13 +38,13 @@ class Yingcai(jobs.definition.base.Base):
     def jobgenerator(self):
         for _file in self.industry_yamls:
             yamldata = utils.builtin.load_yaml('yingcai/JOBTITLES', _file)
+            if 'datas' in yamldata:
+                yamldata = yamldata['datas']
             sorted_id = sorted(yamldata,
-                               key = lambda cvid: yamldata[cvid]['peo'][-1],
+                               key = lambda cvid: yamldata[cvid]['peo'][-1],,
                                reverse=True)
             for cv_id in sorted_id:
                 if not self.cvstorage.exists(cv_id):
                     cv_info = yamldata[cv_id]
                     job_process = functools.partial(self.downloadjob, cv_info)
-                    t1 = time.time()
                     yield job_process
-                    print(time.time() - t1)

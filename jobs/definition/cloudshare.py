@@ -51,7 +51,10 @@ class Cloudshare(jobs.definition.base.Base):
 
     def get_cv_list(self, file_name, keywords):
         yamlfile = utils.builtin.load_yaml('output/%s/JOBTITLES'%self.source, file_name)
-        _tmpdata = yamlfile['datas']
+        if 'datas' in yamlfile:
+            _tmpdata = yamlfile['datas']
+        else:
+            _tmpdata = yamlfile
         if keywords is None or len(keywords) == 0:
             yamldata = _tmpdata
         else:

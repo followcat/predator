@@ -13,6 +13,8 @@ class Liepin(jobs.definition.base.Base):
 
     def jobgenerator(self):
         yamldata = utils.builtin.load_yaml('liepin/JOBTITLES', '290097.yaml')
+        if 'datas' in yamldata:
+            yamldata = yamldata['datas']
         sorted_id = sorted(yamldata,
                            key = lambda cvid: yamldata[cvid]['peo'][-1],
                            reverse=True)
