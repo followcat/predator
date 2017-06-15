@@ -1,13 +1,31 @@
+/*{
+  "name": "Get pages source",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Get pages source from a popup",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["tabs", "<all_urls>"]
+}*/
 {
   "name": "Predator",
   "version": "0.1.0",
   "manifest_version": 2,
   "description": "Get CV from website.",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "icons": { "16": "icon.png",
+             "48": "icon.png",
+             "128": "icon.png" },
   "background": {
     "scripts": ["background.js"]
   },
   "content_scripts": [{
-    "matches": ["<all_urls>"],
+    "matches":  ["https://h.liepin.com/resume/showresumedetail/*"],
+    // "matches":  ["<all_urls>"]
     "js": ["content.js"]
   }],
   "permissions": ["webNavigation", "tabs", "contextMenus", "<all_urls>"]

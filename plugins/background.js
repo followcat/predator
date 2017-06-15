@@ -1,7 +1,3 @@
-chrome.webNavigation.onCompleted.addListener(function( tab ){
-　　sendMsg( tab.tabId );
-});
-
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     var url = request.url;
     var html = request.html;
@@ -15,6 +11,12 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         url: url,
         html: html,
       })
+    })
+    .then(response => response.json())
+    .then(response => {
+      localStorage["id"] = response.id;
+      localStorage["url"] = response.url;
+      localStorage["result"] = response.result;
     })
 });
 
