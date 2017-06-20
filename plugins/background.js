@@ -1,7 +1,7 @@
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     var url = request.url;
     var html = request.html;
-    fetch('http://10.0.0.105:4888/api/browsersync', {
+    fetch('http://10.0.0.200:4888/api/browsersync', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
