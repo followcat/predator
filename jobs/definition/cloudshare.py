@@ -1,4 +1,5 @@
 import time
+import logging
 
 import storage.cv
 import utils.builtin
@@ -82,14 +83,11 @@ class Cloudshare(jobs.definition.base.Base):
         return yamldata
 
     def jobgenerator(self, config):
-        try:
-            settings = self.get_setting(config)
-            while True:
-                for (industries, keywords) in settings:
-                    for job in self.simple_jobgenerator(industries, keywords):
-                        yield job
-        except:
-            return
+        settings = self.get_setting(config)
+        while True:
+            for (industries, keywords) in settings:
+                for job in self.simple_jobgenerator(industries, keywords):
+                    yield job
 
     def simple_jobgenerator(self, industry_needed, keywords=None):
         pass
