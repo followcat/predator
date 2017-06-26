@@ -1,6 +1,8 @@
 import yaml
 import os.path
 
+import utils.builtin
+
 
 class CurriculumVitae(object):
 
@@ -92,8 +94,7 @@ class CurriculumVitae(object):
     def getyaml(self, cv_id):
         data = None
         if self.existsyaml(cv_id):
-            filename = os.path.join(self.interface_rawpath, cv_id) + self.yamlextension
-            data = self._get(filename)
+            data = utils.builtin.load_yaml(self.interface_rawpath, cv_id+ self.yamlextension)
         return data
 
     def getraw(self, cv_id):
