@@ -49,10 +49,10 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
                             print '[jingying cv]: switch profile'
                             self.wb_downloader.switch_profile(ff_profiles)
                             start_time = current_time
-                else:
-                    cv_info = yamldata[cv_id]
-                    job_process = functools.partial(self.updatejob, cv_info)
-                    yield job_process
+                    else:
+                        cv_info = yamldata[cv_id]
+                        job_process = functools.partial(self.updatejob, cv_info)
+                        yield job_process
 
 
     def downloadjob(self, cv_info, classify_id):
