@@ -51,8 +51,7 @@ class Jingying(jobs.definition.cloudshare.Cloudshare):
                             start_time = current_time
                     else:
                         cv_info = yamldata[cv_id]
-                        job_process = functools.partial(self.updatejob, cv_info)
-                        yield job_process
+                        self.updatejob(cv_info)
 
 
     def downloadjob(self, cv_info, classify_id):

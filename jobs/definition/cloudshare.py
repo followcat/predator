@@ -41,7 +41,7 @@ class Cloudshare(jobs.definition.base.Base):
             }
         return template
 
-    def updatejob(self, cv_info, classify_id):
+    def updatejob(self, cv_info):
         job_logger = logging.getLogger('schedJob')
         cv_id = cv_info['id']
         date = cv_info['date']

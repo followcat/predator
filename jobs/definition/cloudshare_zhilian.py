@@ -44,8 +44,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
                         yield job_process
                     else:
                         cv_info = yamldata[cv_id]
-                        job_process = functools.partial(self.updatejob, cv_info)
-                        yield job_process
+                        self.updatejob(cv_info)
 
     def downloadjob(self, cv_info):
         job_logger = logging.getLogger('schedJob')

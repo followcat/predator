@@ -53,8 +53,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                         yield job_process
                     else:
                         cv_info = yamldata[cv_id]
-                        job_process = functools.partial(self.updatejob, cv_info)
-                        yield job_process
+                        self.updatejob(cv_info)
 
                 current_time=datetime.datetime.now()
                 duration=(current_time-self.START_TIME).seconds
