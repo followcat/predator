@@ -48,8 +48,8 @@ class Cloudshare(jobs.definition.base.Base):
         yamldata = self.cvstorage.getyaml(cv_id)
         if yamldata['date'] == date:
             return False
-        print('[yingcai cv]: Update: '+cv_id)
-        print('[yingcai cv]: %s'%cv_info['href'])
+        print('[cv]: Update: '+cv_id)
+        print('[cv]: %s'%cv_info['href'])
         yamldata['date'] = date
         result = self.cvstorage.addyaml(cv_id, yamldata)
         job_logger.info('Update: '+cv_id)
