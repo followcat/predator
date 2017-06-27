@@ -52,9 +52,9 @@ class Jingying(jobs.classify.base.Base):
                 update_list = []
                 industry_id = index[0]
                 industry_value = index[1]
-                print('[jingying url list]: %s' %industry_value)
+                print('[jingying url list]: %s, %s' %(industry_value, keyword.encode('utf8')))
                 postdict = {'indtype': industry_id,
-                            'fulltext':keyword.encode('gb2312')}
+                            'fulltext':keyword.replace(' ', '+')}
                 postinfo = {'industry': industry_value,
                             'searchtext':keyword}
                 header = self.gen_header(postdict, postinfo)
@@ -69,40 +69,44 @@ class Jingying(jobs.classify.base.Base):
                                                 add_list, update_list,
                                                 header)
                 yield job_process
+                current_time = datetime.datetime.now()
+                duration=(current_time-start_time).seconds
+                if duration > 1800:
+                    print '[jingying url list]: switch profile'
+                    self.downloader.switch_profile(self.ff_profiles)
+                    start_time = current_time
 
-                for _area in self.company_area_list:
-                    flush = False
-                    add_list = []
-                    update_list = []
-                    print('[jingying url list]: %s' %_area)
-                    for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
-                        if _index == len(localdatajobs['company_name'][_area]) - 1:
-                            flush = True
-                        print('[jingying url list]: %s' %c_name)
-                        postdict = {'cotext': c_name.decode('utf-8').encode('gb2312'),
-                                    'indtype': industry_id,
-                                    'fulltext':keyword.encode('gb2312')}
-                        postinfo = {'company': c_name,
-                                    'industry': industry_value,
-                                    'searchtext':keyword}
-                        header = self.gen_header(postdict, postinfo)
-                        if resume and not self.eq_postdict(industryid, postdict,
-                                                                exclude=[self.precedure.PAGE_VAR]):
-                            continue
-                        else:
-                            resume = False
-                        job_process = functools.partial(self.precedure.update_classify,
-                                                        filename, filename,
-                                                        postdict, self.repojt,
-                                                        add_list, update_list,
-                                                        header, flush)
-                        yield job_process
-                        current_time = datetime.datetime.now()
-                        duration=(current_time-start_time).seconds
-                        if duration > 1800:
-                            print '[jingying url list]: switch profile'
-                            self.downloader.switch_profile(self.ff_profiles)
-                            start_time = current_time
+        for _area in self.company_area_list:
+            flush = False
+            add_list = []
+            update_list = []
+            print('[jingying url list]: %s' %_area)
+            for _index, c_name in enumerate(localdatajobs['company_name'][_area]):
+                if _index == len(localdatajobs['company_name'][_area]) - 1:
+                    flush = True
+                print('[jingying url list]: %s' %c_name)
+                postdict = {'cotext': c_name.decode('utf-8'),
+                            'indtype': industry_id}
+                postinfo = {'company': c_name,
+                            'industry': industry_value}
+                header = self.gen_header(postdict, postinfo)
+                if resume and not self.eq_postdict(industryid, postdict,
+                                                        exclude=[self.precedure.PAGE_VAR]):
+                    continue
+                else:
+                    resume = False
+                job_process = functools.partial(self.precedure.update_classify,
+                                                filename, filename,
+                                                postdict, self.repojt,
+                                                add_list, update_list,
+                                                header, flush)
+                yield job_process
+                current_time = datetime.datetime.now()
+                duration=(current_time-start_time).seconds
+                if duration > 1800:
+                    print '[jingying url list]: switch profile'
+                    self.downloader.switch_profile(self.ff_profiles)
+                    start_time = current_time
 
 repo = storage.fsinterface.FSInterface('output/jingying')
 PLAN = [dict(name='jingying_classify', second='*/10',hour='8-19'),
