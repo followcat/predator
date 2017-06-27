@@ -1,3 +1,4 @@
+import json
 import socket
 import threading
 import selenium.webdriver
@@ -100,19 +101,22 @@ class Webdriver(object):
         js = """function post(path, params) {
                     var xhr = new XMLHttpRequest();
                     xhr.open("POST", path, false);
-                    var formData = new FormData();
+                    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded; charset=UTF-8');
+                    xhr.setRequestHeader('Accept','application/json, text/javascript, */*; q=0.01');
+                    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+                    var formData = '';
                     for(var key in params) {
-                        formData.append(key, params[key]);
+                        formData += key+'='+params[key]+'&';
                     }
                     xhr.send(formData);
-                    var result = "";
+                    var result = '';
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
                             result = xhr.responseText;
                         }
                     }
 
-                    return result
+                    return result;
                 }
                 url = %s;
                 form = %s;
@@ -120,7 +124,7 @@ class Webdriver(object):
                 return post(url, form);"""
 
         _url = '"' + url + '"'
-        page = self.driver.execute_script(js%(_url, str(form)))
+        page = self.driver.execute_script(js%(_url, json.dumps(form)))
         return page
 
     def close(self):
