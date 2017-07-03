@@ -30,7 +30,6 @@ class LiepinPluginSyncObject(object):
         info['origin'] = u'猎聘爬取'
         #info['email'] = self.email_from_base64()
         #info['phone'] = self.phone_from_base64()
-        print info['email'], info['phone']
         return info
 
     def email_from_base64(self):
