@@ -51,7 +51,7 @@ class Yingcai(precedure.base.Base):
         download_url = searchurl + params_str
         print '[yingcai url list]: download url: ' + download_url
         return self.wb_downloader.getsource(download_url)
-        
+
     def webdriverget_cv(self, url):
         download_url = 'http://qy.chinahr.com/cv/sou?' + url
         print '[yingcai cv]: download url: ' + download_url
@@ -63,7 +63,7 @@ class Yingcai(precedure.base.Base):
         login_form = bs.find(id='tag-login')
         if login_form is not None:
             raise Exception('NoLoginError')
-        content = bs.find(class_='box-myResume')
+        content = bs.find(class_='rm-body')
         return content.prettify()
 
     def parse_classify(self, htmlsource, header):
@@ -133,7 +133,7 @@ class Yingcai(precedure.base.Base):
                     storage_data['tags'][index].add(header['tags'][index])
                 result.append(storage_data)
         return result
- 
+
     def logException(self, text):
         with open('/tmp/classification.log', 'a+') as fp:
             fp.write(text)
