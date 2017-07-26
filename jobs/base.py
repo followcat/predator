@@ -22,8 +22,7 @@ class Base(object):
             contents = utils.builtin.load_yaml('', config)
             for k, v in contents.items():
                 kws = []
-                inds = utils.builtin.load_yaml('', ind_file)
-                ind_file = v['industries']
+                inds = utils.builtin.load_yaml('', v['industries'])
                 if 'keywords' in v:
                     for _k, _v in utils.builtin.load_yaml('', v['keywords']).items():
                         kws.extend(_v)
