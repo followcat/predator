@@ -44,7 +44,8 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
                 continue
             sorted_id = sorted(yamldata, key = lambda cvid: yamldata[cvid]['date'],
                                reverse=True)
-            print _file, sorted_id[0], time.localtime(yamldata[sorted_id[0]]['date'])
+            if sorted_id:
+                print _file, sorted_id[0], time.localtime(yamldata[sorted_id[0]]['date'])
             count = 0
             for cv_id in sorted_id:
                 if (time.time() - yamldata[cv_id]['date'])/60/60/24 < 14:
