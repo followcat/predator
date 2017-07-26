@@ -30,10 +30,12 @@ class Base(object):
                     for filepath in glob.glob(os.path.join(v['keywordpath'], '*.yaml')):
                         kpt_dict = utils.builtin.load_yaml(*os.path.split(filepath))
                         for pos in kpt_dict:
-                            for keywords_list in pos.values():
+                            for posname in pos:
+                                keywords_list = pos[posname]
                                 for keywords in keywords_list:
-                                    if len(keywords.split(' ')) < 7 and keywords:
-                                        kws.append(keywords)
+                                    searchword = ' '.join([posname, keywords])
+                                    if len(searchword.split(' ')) < 7:
+                                        kws.append(searchword)
                 settings.append((inds, kws))
         default_keywords = []
         settings.append((default_industries, default_keywords))
