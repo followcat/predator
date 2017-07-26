@@ -27,7 +27,7 @@ class Zhilian(jobs.definition.cloudshare.Cloudshare):
     def simple_jobgenerator(self, industry_needed, keywords=None):
         for _classify_value in industry_needed:
             print(u'[zhilian cv]: 行业-%s'%_classify_value)
-            _classify_id = industryID[_classify_value.encode('utf-8')]
+            _classify_id = industryID[_classify_value]
             _file = _classify_id + '.yaml'
             try:
                 yamldata = self.get_cv_list(_file, keywords)
