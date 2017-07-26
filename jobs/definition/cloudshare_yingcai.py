@@ -35,7 +35,7 @@ class Yingcai(jobs.definition.cloudshare.Cloudshare):
 
     def simple_jobgenerator(self, industry_needed, keywords=None):
         for _classify_value in industry_needed:
-            _classify_id = industryID[_classify_value]
+            _classify_id = industryID[_classify_value.encode('utf-8')]
             print('[yingcai cv]: %s'%_classify_id)
             _file = _classify_id + '.yaml'
             try:
