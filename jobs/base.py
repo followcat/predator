@@ -35,6 +35,7 @@ class Base(object):
                                 for keywords in keywords_list:
                                     searchword = ' '.join([posname, keywords])
                                     if len(searchword.split(' ')) < 7:
+                                        kws.append(keywords)
                                         kws.append(searchword)
                 settings.append((inds, kws))
         default_keywords = []
